@@ -649,6 +649,10 @@ def apibuilder_check():
 	# EXTENSIONS							    #
 	#####################################################################
 
+	print(IMP_EXTENSIONS)
+
+#	for profile in IMP_EXTENSIONS:
+
 	#####################################################################
 
 	if DEBUG > 0  \
