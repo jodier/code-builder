@@ -34,10 +34,14 @@ if sys.version_info < (3,): range = xrange
 # GLOBAL VARIABLES							    #
 #############################################################################
 
+verbose = False
+
+#############################################################################
+
 INT_ASSET = {}
-INT_EXTENSIONS = []
 INT_TYPES = {}
 INT_PROFILES = {}
+INT_EXTENSIONS = []
 INT_CONSTRAINTS = {}
 
 #############################################################################
@@ -48,11 +52,15 @@ IMP_EXTENSIONS = {}
 
 #############################################################################
 
+LANG = None
+
+#############################################################################
+
 def getTEXTs(self):
 	L = []
 
 	for textensionNode in self.childNodes:
-		if textensionNode.nodeType == xml.dom.Node.     TEXT_NODE    :
+		if textensionNode.nodeType == 3:
 			L.append(textensionNode.nodeValue)
 
 	return L
@@ -65,7 +73,7 @@ def getCDATAs(self):
 	L = []
 
 	for textensionNode in self.childNodes:
-		if textensionNode.nodeType == xml.dom.Node.CDATA_SECTION_NODE:
+		if textensionNode.nodeType == 4:
 			L.append(textensionNode.nodeValue)
 
 	return L
@@ -143,55 +151,6 @@ def parseInterfaceNodes(interfaces):
 
 		#############################################################
 
-		if node.nodeName == 'extensions':
-
-			for extensionNode in node.childNodes:
-
-				#############################################
-
-				if extensionNode.nodeName == 'extension':
-
-					METHODS = []
-
-					for methodNode in extensionNode.childNodes:
-
-						#############################
-
-						if methodNode.nodeName == 'method':
-
-							PARAMS = []
-
-							for paramNode in methodNode.childNodes:
-
-								#############
-
-								if paramNode.nodeName == 'param':
-
-									dic = {
-										'name': paramNode.getAttribute('name'),
-										'type': paramNode.getAttribute('type'),
-									}
-
-									PARAMS.append(dic)
-
-							dic = {
-								'name': methodNode.getAttribute('name'),
-								'type': methodNode.getAttribute('type'),
-								'params': PARAMS
-							}
-
-							METHODS.append(dic)
-
-					dic = {
-						'name': extensionNode.getAttribute('name'),
-					#	'type': extensionNode.getAttribute('type'),
-						'methods': METHODS
-					}
-
-					INT_EXTENSIONS.append(dic)
-
-		#############################################################
-
 		if node.nodeName == 'types':
 
 			TYPE = {}
@@ -262,9 +221,9 @@ def parseInterfaceNodes(interfaces):
 
 			#####################################################
 
-			INT_TYPES['type'] = TYPE
-			INT_TYPES['enum'] = ENUM
-			INT_TYPES['struct'] = STRUCT
+			INT_TYPES['types'] = TYPE
+			INT_TYPES['enums'] = ENUM
+			INT_TYPES['structs'] = STRUCT
 
 		#############################################################
 
@@ -280,6 +239,55 @@ def parseInterfaceNodes(interfaces):
 					}
 
 					INT_PROFILES[profileNode.getAttribute('name')] = dic
+
+		#############################################################
+
+		if node.nodeName == 'extensions':
+
+			for extensionNode in node.childNodes:
+
+				#############################################
+
+				if extensionNode.nodeName == 'extension':
+
+					METHODS = []
+
+					for methodNode in extensionNode.childNodes:
+
+						#############################
+
+						if methodNode.nodeName == 'method':
+
+							PARAMS = []
+
+							for paramNode in methodNode.childNodes:
+
+								#############
+
+								if paramNode.nodeName == 'param':
+
+									dic = {
+										'name': paramNode.getAttribute('name'),
+										'type': paramNode.getAttribute('type'),
+									}
+
+									PARAMS.append(dic)
+
+							dic = {
+								'name': methodNode.getAttribute('name'),
+								'type': methodNode.getAttribute('type'),
+								'params': PARAMS
+							}
+
+							METHODS.append(dic)
+
+					dic = {
+						'name': extensionNode.getAttribute('name'),
+					#	'type': extensionNode.getAttribute('type'),
+						'methods': METHODS
+					}
+
+					INT_EXTENSIONS.append(dic)
 
 		#############################################################
 
@@ -318,28 +326,29 @@ def parseInterfaceNodes(interfaces):
 
 	#####################################################################
 
-	print('-----------------------------------------------------------------------------')
-	print('| ASSET                                                                     |')
-	print('-----------------------------------------------------------------------------')
-	displayTree(INT_ASSET)
-	print('-----------------------------------------------------------------------------')
-	print('| EXTENSIONS                                                                |')
-	print('-----------------------------------------------------------------------------')
-	displayTree(INT_EXTENSIONS)
-	print('-----------------------------------------------------------------------------')
-	print('| TYPES                                                                     |')
-	print('-----------------------------------------------------------------------------')
-	displayTree(INT_TYPES)
-	print('-----------------------------------------------------------------------------')
-	print('| PROFILES                                                                  |')
-	print('-----------------------------------------------------------------------------')
-	displayTree(INT_PROFILES)
-	print('-----------------------------------------------------------------------------')
-	print('| CONSTRAINTS                                                               |')
-	print('-----------------------------------------------------------------------------')
-	displayTree(INT_CONSTRAINTS)
-	print('-----------------------------------------------------------------------------')
-	print('')
+	if verbose:
+		print('-----------------------------------------------------------------------------')
+		print('| ASSET                                                                     |')
+		print('-----------------------------------------------------------------------------')
+		displayTree(INT_ASSET)
+		print('-----------------------------------------------------------------------------')
+		print('| TYPES                                                                     |')
+		print('-----------------------------------------------------------------------------')
+		displayTree(INT_TYPES)
+		print('-----------------------------------------------------------------------------')
+		print('| PROFILES                                                                  |')
+		print('-----------------------------------------------------------------------------')
+		displayTree(INT_PROFILES)
+		print('-----------------------------------------------------------------------------')
+		print('| EXTENSIONS                                                                |')
+		print('-----------------------------------------------------------------------------')
+		displayTree(INT_EXTENSIONS)
+		print('-----------------------------------------------------------------------------')
+		print('| CONSTRAINTS                                                               |')
+		print('-----------------------------------------------------------------------------')
+		displayTree(INT_CONSTRAINTS)
+		print('-----------------------------------------------------------------------------')
+		print('')
 
 #############################################################################
 
@@ -366,7 +375,7 @@ def parseProfileCode(node):
 
 					for cdataNode in codeNode.childNodes:
 
-						if cdataNode.nodeType == xml.dom.Node.CDATA_SECTION_NODE:
+						if cdataNode.nodeType == 4:
 
 							TXTS.append(cdataNode.nodeValue)
 
@@ -447,20 +456,21 @@ def parseImplementationNodes(implementations):
 
 	#####################################################################
 
-	print('-----------------------------------------------------------------------------')
-	print('| EXTRAS                                                                    |')
-	print('-----------------------------------------------------------------------------')
-	displayTree(IMP_EXTRAS)
-	print('-----------------------------------------------------------------------------')
-	print('| INITS                                                                     |')
-	print('-----------------------------------------------------------------------------')
-	displayTree(IMP_INITS)
-	print('-----------------------------------------------------------------------------')
-	print('| EXTENSIONS                                                                |')
-	print('-----------------------------------------------------------------------------')
-	displayTree(IMP_EXTENSIONS)
-	print('-----------------------------------------------------------------------------')
-	print('')
+	if verbose:
+		print('-----------------------------------------------------------------------------')
+		print('| EXTRAS                                                                    |')
+		print('-----------------------------------------------------------------------------')
+		displayTree(IMP_EXTRAS)
+		print('-----------------------------------------------------------------------------')
+		print('| INITS                                                                     |')
+		print('-----------------------------------------------------------------------------')
+		displayTree(IMP_INITS)
+		print('-----------------------------------------------------------------------------')
+		print('| EXTENSIONS                                                                |')
+		print('-----------------------------------------------------------------------------')
+		displayTree(IMP_EXTENSIONS)
+		print('-----------------------------------------------------------------------------')
+		print('')
 
 #############################################################################
 # API-BUILDER								    #
@@ -493,9 +503,133 @@ def apibuilder_load(fileName):
 #############################################################################
 
 def apibuilder_check():
+
+	DEBUG = 0
+	ERROR = 0
+	WARNING = 0
+
+	#####################################################################
+	# TYPES - PASS 1						    #
 	#####################################################################
 
-	pass
+	L = []
+
+	L.extend(LANG.PRIMITIVE)
+
+	for name in INT_TYPES['types']:
+		L.append(name)
+	for name in INT_TYPES['enums']:
+		L.append(name)
+	for name in INT_TYPES['structs']:
+		L.append(name)
+
+	#####################################################################
+	# TYPES - PASS 2						    #
+	#####################################################################
+
+	for t in INT_TYPES['types'].iteritems():
+
+		if t[1]['from'] in L:
+			if t[1]['from'] == t[0]:
+				print('[Error] Recursif type \'%s\' !' % t[1]['from'])
+				ERROR += 1
+		else:
+			print('[Error] Undifined type \'%s\' !' % t[1]['from'])
+			ERROR += 1
+
+	#####################################################################
+
+	for t in INT_TYPES['enums']:
+
+		for u in INT_TYPES['enums'][t]:
+
+			v = INT_TYPES['enums'][t][u]
+
+			for i in xrange(0 + 0, len(v)):
+				for j in xrange(i + 1, len(v)):
+
+					if v[i]['name'] == v[j]['name']:
+
+						print('[Error] Duplicated values \'%s\' and \'%s\' !' % (v[i]['name'], v[j]['name']))
+						ERROR += 1
+
+	#####################################################################
+
+	for t_0_ in INT_TYPES['structs']:
+
+		for u in INT_TYPES['structs'][t_0_].iteritems():
+
+			for v in u[1]:
+
+				if v['type'] in L:
+					if v['type'] == t_0_:
+						print('[Debug] Undifined type \'%s\' !' % v['type'])
+						DEBUG += 1
+				else:
+					print('[Error] Undifined type \'%s\' !' % v['type'])
+					ERROR += 1
+
+	#####################################################################
+	# METHODS							    #
+	#####################################################################
+
+	for e in INT_EXTENSIONS:
+
+		for m in e['methods']:
+
+			for p in m['params']:
+
+				if not p['type'] in L:
+					print('[Error] Undifined type \'%s\' !' % p['type'])
+					ERROR += 1
+
+			p = m['params']
+
+			for i in xrange(0 + 0, len(p)):
+				for j in xrange(i + 1, len(p)):
+
+					if p[i]['name'] == p[j]['name']:
+
+						print('[Error] Duplicated parameter \'%s\' and \'%s\' !' % (p[i]['name'], p[j]['name']))
+						ERROR += 1
+
+		m = e['methods']
+
+		for i in xrange(0 + 0, len(m)):
+			for j in xrange(i + 1, len(m)):
+
+				if m[i]['name'] == m[j]['name']:
+
+					print('[Error] Duplicated method \'%s\' and \'%s\' !' % (m[i]['name'], m[j]['name']))
+					ERROR += 1
+
+	e = INT_EXTENSIONS
+
+	for i in xrange(0 + 0, len(e)):
+		for j in xrange(i + 1, len(e)):
+
+			if e[i]['name'] == e[j]['name']:
+
+				print('[Error] Duplicated extension \'%s\' and \'%s\' !' % (e[i]['name'], e[j]['name']))
+				ERROR += 1
+
+	#####################################################################
+
+	if DEBUG > 0  \
+	   or         \
+	   ERROR > 0  \
+	   or         \
+	   WARNING > 0:
+		print('')
+
+		if DEBUG > 0:
+			print('There are %d debugs !' % DEBUG)
+
+		if ERROR > 0:
+			print('There are %d errors !' % ERROR)
+
+		if WARNING > 0:
+			print('There are %d warnings !' % WARNING)
 
 #############################################################################
 
@@ -519,8 +653,14 @@ if __name__ == '__main__':
 			action='store_true', dest='authors', help='show authors')
 	parser.add_option('-v', '--version',
 			action='store_true', dest='version', help='show version')
+	parser.add_option('-l', '--lang',
+			action='store', dest='lang', help='???')
+	parser.add_option('', '--verbose',
+			action='store_true', dest='verbose', help='set %prog verbose')
 
 	(options, args) = parser.parse_args()
+
+	verbose = options.verbose
 
 	#####################################################################
 
@@ -550,6 +690,18 @@ if __name__ == '__main__':
 
 	if not os.path.exists(fileName):
 		parser.error('incorrect filename \'%s\'' % fileName)
+		sys.exit(1)
+
+	#####################################################################
+
+	try:
+		if options.lang:
+			LANG = __import__('lang_%s' % options.lang)
+		else:
+			LANG = __import__('lang_%s' %     'c'     )
+
+	except ImportError, e:
+		parser.error('incorrect language \'%s\'' % options.lang)
 		sys.exit(1)
 
 	#####################################################################
