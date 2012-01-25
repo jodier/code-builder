@@ -674,7 +674,7 @@ def apibuilder_check():
 			##
 
 			IMP_METHODS = IMP_EXTENSIONS \
-					    [extension]['methods']
+					     [extension]['methods']
 
 			##
 
