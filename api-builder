@@ -34,16 +34,17 @@ if sys.version_info < (3,): range = xrange
 # GLOBAL VARIABLES							    #
 #############################################################################
 
-ASSET = {}
-EXTENSIONS = []
-TYPES = {}
-PROFILES = {}
-CONSTRAINTS = {}
+INT_ASSET = {}
+INT_EXTENSIONS = []
+INT_TYPES = {}
+INT_PROFILES = {}
+INT_CONSTRAINTS = {}
 
 #############################################################################
 
-EXTRAS = {}
-INITS = {}
+IMP_EXTRAS = {}
+IMP_INITS = {}
+IMP_EXTENSIONS = {}
 
 #############################################################################
 
@@ -187,7 +188,7 @@ def parseInterfaceNodes(interfaces):
 						'methods': METHODS
 					}
 
-					EXTENSIONS.append(dic)
+					INT_EXTENSIONS.append(dic)
 
 		#############################################################
 
@@ -261,9 +262,9 @@ def parseInterfaceNodes(interfaces):
 
 			#####################################################
 
-			TYPES['type'] = TYPE
-			TYPES['enum'] = ENUM
-			TYPES['struct'] = STRUCT
+			INT_TYPES['type'] = TYPE
+			INT_TYPES['enum'] = ENUM
+			INT_TYPES['struct'] = STRUCT
 
 		#############################################################
 
@@ -278,7 +279,7 @@ def parseInterfaceNodes(interfaces):
 					dic = {
 					}
 
-					PROFILES[profileNode.getAttribute('name')] = dic
+					INT_PROFILES[profileNode.getAttribute('name')] = dic
 
 		#############################################################
 
@@ -307,38 +308,83 @@ def parseInterfaceNodes(interfaces):
 						'keys': KEYS
 					}
 
-					CONSTRAINTS[constraintNode.getAttribute('name')] = dic
+					INT_CONSTRAINTS[constraintNode.getAttribute('name')] = dic
 
 	#####################################################################
 
-	ASSET['date'] = date
-	ASSET['authors'] = authors
-	ASSET['description'] = description
+	INT_ASSET['date'] = date
+	INT_ASSET['authors'] = authors
+	INT_ASSET['description'] = description
 
 	#####################################################################
 
 	print('-----------------------------------------------------------------------------')
 	print('| ASSET                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	displayTree(ASSET)
+	displayTree(INT_ASSET)
 	print('-----------------------------------------------------------------------------')
 	print('| EXTENSIONS                                                                |')
 	print('-----------------------------------------------------------------------------')
-	displayTree(EXTENSIONS)
+	displayTree(INT_EXTENSIONS)
 	print('-----------------------------------------------------------------------------')
 	print('| TYPES                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	displayTree(TYPES)
+	displayTree(INT_TYPES)
 	print('-----------------------------------------------------------------------------')
 	print('| PROFILES                                                                  |')
 	print('-----------------------------------------------------------------------------')
-	displayTree(PROFILES)
+	displayTree(INT_PROFILES)
 	print('-----------------------------------------------------------------------------')
 	print('| CONSTRAINTS                                                               |')
 	print('-----------------------------------------------------------------------------')
-	displayTree(CONSTRAINTS)
+	displayTree(INT_CONSTRAINTS)
 	print('-----------------------------------------------------------------------------')
 	print('')
+
+#############################################################################
+
+def parseProfileCode(node):
+	#####################################################################
+
+	PROFILES = {}
+
+	for profile in node.childNodes:
+
+		#############################################################
+
+		if profile.nodeName == 'profile':
+
+			CODES = []
+
+			for codeNode in profile.childNodes:
+
+				#############################################
+
+				if codeNode.nodeName == 'code':
+
+					TXTS = []
+
+					for cdataNode in codeNode.childNodes:
+
+						if cdataNode.nodeType == xml.dom.Node.CDATA_SECTION_NODE:
+
+							TXTS.append(cdataNode.nodeValue)
+
+					dic = {
+						'constraint': codeNode.getAttribute('constraint'),
+						'key': codeNode.getAttribute('key'),
+						'txts': TXTS
+					}
+
+					CODES.append(dic)
+
+			dic = {
+				'codes': CODES
+			}
+
+			PROFILES[profile.getAttribute('name')] = dic
+
+	return PROFILES
 
 #############################################################################
 
@@ -360,54 +406,60 @@ def parseImplementationNodes(implementations):
 
 		if node.nodeName == 'extras':
 
-			PROFILES = {}
-
-			for profileNode in node.childNodes:
-
-				#############################################
-
-				if profileNode.nodeName == 'profile':
-
-					dic = {
-						'code': node.getCDATAs()[0]
-					}
-
-					PROFILES[profileNode.getAttribute('name')] = dic
-
-			EXTRAS['profiles'] = PROFILES
-			EXTRAS['code'] = node.getCDATAs()[0]
+			IMP_EXTRAS['profiles'] = parseProfileCode(node)
+			IMP_EXTRAS['code'] = node.getCDATAs()[0]
 
 		#############################################################
 
 		if node.nodeName == 'inits':
 
-			PROFILES = {}
+			IMP_INITS['profiles'] = parseProfileCode(node)
+			IMP_INITS['code'] = node.getCDATAs()[0]
 
-			for profileNode in node.childNodes:
+	#####################################################################
+
+		if node.nodeName == 'extensions':
+
+			for extensionNode in node.childNodes:
 
 				#############################################
 
-				if profileNode.nodeName == 'profile':
+				if extensionNode.nodeName == 'extension':
+
+					METHODS = {}
+
+					for methodNode in extensionNode.childNodes:
+
+						#############################
+
+						if methodNode.nodeName == 'method':
+
+							dic = {
+								'profiles': parseProfileCode(methodNode)
+							}
+
+							METHODS[methodNode.getAttribute('name')] = dic
 
 					dic = {
-						'code': node.getCDATAs()[0]
+						'methods': METHODS
 					}
 
-					PROFILES[profileNode.getAttribute('name')] = dic
-
-			INITS['profiles'] = PROFILES
-			INITS['code'] = node.getCDATAs()[0]
+					IMP_EXTENSIONS[extensionNode.getAttribute('name')] = dic
 
 	#####################################################################
 
 	print('-----------------------------------------------------------------------------')
 	print('| EXTRAS                                                                    |')
 	print('-----------------------------------------------------------------------------')
-	displayTree(EXTRAS)
+	displayTree(IMP_EXTRAS)
 	print('-----------------------------------------------------------------------------')
 	print('| INITS                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	displayTree(INITS)
+	displayTree(IMP_INITS)
+	print('-----------------------------------------------------------------------------')
+	print('| EXTENSIONS                                                                |')
+	print('-----------------------------------------------------------------------------')
+	displayTree(IMP_EXTENSIONS)
 	print('-----------------------------------------------------------------------------')
 	print('')
 
