@@ -42,11 +42,16 @@ CONSTRAINTS = {}
 
 #############################################################################
 
+EXTRAS = {}
+INITS = {}
+
+#############################################################################
+
 def getTEXTs(self):
 	L = []
 
 	for textensionNode in self.childNodes:
-		if textensionNode.nodeType == xml.dom.Node.TEXT_NODE:
+		if textensionNode.nodeType == xml.dom.Node.     TEXT_NODE    :
 			L.append(textensionNode.nodeValue)
 
 	return L
@@ -59,7 +64,7 @@ def getCDATAs(self):
 	L = []
 
 	for textensionNode in self.childNodes:
-		if textensionNode.nodeType == xml.dom.Node.TEXT_CDATA:
+		if textensionNode.nodeType == xml.dom.Node.CDATA_SECTION_NODE:
 			L.append(textensionNode.nodeValue)
 
 	return L
@@ -333,6 +338,7 @@ def parseInterfaceNodes(interfaces):
 	print('-----------------------------------------------------------------------------')
 	displayTree(CONSTRAINTS)
 	print('-----------------------------------------------------------------------------')
+	print('')
 
 #############################################################################
 
@@ -347,6 +353,63 @@ def parseImplementationNodes(implementations):
 	implementation = implementations[0]
 
 	#####################################################################
+
+	for node in implementation.childNodes:
+
+		#############################################################
+
+		if node.nodeName == 'extras':
+
+			PROFILES = {}
+
+			for profileNode in node.childNodes:
+
+				#############################################
+
+				if profileNode.nodeName == 'profile':
+
+					dic = {
+						'code': node.getCDATAs()[0]
+					}
+
+					PROFILES[profileNode.getAttribute('name')] = dic
+
+			EXTRAS['profiles'] = PROFILES
+			EXTRAS['code'] = node.getCDATAs()[0]
+
+		#############################################################
+
+		if node.nodeName == 'inits':
+
+			PROFILES = {}
+
+			for profileNode in node.childNodes:
+
+				#############################################
+
+				if profileNode.nodeName == 'profile':
+
+					dic = {
+						'code': node.getCDATAs()[0]
+					}
+
+					PROFILES[profileNode.getAttribute('name')] = dic
+
+			INITS['profiles'] = PROFILES
+			INITS['code'] = node.getCDATAs()[0]
+
+	#####################################################################
+
+	print('-----------------------------------------------------------------------------')
+	print('| EXTRAS                                                                    |')
+	print('-----------------------------------------------------------------------------')
+	displayTree(EXTRAS)
+	print('-----------------------------------------------------------------------------')
+	print('| INITS                                                                     |')
+	print('-----------------------------------------------------------------------------')
+	displayTree(INITS)
+	print('-----------------------------------------------------------------------------')
+	print('')
 
 #############################################################################
 # API-BUILDER								    #
@@ -375,6 +438,13 @@ def apibuilder_load(fileName):
 
 	parseInterfaceNodes(doc.getElementsByTagName('interface'))
 	parseImplementationNodes(doc.getElementsByTagName('implementation'))
+
+#############################################################################
+
+def apibuilder_check():
+	#####################################################################
+
+	pass
 
 #############################################################################
 
@@ -435,6 +505,7 @@ if __name__ == '__main__':
 
 	apibuilder_load(fileName)
 
+	apibuilder_check()
 	apibuilder_emit()
 
 #############################################################################
