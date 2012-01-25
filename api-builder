@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+
+#############################################################################
+# Author  : Jerome ODIER, Christophe SMEKENS, Francois SMEKENS
+# Email   : ---@gmail.com, ---@gmail.com, ---@gmail.com
+#
+# Version : 1.0 beta (2012)
+#
+#
+# This file is part of API-BUILDER.
+#
+#  u-autotool is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU Lesser General Public License as published
+#  by the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  u-autotool is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public License
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#############################################################################
+
+import sys
+
+#############################################################################
+
+if sys.version_info < (3,): range = xrange
+
+############################################################################
+
+
+############################################################################
+
+#############################################################################
+
+from optparse import OptionParser
+
+#############################################################################
+
+if __name__ == '__main__':
+	#####################################################################
+
+	parser = OptionParser('usage: %prog [options] [filename]')
+
+	parser.add_option('-a', '--authors',
+			action='store_true', dest='authors', help='show authors')
+	parser.add_option('-v', '--version',
+			action='store_true', dest='version', help='show version')
+
+	(options, args) = parser.parse_args()
+
+	#####################################################################
+
+	if options.authors:
+		print('Jerome ODIER, Christophe SMEKENS, Francois SMEKENS')
+		sys.exit()
+
+	if options.version:
+		print('api-builder-1.0')
+		sys.exit()
+
+	#####################################################################
+
+#############################################################################
+
