@@ -24,16 +24,364 @@
 #
 #############################################################################
 
-import sys
+import os, sys, xml.dom.minidom
 
 #############################################################################
 
 if sys.version_info < (3,): range = xrange
 
-############################################################################
+#############################################################################
+# GLOBAL VARIABLES							    #
+#############################################################################
+
+ASSET = {}
+EXTENSIONS = []
+TYPES = {}
+PROFILES = {}
+CONSTRAINTS = {}
+
+#############################################################################
+
+def getTEXTs(self):
+	L = []
+
+	for textensionNode in self.childNodes:
+		if textensionNode.nodeType == xml.dom.Node.TEXT_NODE:
+			L.append(textensionNode.nodeValue)
+
+	return L
+
+xml.dom.minidom.Element.getTEXTs = getTEXTs
+
+#############################################################################
+
+def getCDATAs(self):
+	L = []
+
+	for textensionNode in self.childNodes:
+		if textensionNode.nodeType == xml.dom.Node.TEXT_CDATA:
+			L.append(textensionNode.nodeValue)
+
+	return L
+
+xml.dom.minidom.Element.getCDATAs = getCDATAs
+
+#############################################################################
+
+def myprint(s, level):
+
+	for i in xrange(level):
+		sys.stdout.write(' ')
+
+	print(s)
+
+#############################################################################
+
+def displayTree(T, level = 0):
+
+		if   type(T).__name__ == 'list':
+
+			for item in enumerate(T):
+
+				myprint('idx: %d' % item[0], level)
+
+				displayTree(item[1], level + 4)
+
+		elif type(T).__name__ == 'dict':
+
+			for item in T.iteritems():
+
+				myprint('key: %s' % item[0], level)
+
+				displayTree(item[1], level + 4)
+
+		else:
+			myprint(T, level)
+
+#############################################################################
+# PARSERS								    #
+#############################################################################
+
+def parseInterfaceNodes(interfaces):
+	#####################################################################
+
+	if len(interfaces) != 1:
+		print('[Error] Only one interface allowed !')
+
+		sys.exit(1)
+
+	interface = interfaces[0]
+
+	#####################################################################
+
+	date = ''
+	authors = ''
+	description = ''
+
+	#####################################################################
+
+	for node in interface.childNodes:
+
+		#############################################################
+
+		if node.nodeName == 'asset':
+
+			for assetNode in node.childNodes:
+
+				if assetNode.nodeName == 'date':
+					date = assetNode.getTEXTs()[0]
+				if assetNode.nodeName == 'authors':
+					authors = assetNode.getTEXTs()[0]
+				if assetNode.nodeName == 'description':
+					description = assetNode.getTEXTs()[0]
+
+		#############################################################
+
+		if node.nodeName == 'extensions':
+
+			for extensionNode in node.childNodes:
+
+				#############################################
+
+				if extensionNode.nodeName == 'extension':
+
+					METHODS = []
+
+					for methodNode in extensionNode.childNodes:
+
+						#############################
+
+						if methodNode.nodeName == 'method':
+
+							PARAMS = []
+
+							for paramNode in methodNode.childNodes:
+
+								#############
+
+								if paramNode.nodeName == 'param':
+
+									dic = {
+										'name': paramNode.getAttribute('name'),
+										'type': paramNode.getAttribute('type'),
+									}
+
+									PARAMS.append(dic)
+
+							dic = {
+								'name': methodNode.getAttribute('name'),
+								'type': methodNode.getAttribute('type'),
+								'params': PARAMS
+							}
+
+							METHODS.append(dic)
+
+					dic = {
+						'name': extensionNode.getAttribute('name'),
+					#	'type': extensionNode.getAttribute('type'),
+						'methods': METHODS
+					}
+
+					EXTENSIONS.append(dic)
+
+		#############################################################
+
+		if node.nodeName == 'types':
+
+			TYPE = {}
+			ENUM = {}
+			STRUCT = {}
+
+			for typeNode in node.childNodes:
+
+				#############################################
+
+				if typeNode.nodeName == 'type':
+
+					dic = {
+						'from': typeNode.getAttribute('from')
+					}
+
+					TYPE[typeNode.getAttribute('name')] = dic
+
+				#############################################
+
+				if typeNode.nodeName == 'enum':
+
+					VALUES = []
+
+					for valueNode in typeNode.childNodes:
+
+						#############################
+
+						if valueNode.nodeName == 'value':
+
+							dic = {
+								'name': valueNode.getAttribute('name')
+							}
+
+							VALUES.append(dic)
+
+					dic = {
+						'values': VALUES
+					}
+
+					ENUM[typeNode.getAttribute('name')] = dic
 
 
-############################################################################
+				#############################################
+
+				if typeNode.nodeName == 'struct':
+
+					FIELDS = []
+
+					for fieldNode in typeNode.childNodes:
+
+						#############################
+
+						if fieldNode.nodeName == 'field':
+
+							dic = {
+								'name': fieldNode.getAttribute('name'),
+								'type': fieldNode.getAttribute('type'),
+							}
+
+							FIELDS.append(dic)
+
+					dic = {
+						'fields': FIELDS
+					}
+
+					STRUCT[typeNode.getAttribute('name')] = dic
+
+			#####################################################
+
+			TYPES['type'] = TYPE
+			TYPES['enum'] = ENUM
+			TYPES['struct'] = STRUCT
+
+		#############################################################
+
+		if node.nodeName == 'profiles':
+
+			for profileNode in node.childNodes:
+
+				#############################################
+
+				if profileNode.nodeName == 'profile':
+
+					dic = {
+					}
+
+					PROFILES[profileNode.getAttribute('name')] = dic
+
+		#############################################################
+
+		if node.nodeName == 'constraints':
+
+			for constraintNode in node.childNodes:
+
+				#############################################
+
+				if constraintNode.nodeName == 'constraint':
+
+					KEYS = {}
+
+					for keyNode in constraintNode.childNodes:
+
+						#############################
+
+						if keyNode.nodeName == 'key':
+
+							dic = {
+							}
+
+							KEYS[keyNode.getAttribute('name')] = dic
+
+					dic = {
+						'keys': KEYS
+					}
+
+					CONSTRAINTS[constraintNode.getAttribute('name')] = dic
+
+	#####################################################################
+
+	ASSET['date'] = date
+	ASSET['authors'] = authors
+	ASSET['description'] = description
+
+	#####################################################################
+
+	print('-----------------------------------------------------------------------------')
+	print('| ASSET                                                                     |')
+	print('-----------------------------------------------------------------------------')
+	displayTree(ASSET)
+	print('-----------------------------------------------------------------------------')
+	print('| EXTENSIONS                                                                |')
+	print('-----------------------------------------------------------------------------')
+	displayTree(EXTENSIONS)
+	print('-----------------------------------------------------------------------------')
+	print('| TYPES                                                                     |')
+	print('-----------------------------------------------------------------------------')
+	displayTree(TYPES)
+	print('-----------------------------------------------------------------------------')
+	print('| PROFILES                                                                  |')
+	print('-----------------------------------------------------------------------------')
+	displayTree(PROFILES)
+	print('-----------------------------------------------------------------------------')
+	print('| CONSTRAINTS                                                               |')
+	print('-----------------------------------------------------------------------------')
+	displayTree(CONSTRAINTS)
+	print('-----------------------------------------------------------------------------')
+
+#############################################################################
+
+def parseImplementationNodes(implementations):
+	#####################################################################
+
+	if len(implementations) != 1:
+		print('[Error] Only one implementation allowed !')
+
+		sys.exit(1)
+
+	implementation = implementations[0]
+
+	#####################################################################
+
+#############################################################################
+# API-BUILDER								    #
+#############################################################################
+
+def apibuilder_load(fileName):
+	#####################################################################
+
+	try:
+		doc = xml.dom.minidom.parse(fileName)
+
+	except:
+		print('[Error] XML error in file `%s` !' % fileName)
+
+		sys.exit(1)
+
+	#####################################################################
+
+	for include in doc.getElementsByTagName('include'):
+
+		for url in buildPaths(include.getAttribute('url')):
+
+			apibuilder_load(url, config)
+
+	#####################################################################
+
+	parseInterfaceNodes(doc.getElementsByTagName('interface'))
+	parseImplementationNodes(doc.getElementsByTagName('implementation'))
+
+#############################################################################
+
+def apibuilder_emit():
+	#####################################################################
+
+	pass
 
 #############################################################################
 
@@ -64,6 +412,30 @@ if __name__ == '__main__':
 		sys.exit()
 
 	#####################################################################
+
+	list = [
+		'ApiBuilder.xml',
+	]
+
+	if   len(args) == 0:
+		fileName = os.path.normcase(list[0])
+	elif len(args) == 1:
+		fileName = os.path.normcase(args[0])
+	else:
+		parser.error('syntax error')
+		sys.exit(1)
+
+	#####################################################################
+
+	if not os.path.exists(fileName):
+		parser.error('incorrect filename \'%s\'' % fileName)
+		sys.exit(1)
+
+	#####################################################################
+
+	apibuilder_load(fileName)
+
+	apibuilder_emit()
 
 #############################################################################
 
