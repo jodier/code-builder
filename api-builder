@@ -579,6 +579,9 @@ def apibuilder_check():
 	# METHODS							    #
 	#####################################################################
 
+	EXTENSIONS = []
+	METHODS = []
+
 	for e in INT_EXTENSIONS:
 
 		for m in e['methods']:
@@ -588,6 +591,8 @@ def apibuilder_check():
 				if not p['type'] in L:
 					print('[Error] Undifined type \'%s\' !' % p['type'])
 					ERROR += 1
+
+			##
 
 			p = m['params']
 
@@ -649,9 +654,35 @@ def apibuilder_check():
 	# EXTENSIONS							    #
 	#####################################################################
 
-	print(IMP_EXTENSIONS)
+	for extension in IMP_EXTENSIONS:
 
-#	for profile in IMP_EXTENSIONS:
+		L = [e['name']                       for e in INT_EXTENSIONS]
+		M = [m['name'] for m in e['methods'] for e in INT_EXTENSIONS]
+
+		##
+
+		if not extension in L:
+			print('[Error] Undifined extension \'%s\' !' % extension)
+			ERROR += 1
+
+		for method in IMP_EXTENSIONS[extension]['methods']:
+
+			if not method in M:
+				print('[Error] Undifined method \'%s\' !' % method)
+				ERROR += 1
+
+			##
+
+			IMP_METHODS = IMP_EXTENSIONS \
+					    [extension]['methods']
+
+			##
+
+			for profile in IMP_METHODS[method]['profiles']:
+
+				if INT_PROFILES.has_key(profile) == False:
+					print('[Error] Undifined profile \'%s\' !' % profile)
+					ERROR += 1
 
 	#####################################################################
 
