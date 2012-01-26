@@ -23,6 +23,7 @@
 #############################################################################
 
 PRIMITIVE = [
+	'void',
 	'int8_t',
 	'uint8_t',
 	'int16_t',
@@ -31,7 +32,17 @@ PRIMITIVE = [
 	'uint32_t',
 	'int64_t',
 	'uint64_t',
-	'bool'
+	'bool',
+	'float',
+	'double',
+]
+
+#############################################################################
+
+QUALIFIER = [
+	'const',
+	'register',
+	'volatile',
 ]
 
 #############################################################################
@@ -129,12 +140,17 @@ def generate_profile(p, incCnt):
 def generate_prototype(m, prefix, suffix = None):
 
 	if suffix is None:
-		proto = '%s %s_%s(' % (m['type'], prefix, m['name'])
+		proto = '%s %s_%s' % (m['type'], prefix, m['name'])
 	else:
-		proto = '%s %s_%s_%s(' % (m['type'], prefix, m['name'], suffix)
+		proto = '%s %s_%s_%s' % (m['type'], prefix, m['name'], suffix)
 
-	for p in m['params']:
-		proto += '%s %s,' % (p['type'], p['name'])
+	proto += '('
+
+	if len(m['params']) > 0:
+		for p in m['params']:
+			proto += '%s %s,' % (p['type'], p['name'])
+	else:
+		proto += 'void,'
 
 	print(proto[: -1] + ');')
 

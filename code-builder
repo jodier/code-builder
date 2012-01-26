@@ -24,7 +24,7 @@
 #
 #############################################################################
 
-import os, sys, xml.dom.minidom
+import os, sys, glob, xml.dom.minidom
 
 #############################################################################
 
@@ -35,6 +35,10 @@ if sys.version_info < (3,): range = xrange
 #############################################################################
 
 verbose = False
+
+#############################################################################
+
+PWD = '.'
 
 #############################################################################
 
@@ -51,8 +55,8 @@ INT_CONSTRAINTS = {}
 
 #############################################################################
 
-IMP_EXTRAS = {}
-IMP_INITS = {}
+IMP_EXTRAS = []
+IMP_INITS = []
 IMP_EXTENSIONS = {}
 
 #############################################################################
@@ -67,6 +71,18 @@ def incCnt():
 	global CNT
 	CNT += 1
 	return CNT
+
+#############################################################################
+# UTILS									    #
+#############################################################################
+
+def buildPaths(s):
+	s = s
+
+	if not s[0] in ['\\', '/']:
+		s = os.path.join(PWD, s)
+
+	return [os.path.normpath(f).replace('\\', '/') for f in glob.iglob(s)]
 
 #############################################################################
 
@@ -134,9 +150,10 @@ def parseInterfaceNodes(interfaces):
 	#####################################################################
 
 	if len(interfaces) != 1:
-		print('[Error] Only one interface allowed !')
+		if len(interfaces) > 1:
+			print('[Error] Only one interface allowed !')
 
-		sys.exit(1)
+		return
 
 	interface = interfaces[0]
 
@@ -151,6 +168,8 @@ def parseInterfaceNodes(interfaces):
 
 	for node in interface.childNodes:
 
+		#############################################################
+		# ASSET							    #
 		#############################################################
 
 		if node.nodeName == 'asset':
@@ -167,6 +186,8 @@ def parseInterfaceNodes(interfaces):
 					description = assetNode.getTEXTs()[0]
 
 		#############################################################
+		# TYPES							    #
+		#############################################################
 
 		if node.nodeName == 'types':
 
@@ -176,6 +197,8 @@ def parseInterfaceNodes(interfaces):
 
 			for typeNode in node.childNodes:
 
+				#############################################
+				# TYPE					    #
 				#############################################
 
 				if typeNode.nodeName == 'type':
@@ -187,6 +210,8 @@ def parseInterfaceNodes(interfaces):
 					TYPE[typeNode.getAttribute('name')] = dic
 
 				#############################################
+				# ENUM					    #
+				#############################################
 
 				if typeNode.nodeName == 'enum':
 
@@ -194,6 +219,8 @@ def parseInterfaceNodes(interfaces):
 
 					for valueNode in typeNode.childNodes:
 
+						#############################
+						# VALUE			    #
 						#############################
 
 						if valueNode.nodeName == 'value':
@@ -212,6 +239,8 @@ def parseInterfaceNodes(interfaces):
 
 
 				#############################################
+				# STRUCT				    #
+				#############################################
 
 				if typeNode.nodeName == 'struct':
 
@@ -219,6 +248,8 @@ def parseInterfaceNodes(interfaces):
 
 					for fieldNode in typeNode.childNodes:
 
+						#############################
+						# FIELD			    #
 						#############################
 
 						if fieldNode.nodeName == 'field':
@@ -243,6 +274,8 @@ def parseInterfaceNodes(interfaces):
 			INT_TYPES['structs'] = STRUCT
 
 		#############################################################
+		# PROFILES						    #
+		#############################################################
 
 		if node.nodeName == 'profiles':
 
@@ -258,11 +291,15 @@ def parseInterfaceNodes(interfaces):
 					INT_PROFILES[profileNode.getAttribute('name')] = dic
 
 		#############################################################
+		# EXTENSIONS						    #
+		#############################################################
 
 		if node.nodeName == 'extensions':
 
 			for extensionNode in node.childNodes:
 
+				#############################################
+				# EXTENSION				    #
 				#############################################
 
 				if extensionNode.nodeName == 'extension':
@@ -272,6 +309,8 @@ def parseInterfaceNodes(interfaces):
 					for methodNode in extensionNode.childNodes:
 
 						#############################
+						# METHOD		    #
+						#############################
 
 						if methodNode.nodeName == 'method':
 
@@ -279,6 +318,8 @@ def parseInterfaceNodes(interfaces):
 
 							for paramNode in methodNode.childNodes:
 
+								#############
+								# PARAM	    #
 								#############
 
 								if paramNode.nodeName == 'param':
@@ -307,11 +348,15 @@ def parseInterfaceNodes(interfaces):
 					INT_EXTENSIONS.append(dic)
 
 		#############################################################
+		# CONSTRAINTS						    #
+		#############################################################
 
 		if node.nodeName == 'constraints':
 
 			for constraintNode in node.childNodes:
 
+				#############################################
+				# CONSTRAINT				    #
 				#############################################
 
 				if constraintNode.nodeName == 'constraint':
@@ -320,6 +365,8 @@ def parseInterfaceNodes(interfaces):
 
 					for keyNode in constraintNode.childNodes:
 
+						#############################
+						# KEY			    #
 						#############################
 
 						if keyNode.nodeName == 'key':
@@ -383,44 +430,26 @@ def parseInterfaceNodes(interfaces):
 def parseProfileCode(node):
 	#####################################################################
 
-	PROFILES = {}
+	CODES = []
 
-	for profile in node.childNodes:
+	#####################################################################
+
+	for codeNode in node.childNodes:
 
 		#############################################################
+		# CODE							    #
+		#############################################################
 
-		if profile.nodeName == 'profile':
-
-			CODES = []
-
-			for codeNode in profile.childNodes:
-
-				#############################################
-
-				if codeNode.nodeName == 'code':
-
-					TXTS = []
-
-					for cdataNode in codeNode.childNodes:
-
-						if cdataNode.nodeType == 4:
-
-							TXTS.append(cdataNode.nodeValue)
-
-					dic = {
-						'condition': codeNode.getAttribute('condition'),
-						'txts': TXTS
-					}
-
-					CODES.append(dic)
+		if codeNode.nodeName == 'code':
 
 			dic = {
-				'codes': CODES
+				'condition': codeNode.getAttribute('condition'),
+				'txts': codeNode.getCDATAs()
 			}
 
-			PROFILES[profile.getAttribute('name')] = dic
+			CODES.append(dic)
 
-	return PROFILES
+	return CODES
 
 #############################################################################
 
@@ -428,59 +457,46 @@ def parseImplementationNodes(implementations):
 	#####################################################################
 
 	if len(implementations) != 1:
-		print('[Error] Only one implementation allowed !')
+		if len(implementations) > 1:
+			print('[Error] Only one implementation allowed !')
 
-		sys.exit(1)
+		return
 
 	implementation = implementations[0]
-
-	#####################################################################
 
 	for node in implementation.childNodes:
 
 		#############################################################
-
-		if node.nodeName == 'extras':
-
-			IMP_EXTRAS['profiles'] = parseProfileCode(node)
-			IMP_EXTRAS['code'] = node.getCDATAs()[0]
-
+		# EXTRA							    #
 		#############################################################
 
-		if node.nodeName == 'inits':
+		if node.nodeName == 'extra':
+			IMP_EXTRAS.append(parseProfileCode(node))
 
-			IMP_INITS['profiles'] = parseProfileCode(node)
-			IMP_INITS['code'] = node.getCDATAs()[0]
+		#############################################################
+		# INIT							    #
+		#############################################################
 
-	#####################################################################
+		if node.nodeName == 'init':
+			IMP_INITS.append(parseProfileCode(node))
 
-		if node.nodeName == 'extensions':
+		#############################################################
+		# PROFILES						    #
+		#############################################################
 
-			for extensionNode in node.childNodes:
+		if node.nodeName == 'profiles':
+
+			for profileNode in node.childNodes:
+
+				print('Hi !', profileNode.nodeName)
 
 				#############################################
+				# PROFILE				    #
+				#############################################
 
-				if extensionNode.nodeName == 'extension':
+				if profileNode.nodeName == 'profile':
 
-					METHODS = {}
-
-					for methodNode in extensionNode.childNodes:
-
-						#############################
-
-						if methodNode.nodeName == 'method':
-
-							dic = {
-								'profiles': parseProfileCode(methodNode)
-							}
-
-							METHODS[methodNode.getAttribute('name')] = dic
-
-					dic = {
-						'methods': METHODS
-					}
-
-					IMP_EXTENSIONS[extensionNode.getAttribute('name')] = dic
+					print('Hello !')
 
 	#####################################################################
 
@@ -501,13 +517,16 @@ def parseImplementationNodes(implementations):
 		print('')
 
 #############################################################################
-# API-BUILDER								    #
+# CODE-BUILDER								    #
 #############################################################################
 
-def apibuilder_load(fileName):
+def codebuilder_load(fileName):
 	#####################################################################
 
 	try:
+		if verbose:
+			print('Loading \'%s\'...' % fileName)
+
 		doc = xml.dom.minidom.parse(fileName)
 
 	except:
@@ -517,20 +536,31 @@ def apibuilder_load(fileName):
 
 	#####################################################################
 
-	for include in doc.getElementsByTagName('include'):
+	global PWD
 
-		for url in buildPaths(include.getAttribute('url')):
-
-			apibuilder_load(url, config)
+	PWD = os.path.normpath(
+		os.path.dirname(fileName)
+	)
 
 	#####################################################################
 
-	parseInterfaceNodes(doc.getElementsByTagName('interface'))
-	parseImplementationNodes(doc.getElementsByTagName('implementation'))
+	for include in doc.getElementsByTagName('include'):
+
+#		OLD_PWD = PWD
+#		for url in buildPaths(include.getAttribute('url')): codebuilder_load(url)
+#		PWD = OLD_PWD
+
+		pass
+
+	#####################################################################
+
+	return doc
 
 #############################################################################
 
-def apibuilder_check():
+def codebuilder_check():
+
+	return
 
 	DEBUG = 0
 	ERROR = 0
@@ -659,55 +689,13 @@ def apibuilder_check():
 	# EXTRAS							    #
 	#####################################################################
 
-	for profile in IMP_EXTRAS['profiles']:
-
-		if INT_PROFILES.has_key(profile) == False:
-			print('[Error] Undefined profile \'%s\' !' % profile)
-			ERROR += 1
-
 	#####################################################################
 	# INITS								    #
 	#####################################################################
 
-	for profile in IMP_INITS['profiles']:
-
-		if INT_PROFILES.has_key(profile) == False:
-			print('[Error] Undefined profile \'%s\' !' % profile)
-			ERROR += 1
-
 	#####################################################################
 	# EXTENSIONS							    #
 	#####################################################################
-
-	for extension in IMP_EXTENSIONS:
-
-		L = [e['name']                       for e in INT_EXTENSIONS]
-		M = [m['name'] for m in e['methods'] for e in INT_EXTENSIONS]
-
-		##
-
-		if not extension in L:
-			print('[Error] Undefined extension \'%s\' !' % extension)
-			ERROR += 1
-
-		for method in IMP_EXTENSIONS[extension]['methods']:
-
-			if not method in M:
-				print('[Error] Undefined method \'%s\' !' % method)
-				ERROR += 1
-
-			##
-
-			IMP_METHODS = IMP_EXTENSIONS \
-					     [extension]['methods']
-
-			##
-
-			for profile in IMP_METHODS[method]['profiles']:
-
-				if INT_PROFILES.has_key(profile) == False:
-					print('[Error] Undefined profile \'%s\' !' % profile)
-					ERROR += 1
 
 	#####################################################################
 
@@ -729,7 +717,10 @@ def apibuilder_check():
 
 #############################################################################
 
-def apibuilder_emit():
+def codebuilder_emit():
+
+	return
+
 	#####################################################################
 	# PROLOG							    #
 	#####################################################################
@@ -860,10 +851,13 @@ if __name__ == '__main__':
 
 	#####################################################################
 
-	apibuilder_load(fileName)
+	doc = codebuilder_load(fileName)
 
-	apibuilder_check()
-	apibuilder_emit()
+	parseInterfaceNodes(doc.getElementsByTagName('interface'))
+	parseImplementationNodes(doc.getElementsByTagName('implementation'))
+
+	codebuilder_check()
+	codebuilder_emit()
 
 #############################################################################
 
