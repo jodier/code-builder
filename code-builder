@@ -57,7 +57,7 @@ INT_CONSTRAINTS = {}
 
 IMP_EXTRAS = []
 IMP_INITS = []
-IMP_EXTENSIONS = {}
+IMP_PROFILES = {}
 
 #############################################################################
 
@@ -464,6 +464,8 @@ def parseImplementationNodes(implementations):
 
 	implementation = implementations[0]
 
+	#####################################################################
+
 	for node in implementation.childNodes:
 
 		#############################################################
@@ -488,15 +490,88 @@ def parseImplementationNodes(implementations):
 
 			for profileNode in node.childNodes:
 
-				print('Hi !', profileNode.nodeName)
-
 				#############################################
 				# PROFILE				    #
 				#############################################
 
 				if profileNode.nodeName == 'profile':
 
-					print('Hello !')
+					EXTRAS1 = []
+					INITS1 = []
+					EXTENSIONS = {}
+
+					for itemNode1 in profileNode.childNodes:
+
+						#############################
+						# EXTRA			    #
+						#############################
+
+						if itemNode1.nodeName == 'extra':
+							EXTRAS1.append(parseProfileCode(itemNode1))
+
+						#############################
+						# INIT			    #
+						#############################
+
+						if itemNode1.nodeName == 'init':
+							INITS1.append(parseProfileCode(itemNode1))
+
+						#############################
+						# EXTENSIONS		    #
+						#############################
+
+						if itemNode1.nodeName == 'extensions':
+
+							for extensionNode in itemNode1.childNodes:
+
+								#############
+								# EXTENSION #
+								#############
+
+								if extensionNode.nodeName == 'extension':
+
+									EXTRAS2 = []
+									INITS2 = []
+									METHODS = {}
+
+									for itemNode2 in extensionNode.childNodes:
+
+										#############
+										# EXTRA	    #
+										#############
+
+										if itemNode2.nodeName == 'extra':
+											EXTRAS2.append(parseProfileCode(itemNode2))
+
+										#############
+										# INIT	    #
+										#############
+
+										if itemNode2.nodeName == 'init':
+											INITS2.append(parseProfileCode(itemNode2))
+
+										#############
+										# METHOD    #
+										#############
+
+										if itemNode2.nodeName == 'method':
+											METHODS[itemNode2.getAttribute('name')] = parseProfileCode(itemNode2)
+
+									dic = {
+										'extras': EXTRAS2,
+										'inits': INITS2,
+										'methods': METHODS,
+									}
+
+									EXTENSIONS[extensionNode.getAttribute('name')] = dic
+
+					dic = {
+						'extras': EXTRAS1,
+						'inits': INITS1,
+						'extensions': EXTENSIONS,
+					}
+
+					IMP_PROFILES[profileNode.getAttribute('name')] = dic
 
 	#####################################################################
 
@@ -510,9 +585,9 @@ def parseImplementationNodes(implementations):
 		print('-----------------------------------------------------------------------------')
 		displayTree(IMP_INITS)
 		print('-----------------------------------------------------------------------------')
-		print('| EXTENSIONS                                                                |')
+		print('| PROFILE                                                                   |')
 		print('-----------------------------------------------------------------------------')
-		displayTree(IMP_EXTENSIONS)
+		displayTree(IMP_PROFILES)
 		print('-----------------------------------------------------------------------------')
 		print('')
 
@@ -544,13 +619,13 @@ def codebuilder_load(fileName):
 
 	#####################################################################
 
-	for include in doc.getElementsByTagName('include'):
-
-#		OLD_PWD = PWD
-#		for url in buildPaths(include.getAttribute('url')): codebuilder_load(url)
-#		PWD = OLD_PWD
-
-		pass
+#	for include in doc.getElementsByTagName('include'):
+#
+#		for url in buildPaths(include.getAttribute('url')):
+#
+#			OLD_PWD = PWD
+#			include.parentNode.appendChild(codebuilder_load(url))
+#			PWD = OLD_PWD
 
 	#####################################################################
 
