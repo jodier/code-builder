@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- ******************************************************************** -->
+
+<xml>
+
+  <!-- ****************************************************************** -->
+
+  <profile name="profile2">
+
+    <!-- **************************************************************** -->
+
+    <extra>
+      <code condition="cond1">
+        <![CDATA[Hello world]]>
+      </code>
+    </extra>
+
+    <!-- **************************************************************** -->
+
+    <init>
+      <code condition="cond1">
+        <![CDATA[Hello world]]>
+      </code>
+    </init>
+
+    <!-- **************************************************************** -->
+
+    <extensions>
+
+      <!-- ************************************************************** -->
+
+      <extension name="context">
+
+        <init>
+          <code condition="cond1">
+            <![CDATA[Hello world]]>
+          </code>
+        </init>
+
+        <method name="new">
+          <code condition="cond1">
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+          </code>
+        </method>
+
+        <method name="delete">
+          <code condition="cond1">
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+          </code>
+          <code condition="cond2">
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+          </code>
+        </method>
+      </extension>
+
+      <!-- ************************************************************** -->
+
+    </extensions>
+
+    <!-- **************************************************************** -->
+
+  </profile>
+
+  <!-- ****************************************************************** -->
+
+</xml>
+
+<!-- ******************************************************************** -->

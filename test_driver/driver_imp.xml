@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<xml>
+
+<!-- ******************************************************************** -->
+
+  <implementation>
+
+    <extra>
+      <code condition="cond1">
+        <![CDATA[Hello world]]>
+      </code>
+    </extra>
+
+    <include url="profiles/egl.xml" />
+    <include url="profiles/wgl.xml" />
+    <include url="profiles/glx.xml" />
+    <include url="profiles/cocoa.xml" />
+    <include url="profiles/uikit.xml" />
+    <include url="profiles/directx.xml" />
+
+  </implementation>
+
+<!-- ******************************************************************** -->
+
+</xml>
+

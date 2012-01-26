@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<xml>
+
+<!-- ******************************************************************** -->
+
+  <interface name="simple_api" major="1" minor="0">
+
+    <asset>
+      <date>2012</date>
+      <authors>Jerome ODIER, Christophe SMEKENS, Francois SMEKENS</authors>
+      <emails>---@gmail.com, ---@gmail.com, ---@gmail.com</emails>
+      <description>This file is part of DRIVER</description>
+    </asset>
+
+    <extensions>
+
+      <extension name="context">
+        <method name="new" type="context_id" />
+        <method name="delete" type="void">
+          <param name="context" type="context_id" />
+        </method>
+      </extension>
+
+      <extension name="drawable" optional="yes">
+        <method name="new" type="drawable_id">
+          <param name="context" type="context_id" />
+        </method>
+        <method name="delete" type="void">
+          <param name="context" type="drawable_id" />
+        </method>
+      </extension>
+
+    </extensions>
+
+    <types>
+      <type name="context_id" from="uint32_t" />
+      <type name="drawable_id" from="uint32_t" />
+    </types>
+
+    <profiles>
+      <profile name="egl" />
+      <profile name="glx" />
+      <profile name="wgl" />
+      <profile name="cocoa" />
+      <profile name="uikit" />
+      <profile name="directx" />
+    </profiles>
+
+  </interface>
+
+<!-- ******************************************************************** -->
+
+</xml>
+

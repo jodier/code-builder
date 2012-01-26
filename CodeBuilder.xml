@@ -22,7 +22,7 @@
           <param name="param2" type="simple_uint32_t" />
         </method>
 
-        <method name="simple_method2" type="simple_uint64_t">
+        <method name="simple_method2" type="simple_uint64_t" optional="true">
           <param name="param1" type="simple_uint64_t" />
           <param name="param2" type="simple_uint64_t" />
         </method>
@@ -74,51 +74,101 @@
 
   <implementation>
 
-    <extras>
-      <profile name="simple_profile1">
-        <code condition="cond1">
-          <![CDATA[Hello world]]>
-        </code>
-      </profile>
-      <profile name="simple_profile2">
-        <code condition="cond2">
-          <![CDATA[Hello world]]>
-        </code>
-      </profile>
-      <![CDATA[Hello world]]>
-    </extras>
+    <extra>
+      <code condition="cond1">
+        <![CDATA[Hello world]]>
+      </code>
+    </extra>
 
-    <inits>
-      <profile name="simple_profile1">
+    <init>
+      <code condition="cond2">
+        <![CDATA[Hello world]]>
+      </code>
+    </init>
+
+    <profile name="simple_profile1">
+
+      <extra>
         <code condition="cond3">
           <![CDATA[Hello world]]>
         </code>
-      </profile>
-      <profile name="simple_profile2">
+      </extra>
+
+      <init>
         <code condition="cond4">
           <![CDATA[Hello world]]>
         </code>
-      </profile>
-      <![CDATA[Hello world]]>
-    </inits>
+      </init>
 
-    <extensions>
+      <extensions>
 
-      <extension name="simple_extension1">
+        <extension name="simple_extension1">
 
-        <method name="simple_method1">
-          <profile name="simple_profile1">
+          <init>
             <code condition="cond5">
+              <![CDATA[Hello world]]>
+            </code>
+          </init>
+
+          <method name="simple_method1">
+            <code condition="cond6">
               <![CDATA[Hello world 1]]>
               <![CDATA[Hello world 2]]>
               <![CDATA[Hello world 3]]>
             </code>
-          </profile>
-        </method>
+          </method>
 
-      </extension>
+          <method name="simple_method2">
+            <code condition="cond7">
+              <![CDATA[Hello world 1]]>
+              <![CDATA[Hello world 2]]>
+              <![CDATA[Hello world 3]]>
+            </code>
+          </method>
 
-    </extensions>
+        </extension>
+
+      </extensions>
+
+    </profile>
+
+    <profile name="simple_profile2">
+
+      <extra>
+        <code condition="cond8">
+          <![CDATA[Hello world]]>
+        </code>
+      </extra>
+
+      <init>
+        <code condition="cond9">
+          <![CDATA[Hello world]]>
+        </code>
+      </init>
+
+      <extensions>
+
+        <extension name="simple_extension1">
+
+          <init>
+            <code condition="cond10">
+              <![CDATA[Hello world]]>
+            </code>
+          </init>
+
+          <method name="simple_method1">
+            <code condition="cond11">
+              <![CDATA[Hello world 1]]>
+              <![CDATA[Hello world 2]]>
+              <![CDATA[Hello world 3]]>
+            </code>
+          </method>
+
+        </extension>
+
+      </extensions>
+
+    </profile>
 
   </implementation>
 

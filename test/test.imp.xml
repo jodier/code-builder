@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<xml>
+
+<!-- ******************************************************************** -->
+
+  <implementation>
+
+    <extra>
+      <code condition="cond1">
+        <![CDATA[Hello world]]>
+      </code>
+    </extra>
+
+    <include url="profiles/profile1.xml" />
+    <include url="profiles/profile2.xml" />
+
+  </implementation>
+
+<!-- ******************************************************************** -->
+
+</xml>
+

@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- ******************************************************************** -->
+
+<xml>
+
+  <!-- ****************************************************************** -->
+
+  <profile name="cocoa">
+
+    <!-- **************************************************************** -->
+
+    <extra>
+      <code>
+        <![CDATA[Hello world]]>
+      </code>
+    </extra>
+
+    <!-- **************************************************************** -->
+
+    <init>
+      <code>
+        <![CDATA[Hello world]]>
+      </code>
+    </init>
+
+    <!-- **************************************************************** -->
+
+    <extensions>
+
+      <!-- ************************************************************** -->
+
+      <extension name="context">
+
+        <init>
+          <code>
+            <![CDATA[Hello world]]>
+          </code>
+        </init>
+
+        <method name="new">
+          <code>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+          </code>
+        </method>
+
+        <method name="delete">
+          <code>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+          </code>
+        </method>
+      </extension>
+
+      <!-- ************************************************************** -->
+
+      <extension name="drawable">
+        <init>
+          <code>
+            <![CDATA[Hello world]]>
+          </code>
+        </init>
+
+        <method name="new">
+          <code>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+          </code>
+        </method>
+
+        <method name="delete">
+          <code>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+            <![CDATA[Hello world 1]]>
+          </code>
+        </method>
+      </extension>
+
+      <!-- ************************************************************** -->
+
+    </extensions>
+
+    <!-- **************************************************************** -->
+
+  </profile>
+
+  <!-- ****************************************************************** -->
+
+</xml>
+
+<!-- ******************************************************************** -->
