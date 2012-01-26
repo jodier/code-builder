@@ -823,13 +823,13 @@ if __name__ == '__main__':
 		sys.exit()
 
 	if options.version:
-		print('api-builder-1.0')
+		print('code-builder-1.0')
 		sys.exit()
 
 	#####################################################################
 
 	list = [
-		'ApiBuilder.xml',
+		'CodeBuilder.xml',
 	]
 
 	if   len(args) == 0:
