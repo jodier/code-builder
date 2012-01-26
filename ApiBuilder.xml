@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<xml>
+
+<!-- ******************************************************************** -->
+
+  <interface name="simple_api" major="1" minor="0">
+
+    <asset>
+      <date>2012</date>
+      <authors>Jerome ODIER, Christophe SMEKENS, Francois SMEKENS</authors>
+      <emails>--@--.com</emails>
+      <description>This is an example</description>
+    </asset>
+
+    <extensions>
+
+      <extension name="simple_extension1">
+
+        <method name="simple_method1" type="simple_uint64_t">
+          <param name="param1" type="simple_uint32_t" />
+          <param name="param2" type="simple_uint32_t" />
+        </method>
+
+        <method name="simple_method2" type="simple_uint64_t">
+          <param name="param1" type="simple_uint64_t" />
+          <param name="param2" type="simple_uint64_t" />
+        </method>
+
+      </extension>
+
+    </extensions>
+
+    <types>
+      <type name="simple_uint32_t" from="uint32_t" />
+      <type name="simple_uint64_t" from="uint64_t" />
+
+      <enum name="simple_enum1">
+        <value name="SIMPLE_ENUM1_VALUE1" />
+        <value name="SIMPLE_ENUM1_VALUE2" />
+        <value name="SIMPLE_ENUM1_VALUE3" />
+      </enum>
+
+      <struct name="simple_struct1">
+        <field name="field1" type="simple_uint32_t" />
+        <field name="field2" type="simple_uint64_t" />
+        <field name="field3" type="simple_enum1" />
+      </struct>
+    </types>
+
+    <profiles>
+
+      <profile name="simple_profile1" />
+      <profile name="simple_profile2" />
+
+    </profiles>
+
+    <constraints>
+
+      <constraint name="simple_constraint1">
+        <key name="simple_key1"/>
+        <key name="simple_key2"/>
+      </constraint>
+
+      <constraint name="simple_constraint2">
+        <key name="simple_key3"/>
+      </constraint>
+
+    </constraints>
+
+  </interface>
+
+<!-- ******************************************************************** -->
+
+  <implementation>
+
+    <extras>
+      <profile name="simple_profile1">
+        <code condition="cond1">
+          <![CDATA[Hello world]]>
+        </code>
+      </profile>
+      <profile name="simple_profile2">
+        <code condition="cond2">
+          <![CDATA[Hello world]]>
+        </code>
+      </profile>
+      <![CDATA[Hello world]]>
+    </extras>
+
+    <inits>
+      <profile name="simple_profile1">
+        <code condition="cond3">
+          <![CDATA[Hello world]]>
+        </code>
+      </profile>
+      <profile name="simple_profile2">
+        <code condition="cond4">
+          <![CDATA[Hello world]]>
+        </code>
+      </profile>
+      <![CDATA[Hello world]]>
+    </inits>
+
+    <extensions>
+
+      <extension name="simple_extension1">
+
+        <method name="simple_method1">
+          <profile name="simple_profile1">
+            <code condition="cond5">
+              <![CDATA[Hello world 1]]>
+              <![CDATA[Hello world 2]]>
+              <![CDATA[Hello world 3]]>
+            </code>
+          </profile>
+        </method>
+
+      </extension>
+
+    </extensions>
+
+  </implementation>
+
+<!-- ******************************************************************** -->
+
+</xml>
+

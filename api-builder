@@ -38,6 +38,11 @@ verbose = False
 
 #############################################################################
 
+NAME = 'noname'
+
+MAJOR = 0
+MINOR = 0
+
 INT_ASSET = {}
 INT_TYPES = {}
 INT_PROFILES = {}
@@ -53,6 +58,15 @@ IMP_EXTENSIONS = {}
 #############################################################################
 
 LANG = None
+
+#############################################################################
+
+CNT = 0xFFFF
+
+def incCnt():
+	global CNT
+	CNT += 1
+	return CNT
 
 #############################################################################
 
@@ -130,6 +144,7 @@ def parseInterfaceNodes(interfaces):
 
 	date = ''
 	authors = ''
+	emails = ''
 	description = ''
 
 	#####################################################################
@@ -146,6 +161,8 @@ def parseInterfaceNodes(interfaces):
 					date = assetNode.getTEXTs()[0]
 				if assetNode.nodeName == 'authors':
 					authors = assetNode.getTEXTs()[0]
+				if assetNode.nodeName == 'emails':
+					emails = assetNode.getTEXTs()[0]
 				if assetNode.nodeName == 'description':
 					description = assetNode.getTEXTs()[0]
 
@@ -320,8 +337,19 @@ def parseInterfaceNodes(interfaces):
 
 	#####################################################################
 
+	global NAME
+	global MAJOR
+	global MINOR
+
+	NAME = interface.getAttribute('name')
+	MAJOR = int(interface.getAttribute('major'))
+	MINOR = int(interface.getAttribute('minor'))
+
+	#####################################################################
+
 	INT_ASSET['date'] = date
 	INT_ASSET['authors'] = authors
+	INT_ASSET['emails'] = emails
 	INT_ASSET['description'] = description
 
 	#####################################################################
@@ -579,9 +607,6 @@ def apibuilder_check():
 	# METHODS							    #
 	#####################################################################
 
-	EXTENSIONS = []
-	METHODS = []
-
 	for e in INT_EXTENSIONS:
 
 		for m in e['methods']:
@@ -706,8 +731,66 @@ def apibuilder_check():
 
 def apibuilder_emit():
 	#####################################################################
+	# PROLOG							    #
+	#####################################################################
 
-	pass
+	LANG.generate_prolog(NAME, MAJOR, MINOR, INT_ASSET)
+
+	#####################################################################
+	# TYPES								    #
+	#####################################################################
+
+	LANG.generate_separator()
+
+	for t in INT_TYPES['types'].iteritems():
+		LANG.generate_type(t)
+
+	print('')
+
+	LANG.generate_separator()
+
+	for t in INT_TYPES['enums'].iteritems():
+		LANG.generate_enum(t, incCnt)
+		print('')
+
+	LANG.generate_separator()
+
+	for t in INT_TYPES['structs'].iteritems():
+		LANG.generate_struct(t)
+		print('')
+
+	#####################################################################
+	# EXTENSIONS							    #
+	#####################################################################
+
+	LANG.generate_separator()
+
+	for p in INT_PROFILES:
+		LANG.generate_profile(p, incCnt)
+
+	print('')
+
+	for p in INT_PROFILES:
+
+		LANG.generate_box(p.upper())
+
+		for e in INT_EXTENSIONS:
+
+			LANG.generate_comment(e['name'].upper())
+
+			for m in e['methods']:
+				LANG.generate_prototype(m, '%s_%s' % (p, e['name']))
+				LANG.generate_prototype(m, '%s_%s' % (p, e['name']), 'check')
+				LANG.generate_prototype(m, '%s_%s' % (p, e['name']), 'best')
+				print('')
+
+	LANG.generate_separator()
+
+	#####################################################################
+	# EPILOG							    #
+	#####################################################################
+
+	LANG.generate_epilog(NAME)
 
 #############################################################################
 
