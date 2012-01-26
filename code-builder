@@ -226,7 +226,8 @@ def parseInterfaceNodes(interfaces):
 						if valueNode.nodeName == 'value':
 
 							dic = {
-								'name': valueNode.getAttribute('name')
+								'name': valueNode.getAttribute('name'),
+								'init': valueNode.getAttribute('init'),
 							}
 
 							VALUES.append(dic)
@@ -635,8 +636,6 @@ def codebuilder_load(fileName):
 
 def codebuilder_check():
 
-	return
-
 	DEBUG = 0
 	ERROR = 0
 	WARNING = 0
@@ -666,14 +665,16 @@ def codebuilder_check():
 	# TYPES - PASS 2						    #
 	#####################################################################
 
-	for t in INT_TYPES['types'].iteritems():
+	for t in INT_TYPES['types']:
 
-		if t[1]['from'] in L:
-			if t[1]['from'] == t[0]:
-				print('[Error] Recursif type \'%s\' !' % t[1]['from'])
+		T = INT_TYPES['types'][t]['from']
+
+		if T in L:
+			if T == t:
+				print('[Error] Recursif type \'%s\' !' % T)
 				ERROR += 1
 		else:
-			print('[Error] Undefined type \'%s\' !' % t[1]['from'])
+			print('[Error] Undefined type \'%s\' !' % T)
 			ERROR += 1
 
 	#####################################################################
@@ -694,18 +695,32 @@ def codebuilder_check():
 
 	#####################################################################
 
-	for t_0_ in INT_TYPES['structs']:
+	for t in INT_TYPES['structs']:
 
-		for u in INT_TYPES['structs'][t_0_].iteritems():
+		for u in INT_TYPES['structs'][t]:
 
-			for v in u[1]:
+			v = INT_TYPES['structs'][t][u]
 
-				if v['type'] in L:
-					if v['type'] == t_0_:
-						print('[Debug] Undefined type \'%s\' !' % v['type'])
+			for i in xrange(0 + 0, len(v)):
+				for j in xrange(i + 1, len(v)):
+
+					if v[i]['name'] == v[j]['name']:
+
+						print('[Error] Duplicated fields \'%s\' and \'%s\' !' % (v[i]['name'], v[j]['name']))
+						ERROR += 1
+
+			##
+
+			for w in v:
+
+				T = w['type']
+
+				if T in L:
+					if T == t:
+						print('[Debug] Undefined type \'%s\' !' % T)
 						DEBUG += 1
 				else:
-					print('[Error] Undefined type \'%s\' !' % v['type'])
+					print('[Error] Undefined type \'%s\' !' % T)
 					ERROR += 1
 
 	#####################################################################
@@ -761,16 +776,17 @@ def codebuilder_check():
 	#####################################################################
 
 	#####################################################################
-	# EXTRAS							    #
+	# PROFILES							    #
 	#####################################################################
 
-	#####################################################################
-	# INITS								    #
-	#####################################################################
+#	print(INT_EXTENSIONS)
 
-	#####################################################################
-	# EXTENSIONS							    #
-	#####################################################################
+	for p in IMP_PROFILES:
+
+		if not INT_PROFILES.has_key(p):
+			print('[Error] Undefined profile \'%s\' !' % p)
+			ERROR += 1
+
 
 	#####################################################################
 
