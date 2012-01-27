@@ -1,6 +1,6 @@
 #############################################################################
 # Author  : Jerome ODIER, Christophe SMEKENS
-# Email   : odier[at]hypnos3d.com, smekens[at]hypnos3d.com
+# Email   : odier@hypnos3d.com, smekens@hypnos3d.com
 #
 # Version : 1.0 beta (2012)
 #
