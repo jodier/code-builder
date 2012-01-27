@@ -175,7 +175,7 @@ def implementation(ctx):
 			else:
 				for m in IMP_PROFILES[p]['extensions'][e]['methods']:
 
-					if b.utils.getMethod(EXT, m) is None:
+					if cb.utils.getMethod(EXT, m) is None:
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
 
 #############################################################################
