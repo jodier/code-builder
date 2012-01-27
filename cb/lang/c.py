@@ -1,11 +1,11 @@
 #############################################################################
-# Author  : Jerome ODIER, Christophe SMEKENS, Francois SMEKENS
-# Email   : ---@gmail.com, ---@gmail.com, ---@gmail.com
+# Author  : Jerome ODIER, Christophe SMEKENS
+# Email   : odier@hypnos3d.com, smekens@hypnos3d.com
 #
 # Version : 1.0 beta (2012)
 #
 #
-# This file is part of API-BUILDER.
+# This file is part of CODE-BUILDER.
 #
 #  u-autotool is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as published
@@ -22,7 +22,7 @@
 #
 #############################################################################
 
-PRIMITIVE = [
+PRIMITIVES = [
 	'void',
 	'int8_t',
 	'uint8_t',
@@ -39,7 +39,7 @@ PRIMITIVE = [
 
 #############################################################################
 
-QUALIFIER = [
+QUALIFIERS = [
 	'const',
 	'register',
 	'volatile',

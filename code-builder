@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 #############################################################################
-# Author  : Jerome ODIER, Christophe SMEKENS, Francois SMEKENS
-# Email   : ---@gmail.com, ---@gmail.com, ---@gmail.com
+# Author  : Jerome ODIER, Christophe SMEKENS
+# Email   : odier[at]hypnos3d.com, smekens[at]hypnos3d.com
 #
 # Version : 1.0 beta (2012)
 #
 #
-# This file is part of API-BUILDER.
+# This file is part of CODE-BUILDER.
 #
 #  u-autotool is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as published
@@ -24,573 +24,42 @@
 #
 #############################################################################
 
-import os, sys, glob, xml.dom.minidom
+import sys
+
+import cb.utils
+import cb.parser
+import cb.checker
 
 #############################################################################
 
-if sys.version_info < (3,): range = xrange
+try:
+	import os, xml.dom.minidom
+
+except ImportError, e:
+	cb.utils.fatal(e)
 
 #############################################################################
-# GLOBAL VARIABLES							    #
+# VARIABLES								    #
 #############################################################################
 
-verbose = False
-
-#############################################################################
-
-PWD = '.'
-
-#############################################################################
-
-NAME = 'noname'
-
-MAJOR = 0
-MINOR = 0
-
-INT_ASSET = {}
-INT_TYPES = {}
-INT_PROFILES = {}
-INT_EXTENSIONS = []
-INT_CONSTRAINTS = {}
-
-#############################################################################
-
-IMP_EXTRAS = []
-IMP_INITS = []
-IMP_PROFILES = {}
-
-#############################################################################
-
-LANG = None
-
-#############################################################################
-
-CNT = 0xFFFF
-
-def incCnt():
-	global CNT
-	CNT += 1
-	return CNT
-
-#############################################################################
-# UTILS									    #
-#############################################################################
-
-def buildPaths(s):
-	s = s
-
-	if not s[0] in ['\\', '/']:
-		s = os.path.join(PWD, s)
-
-	return [os.path.normpath(f).replace('\\', '/') for f in glob.iglob(s)]
-
-#############################################################################
-
-def getTEXTs(self):
-	L = []
-
-	for textensionNode in self.childNodes:
-		if textensionNode.nodeType == 3:
-			L.append(textensionNode.nodeValue)
-
-	return L
-
-xml.dom.minidom.Element.getTEXTs = getTEXTs
-
-#############################################################################
-
-def getCDATAs(self):
-	L = []
-
-	for textensionNode in self.childNodes:
-		if textensionNode.nodeType == 4:
-			L.append(textensionNode.nodeValue)
-
-	return L
-
-xml.dom.minidom.Element.getCDATAs = getCDATAs
-
-#############################################################################
-
-def myprint(s, level):
-
-	for i in xrange(level):
-		sys.stdout.write(' ')
-
-	print(s)
-
-#############################################################################
-
-def displayTree(T, level = 0):
-
-		if   type(T).__name__ == 'list':
-
-			for item in enumerate(T):
-
-				myprint('idx: %d' % item[0], level)
-
-				displayTree(item[1], level + 4)
-
-		elif type(T).__name__ == 'dict':
-
-			for item in T.iteritems():
-
-				myprint('key: %s' % item[0], level)
-
-				displayTree(item[1], level + 4)
-
-		else:
-			myprint(T, level)
-
-#############################################################################
-# PARSERS								    #
-#############################################################################
-
-def parseInterfaceNodes(interfaces):
-	#####################################################################
-
-	if len(interfaces) != 1:
-		if len(interfaces) > 1:
-			print('[Error] Only one interface allowed !')
-
-		return
-
-	interface = interfaces[0]
-
-	#####################################################################
-
-	date = ''
-	authors = ''
-	emails = ''
-	description = ''
-
-	#####################################################################
-
-	for node in interface.childNodes:
-
-		#############################################################
-		# ASSET							    #
-		#############################################################
-
-		if node.nodeName == 'asset':
-
-			for assetNode in node.childNodes:
-
-				if assetNode.nodeName == 'date':
-					date = assetNode.getTEXTs()[0]
-				if assetNode.nodeName == 'authors':
-					authors = assetNode.getTEXTs()[0]
-				if assetNode.nodeName == 'emails':
-					emails = assetNode.getTEXTs()[0]
-				if assetNode.nodeName == 'description':
-					description = assetNode.getTEXTs()[0]
-
-		#############################################################
-		# TYPES							    #
-		#############################################################
-
-		if node.nodeName == 'types':
-
-			TYPE = {}
-			ENUM = {}
-			STRUCT = {}
-
-			for typeNode in node.childNodes:
-
-				#############################################
-				# TYPE					    #
-				#############################################
-
-				if typeNode.nodeName == 'type':
-
-					dic = {
-						'from': typeNode.getAttribute('from')
-					}
-
-					TYPE[typeNode.getAttribute('name')] = dic
-
-				#############################################
-				# ENUM					    #
-				#############################################
-
-				if typeNode.nodeName == 'enum':
-
-					VALUES = []
-
-					for valueNode in typeNode.childNodes:
-
-						#############################
-						# VALUE			    #
-						#############################
-
-						if valueNode.nodeName == 'value':
-
-							dic = {
-								'name': valueNode.getAttribute('name'),
-								'init': valueNode.getAttribute('init'),
-							}
-
-							VALUES.append(dic)
-
-					dic = {
-						'values': VALUES
-					}
-
-					ENUM[typeNode.getAttribute('name')] = dic
-
-
-				#############################################
-				# STRUCT				    #
-				#############################################
-
-				if typeNode.nodeName == 'struct':
-
-					FIELDS = []
-
-					for fieldNode in typeNode.childNodes:
-
-						#############################
-						# FIELD			    #
-						#############################
-
-						if fieldNode.nodeName == 'field':
-
-							dic = {
-								'name': fieldNode.getAttribute('name'),
-								'type': fieldNode.getAttribute('type'),
-							}
-
-							FIELDS.append(dic)
-
-					dic = {
-						'fields': FIELDS
-					}
-
-					STRUCT[typeNode.getAttribute('name')] = dic
-
-			#####################################################
-
-			INT_TYPES['types'] = TYPE
-			INT_TYPES['enums'] = ENUM
-			INT_TYPES['structs'] = STRUCT
-
-		#############################################################
-		# PROFILES						    #
-		#############################################################
-
-		if node.nodeName == 'profiles':
-
-			for profileNode in node.childNodes:
-
-				#############################################
-
-				if profileNode.nodeName == 'profile':
-
-					dic = {
-					}
-
-					INT_PROFILES[profileNode.getAttribute('name')] = dic
-
-		#############################################################
-		# EXTENSIONS						    #
-		#############################################################
-
-		if node.nodeName == 'extensions':
-
-			for extensionNode in node.childNodes:
-
-				#############################################
-				# EXTENSION				    #
-				#############################################
-
-				if extensionNode.nodeName == 'extension':
-
-					METHODS = []
-
-					for methodNode in extensionNode.childNodes:
-
-						#############################
-						# METHOD		    #
-						#############################
-
-						if methodNode.nodeName == 'method':
-
-							PARAMS = []
-
-							for paramNode in methodNode.childNodes:
-
-								#############
-								# PARAM	    #
-								#############
-
-								if paramNode.nodeName == 'param':
-
-									dic = {
-										'name': paramNode.getAttribute('name'),
-										'type': paramNode.getAttribute('type'),
-									}
-
-									PARAMS.append(dic)
-
-							dic = {
-								'name': methodNode.getAttribute('name'),
-								'type': methodNode.getAttribute('type'),
-								'params': PARAMS
-							}
-
-							METHODS.append(dic)
-
-					dic = {
-						'name': extensionNode.getAttribute('name'),
-					#	'type': extensionNode.getAttribute('type'),
-						'methods': METHODS
-					}
-
-					INT_EXTENSIONS.append(dic)
-
-		#############################################################
-		# CONSTRAINTS						    #
-		#############################################################
-
-		if node.nodeName == 'constraints':
-
-			for constraintNode in node.childNodes:
-
-				#############################################
-				# CONSTRAINT				    #
-				#############################################
-
-				if constraintNode.nodeName == 'constraint':
-
-					KEYS = {}
-
-					for keyNode in constraintNode.childNodes:
-
-						#############################
-						# KEY			    #
-						#############################
-
-						if keyNode.nodeName == 'key':
-
-							dic = {
-							}
-
-							KEYS[keyNode.getAttribute('name')] = dic
-
-					dic = {
-						'keys': KEYS
-					}
-
-					INT_CONSTRAINTS[constraintNode.getAttribute('name')] = dic
-
-	#####################################################################
-
-	global NAME
-	global MAJOR
-	global MINOR
-
-	NAME = interface.getAttribute('name')
-	MAJOR = int(interface.getAttribute('major'))
-	MINOR = int(interface.getAttribute('minor'))
-
-	#####################################################################
-
-	INT_ASSET['date'] = date
-	INT_ASSET['authors'] = authors
-	INT_ASSET['emails'] = emails
-	INT_ASSET['description'] = description
-
-	#####################################################################
-
-	if verbose:
-		print('-----------------------------------------------------------------------------')
-		print('| ASSET                                                                     |')
-		print('-----------------------------------------------------------------------------')
-		displayTree(INT_ASSET)
-		print('-----------------------------------------------------------------------------')
-		print('| TYPES                                                                     |')
-		print('-----------------------------------------------------------------------------')
-		displayTree(INT_TYPES)
-		print('-----------------------------------------------------------------------------')
-		print('| PROFILES                                                                  |')
-		print('-----------------------------------------------------------------------------')
-		displayTree(INT_PROFILES)
-		print('-----------------------------------------------------------------------------')
-		print('| EXTENSIONS                                                                |')
-		print('-----------------------------------------------------------------------------')
-		displayTree(INT_EXTENSIONS)
-		print('-----------------------------------------------------------------------------')
-		print('| CONSTRAINTS                                                               |')
-		print('-----------------------------------------------------------------------------')
-		displayTree(INT_CONSTRAINTS)
-		print('-----------------------------------------------------------------------------')
-		print('')
-
-#############################################################################
-
-def parseProfileCode(node):
-	#####################################################################
-
-	CODES = []
-
-	#####################################################################
-
-	for codeNode in node.childNodes:
-
-		#############################################################
-		# CODE							    #
-		#############################################################
-
-		if codeNode.nodeName == 'code':
-
-			dic = {
-				'condition': codeNode.getAttribute('condition'),
-				'txts': codeNode.getCDATAs()
-			}
-
-			CODES.append(dic)
-
-	return CODES
-
-#############################################################################
-
-def parseImplementationNodes(implementations):
-	#####################################################################
-
-	if len(implementations) != 1:
-		if len(implementations) > 1:
-			print('[Error] Only one implementation allowed !')
-
-		return
-
-	implementation = implementations[0]
-
-	#####################################################################
-
-	for node in implementation.childNodes:
-
-		#############################################################
-		# EXTRA							    #
-		#############################################################
-
-		if node.nodeName == 'extra':
-			IMP_EXTRAS.append(parseProfileCode(node))
-
-		#############################################################
-		# INIT							    #
-		#############################################################
-
-		if node.nodeName == 'init':
-			IMP_INITS.append(parseProfileCode(node))
-
-		#############################################################
-		# PROFILES						    #
-		#############################################################
-
-		if node.nodeName == 'profiles':
-
-			for profileNode in node.childNodes:
-
-				#############################################
-				# PROFILE				    #
-				#############################################
-
-				if profileNode.nodeName == 'profile':
-
-					EXTRAS1 = []
-					INITS1 = []
-					EXTENSIONS = {}
-
-					for itemNode1 in profileNode.childNodes:
-
-						#############################
-						# EXTRA			    #
-						#############################
-
-						if itemNode1.nodeName == 'extra':
-							EXTRAS1.append(parseProfileCode(itemNode1))
-
-						#############################
-						# INIT			    #
-						#############################
-
-						if itemNode1.nodeName == 'init':
-							INITS1.append(parseProfileCode(itemNode1))
-
-						#############################
-						# EXTENSIONS		    #
-						#############################
-
-						if itemNode1.nodeName == 'extensions':
-
-							for extensionNode in itemNode1.childNodes:
-
-								#############
-								# EXTENSION #
-								#############
-
-								if extensionNode.nodeName == 'extension':
-
-									EXTRAS2 = []
-									INITS2 = []
-									METHODS = {}
-
-									for itemNode2 in extensionNode.childNodes:
-
-										#############
-										# EXTRA	    #
-										#############
-
-										if itemNode2.nodeName == 'extra':
-											EXTRAS2.append(parseProfileCode(itemNode2))
-
-										#############
-										# INIT	    #
-										#############
-
-										if itemNode2.nodeName == 'init':
-											INITS2.append(parseProfileCode(itemNode2))
-
-										#############
-										# METHOD    #
-										#############
-
-										if itemNode2.nodeName == 'method':
-											METHODS[itemNode2.getAttribute('name')] = parseProfileCode(itemNode2)
-
-									dic = {
-										'extras': EXTRAS2,
-										'inits': INITS2,
-										'methods': METHODS,
-									}
-
-									EXTENSIONS[extensionNode.getAttribute('name')] = dic
-
-					dic = {
-						'extras': EXTRAS1,
-						'inits': INITS1,
-						'extensions': EXTENSIONS,
-					}
-
-					IMP_PROFILES[profileNode.getAttribute('name')] = dic
-
-	#####################################################################
-
-	if verbose:
-		print('-----------------------------------------------------------------------------')
-		print('| EXTRAS                                                                    |')
-		print('-----------------------------------------------------------------------------')
-		displayTree(IMP_EXTRAS)
-		print('-----------------------------------------------------------------------------')
-		print('| INITS                                                                     |')
-		print('-----------------------------------------------------------------------------')
-		displayTree(IMP_INITS)
-		print('-----------------------------------------------------------------------------')
-		print('| PROFILE                                                                   |')
-		print('-----------------------------------------------------------------------------')
-		displayTree(IMP_PROFILES)
-		print('-----------------------------------------------------------------------------')
-		print('')
+CTX = {
+	'int_asset': {},
+	'int_types': {},
+	'int_profiles': {},
+	'int_constraints': {},
+	'int_extensions': [],
+
+	'imp_extras': [],
+	'imp_inits': [],
+	'imp_profiles': {},
+
+	'options': None,
+	'lang': None,
+
+	'debug': 0,
+	'ooops': 0,
+	'error': 0,
+}
 
 #############################################################################
 # CODE-BUILDER								    #
@@ -600,9 +69,6 @@ def codebuilder_load(fileName):
 	#####################################################################
 
 	try:
-		if verbose:
-			print('Loading \'%s\'...' % fileName)
-
 		doc = xml.dom.minidom.parse(fileName)
 
 	except:
@@ -612,267 +78,26 @@ def codebuilder_load(fileName):
 
 	#####################################################################
 
-	global PWD
-
-	PWD = os.path.normpath(
-		os.path.dirname(fileName)
+	cb.parser.parseInterface(CTX,
+		doc.getElementsByTagName('interface')
 	)
 
-	#####################################################################
-
-#	for include in doc.getElementsByTagName('include'):
-#
-#		for url in buildPaths(include.getAttribute('url')):
-#
-#			OLD_PWD = PWD
-#			include.parentNode.appendChild(codebuilder_load(url))
-#			PWD = OLD_PWD
-
-	#####################################################################
-
-	return doc
+	cb.parser.parseImplementation(CTX,
+		doc.getElementsByTagName('implementation')
+	)
 
 #############################################################################
 
 def codebuilder_check():
+	cb.checker.interface(CTX)
+	cb.checker.implementation(CTX)
 
-	DEBUG = 0
-	ERROR = 0
-	WARNING = 0
-
-	#####################################################################
-	#####################################################################
-	## INTERFACE							   ##
-	#####################################################################
-	#####################################################################
-
-	#####################################################################
-	# TYPES - PASS 1						    #
-	#####################################################################
-
-	L = []
-
-	L.extend(LANG.PRIMITIVE)
-
-	for name in INT_TYPES['types']:
-		L.append(name)
-	for name in INT_TYPES['enums']:
-		L.append(name)
-	for name in INT_TYPES['structs']:
-		L.append(name)
-
-	#####################################################################
-	# TYPES - PASS 2						    #
-	#####################################################################
-
-	for t in INT_TYPES['types']:
-
-		T = INT_TYPES['types'][t]['from']
-
-		if T in L:
-			if T == t:
-				print('[Error] Recursif type \'%s\' !' % T)
-				ERROR += 1
-		else:
-			print('[Error] Undefined type \'%s\' !' % T)
-			ERROR += 1
-
-	#####################################################################
-
-	for t in INT_TYPES['enums']:
-
-		for u in INT_TYPES['enums'][t]:
-
-			v = INT_TYPES['enums'][t][u]
-
-			for i in xrange(0 + 0, len(v)):
-				for j in xrange(i + 1, len(v)):
-
-					if v[i]['name'] == v[j]['name']:
-
-						print('[Error] Duplicated values \'%s\' and \'%s\' !' % (v[i]['name'], v[j]['name']))
-						ERROR += 1
-
-	#####################################################################
-
-	for t in INT_TYPES['structs']:
-
-		for u in INT_TYPES['structs'][t]:
-
-			v = INT_TYPES['structs'][t][u]
-
-			for i in xrange(0 + 0, len(v)):
-				for j in xrange(i + 1, len(v)):
-
-					if v[i]['name'] == v[j]['name']:
-
-						print('[Error] Duplicated fields \'%s\' and \'%s\' !' % (v[i]['name'], v[j]['name']))
-						ERROR += 1
-
-			##
-
-			for w in v:
-
-				T = w['type']
-
-				if T in L:
-					if T == t:
-						print('[Debug] Undefined type \'%s\' !' % T)
-						DEBUG += 1
-				else:
-					print('[Error] Undefined type \'%s\' !' % T)
-					ERROR += 1
-
-	#####################################################################
-	# METHODS							    #
-	#####################################################################
-
-	for e in INT_EXTENSIONS:
-
-		for m in e['methods']:
-
-			for p in m['params']:
-
-				if not p['type'] in L:
-					print('[Error] Undefined type \'%s\' !' % p['type'])
-					ERROR += 1
-
-			##
-
-			p = m['params']
-
-			for i in xrange(0 + 0, len(p)):
-				for j in xrange(i + 1, len(p)):
-
-					if p[i]['name'] == p[j]['name']:
-
-						print('[Error] Duplicated parameter \'%s\' and \'%s\' !' % (p[i]['name'], p[j]['name']))
-						ERROR += 1
-
-		m = e['methods']
-
-		for i in xrange(0 + 0, len(m)):
-			for j in xrange(i + 1, len(m)):
-
-				if m[i]['name'] == m[j]['name']:
-
-					print('[Error] Duplicated method \'%s\' and \'%s\' !' % (m[i]['name'], m[j]['name']))
-					ERROR += 1
-
-	e = INT_EXTENSIONS
-
-	for i in xrange(0 + 0, len(e)):
-		for j in xrange(i + 1, len(e)):
-
-			if e[i]['name'] == e[j]['name']:
-
-				print('[Error] Duplicated extension \'%s\' and \'%s\' !' % (e[i]['name'], e[j]['name']))
-				ERROR += 1
-
-	#####################################################################
-	#####################################################################
-	## IMPLEMENTATION						   ##
-	#####################################################################
-	#####################################################################
-
-	#####################################################################
-	# PROFILES							    #
-	#####################################################################
-
-#	print(INT_EXTENSIONS)
-
-	for p in IMP_PROFILES:
-
-		if not INT_PROFILES.has_key(p):
-			print('[Error] Undefined profile \'%s\' !' % p)
-			ERROR += 1
-
-
-	#####################################################################
-
-	if DEBUG > 0  \
-	   or         \
-	   ERROR > 0  \
-	   or         \
-	   WARNING > 0:
-		print('')
-
-		if DEBUG > 0:
-			print('There are %d debugs !' % DEBUG)
-
-		if ERROR > 0:
-			print('There are %d errors !' % ERROR)
-
-		if WARNING > 0:
-			print('There are %d warnings !' % WARNING)
+	cb.utils.status(CTX)
 
 #############################################################################
 
 def codebuilder_emit():
-
-	return
-
-	#####################################################################
-	# PROLOG							    #
-	#####################################################################
-
-	LANG.generate_prolog(NAME, MAJOR, MINOR, INT_ASSET)
-
-	#####################################################################
-	# TYPES								    #
-	#####################################################################
-
-	LANG.generate_separator()
-
-	for t in INT_TYPES['types'].iteritems():
-		LANG.generate_type(t)
-
-	print('')
-
-	LANG.generate_separator()
-
-	for t in INT_TYPES['enums'].iteritems():
-		LANG.generate_enum(t, incCnt)
-		print('')
-
-	LANG.generate_separator()
-
-	for t in INT_TYPES['structs'].iteritems():
-		LANG.generate_struct(t)
-		print('')
-
-	#####################################################################
-	# EXTENSIONS							    #
-	#####################################################################
-
-	LANG.generate_separator()
-
-	for p in INT_PROFILES:
-		LANG.generate_profile(p, incCnt)
-
-	print('')
-
-	for p in INT_PROFILES:
-
-		LANG.generate_box(p.upper())
-
-		for e in INT_EXTENSIONS:
-
-			LANG.generate_comment(e['name'].upper())
-
-			for m in e['methods']:
-				LANG.generate_prototype(m, '%s_%s' % (p, e['name']))
-				LANG.generate_prototype(m, '%s_%s' % (p, e['name']), 'check')
-				LANG.generate_prototype(m, '%s_%s' % (p, e['name']), 'best')
-				print('')
-
-	LANG.generate_separator()
-
-	#####################################################################
-	# EPILOG							    #
-	#####################################################################
-
-	LANG.generate_epilog(NAME)
+	pass
 
 #############################################################################
 
@@ -896,12 +121,12 @@ if __name__ == '__main__':
 
 	(options, args) = parser.parse_args()
 
-	verbose = options.verbose
+	CTX['options'] = options
 
 	#####################################################################
 
 	if options.authors:
-		print('Jerome ODIER, Christophe SMEKENS, Francois SMEKENS')
+		print('Jerome ODIER, Christophe SMEKENS')
 		sys.exit()
 
 	if options.version:
@@ -932,9 +157,11 @@ if __name__ == '__main__':
 
 	try:
 		if options.lang:
-			LANG = __import__('lang_%s' % options.lang)
+			__import__('cb.lang.%s' % options.lang)
 		else:
-			LANG = __import__('lang_%s' %     'c'     )
+			__import__('cb.lang.%s' %     'c'     )
+
+		CTX['lang'] = sys.modules['cb.lang.c']
 
 	except ImportError, e:
 		parser.error('incorrect language \'%s\'' % options.lang)
@@ -942,10 +169,7 @@ if __name__ == '__main__':
 
 	#####################################################################
 
-	doc = codebuilder_load(fileName)
-
-	parseInterfaceNodes(doc.getElementsByTagName('interface'))
-	parseImplementationNodes(doc.getElementsByTagName('implementation'))
+	codebuilder_load(fileName)
 
 	codebuilder_check()
 	codebuilder_emit()
