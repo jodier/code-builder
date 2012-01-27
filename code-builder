@@ -117,7 +117,7 @@ if __name__ == '__main__':
 	parser.add_option('-l', '--lang',
 			action='store', dest='lang', help='???')
 	parser.add_option('', '--verbose',
-			action='store_true', dest='verbose', help='set %prog verbose')
+			action='store_true', dest='verbose', help='set this program verbose')
 
 	(options, args) = parser.parse_args()
 
