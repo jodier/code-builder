@@ -73,7 +73,7 @@ def parseInterface(ctx, interfaces):
 
 	if len(interfaces) != 1:
 		if len(interfaces) > 1:
-			print('[Error] Only one interface allowed !')
+			cb.utils.error('Only one interface allowed !')
 
 		return
 
@@ -356,7 +356,7 @@ def parseImplementation(ctx, implementations):
 
 	if len(implementations) != 1:
 		if len(implementations) > 1:
-			print('[Error] Only one implementation allowed !')
+			cb.utils.error('Only one implementation allowed !')
 
 		return
 
