@@ -169,13 +169,17 @@ def implementation(ctx):
 
 		for e in IMP_PROFILES[p]['extensions']:
 
-			if cb.utils.getExtension(ctx, e) is None:
+			EXT = cb.utils.getExtension(ctx, e)
+
+			if EXT is None:
 				cb.utils.error(ctx, 'Undefined extension \'%s\' !' % e)
 
 			else:
 				for m in IMP_PROFILES[p]['extensions'][e]['methods']:
 
-					if cb.utils.getMethod(EXT, m) is None:
+					MET = cb.utils.getMethod(EXT, m)
+
+					if MET is None:
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
 
 #############################################################################
