@@ -233,12 +233,15 @@ def generate_global_methods(ctx):
 
 	print('int %s_getProNr(void);' % name)
 	print('const char *%s_getProName(int);' % name)
+	print('const char *%s_getProDesc(int);' % name)
 	print('')
 	print('int %s_getExtNr(int);' % name)
 	print('const char *%s_getExtName(int, int);' % name)
+	print('const char *%s_getExtDesc(int, int);' % name)
 	print('')
 	print('int %s_getMetNr(int, int);' % name)
 	print('const char *%s_getMetName(int, int, int);' % name)
+	print('const char *%s_getMetDesc(int, int, int);' % name)
 
 	print('')
 
@@ -248,9 +251,11 @@ def generate_global_methods(ctx):
 	print('')
 	print('bool %s_checkExt(%s_profiles_t, %s_extentions_t);' % (name, name, name))
 	print('const char *%s_getExtName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
+	print('const char *%s_getExtDesc(%s_profiles_t, %s_extentions_t);' % (name, name, name))
 	print('')
 	print('bool %s_checkMet(%s_profiles_t, %s_methods_t);' % (name, name, name))
 	print('const char *%s_getMetName(%s_profiles_t, %s_methods_t);' % (name, name, name))
+	print('const char *%s_getMetDesc(%s_profiles_t, %s_methods_t);' % (name, name, name))
 
 	print('')
 
