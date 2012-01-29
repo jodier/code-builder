@@ -29,10 +29,6 @@ import cb.utils
 def interface(ctx):
 	LANG = ctx['lang']
 
-	INT_TYPES_TYPES   = ctx['int_types']['types'  ]
-	INT_TYPES_ENUMS   = ctx['int_types']['enums'  ]
-	INT_TYPES_STRUCTS = ctx['int_types']['structs']
-
 	#####################################################################
 	# PROLOG							    #
 	#####################################################################
@@ -45,20 +41,20 @@ def interface(ctx):
 
 	LANG.generate_COMMENT(ctx, 'TYPES')
 
-	for t in INT_TYPES_TYPES.iteritems():
+	for t in ctx['int_types']['types'].iteritems():
 		LANG.generate_type(ctx, t)
 
 	print('')
 
 	LANG.generate_separator(ctx)
 
-	for t in INT_TYPES_ENUMS.iteritems():
+	for t in ctx['int_types']['enums'].iteritems():
 		LANG.generate_enum(ctx, t)
 		print('')
 
 	LANG.generate_separator(ctx)
 
-	for t in INT_TYPES_STRUCTS.iteritems():
+	for t in ctx['int_types']['structs'].iteritems():
 		LANG.generate_struct(ctx, t)
 		print('')
 
