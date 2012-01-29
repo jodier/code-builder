@@ -250,7 +250,8 @@ def generate_global_methods(ctx):
 	print('const char *%s_getExtName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
 	print('')
 	print('bool %s_checkMet(%s_profiles_t, %s_methods_t);' % (name, name, name))
-	print('const char *%s_getMetName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
+	print('const char *%s_getMetName(%s_profiles_t, %s_methods_t);' % (name, name, name))
+	print('')
 	print('void *%s_getMetAddr(%s_profiles_t, %s_methods_t);' % (name, name, name))
 
 	print('')
