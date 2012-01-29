@@ -148,6 +148,10 @@ def generate_definitions(ctx):
 	name = ctx['name']
 	NAME = ctx['name'].upper()
 
+	#####################################################################
+	# PROFILES							    #
+	#####################################################################
+
 	generate_comment(ctx, 'PROFILES')
 
 	print('typedef enum %s_profiles_e' % name)
@@ -161,6 +165,10 @@ def generate_definitions(ctx):
 
 	print('')
 
+	#####################################################################
+	# EXTENTIONS							    #
+	#####################################################################
+
 	generate_comment(ctx, 'EXTENTIONS')
 
 	print('typedef enum %s_extentions_e' % name)
@@ -173,6 +181,10 @@ def generate_definitions(ctx):
 	print('} %s_extentions_t;' % name)
 
 	print('')
+
+	#####################################################################
+	# METHODS							    #
+	#####################################################################
 
 	generate_comment(ctx, 'METHODS')
 
