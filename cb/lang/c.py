@@ -226,11 +226,12 @@ def generate_global_methods(ctx):
 
 	generate_comment(ctx, 'LOW LEVEL METHODS')
 
+	print('bool %s_initialize(void);' % name)
+	print('bool %s_finalize(void);' % name)
+	print('')
 	print('int %s_getMajor(void);' % name)
 	print('int %s_getMinor(void);' % name)
-
 	print('')
-
 	print('int %s_getProNr(void);' % name)
 	print('const char *%s_getProName(int);' % name)
 	print('const char *%s_getProDesc(int);' % name)
