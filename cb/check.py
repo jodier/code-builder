@@ -150,9 +150,8 @@ def interface(ctx):
 #############################################################################
 
 def implementation(ctx):
-
 	#####################################################################
-	# EXTENSIONS							    #
+	# PROFILES							    #
 	#####################################################################
 
 	INT_PROFILES = ctx['int_profiles']
@@ -171,7 +170,6 @@ def implementation(ctx):
 		for e in IMP_EXTENSIONS:
 
 			EXT = cb.utils.getExtension(ctx, e)
-
 			if EXT is None:
 				cb.utils.error(ctx, 'Undefined extension \'%s\' !' % e)
 
@@ -181,7 +179,6 @@ def implementation(ctx):
 				for m in IMP_METHODS:
 
 					MET = cb.utils.getMethod(EXT, m)
-
 					if MET is None:
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
 
