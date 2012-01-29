@@ -22,6 +22,10 @@
 #
 #############################################################################
 
+import cb.utils
+
+#############################################################################
+
 PRIMITIVES = [
 	'void',
 	'int8_t',
@@ -47,79 +51,87 @@ QUALIFIERS = [
 
 #############################################################################
 
-def generate_prolog(name, major, minor, a):
-	print('/* Authors : %s' % a['authors'])
-	print(' * Emails  : %s' % a['emails'])
+def generate_separator(ctx):
+	print('/*-------------------------------------------------------------------------*/')
+	print('')
+
+#############################################################################
+
+def generate_COMMENT(ctx, s):
+	print('/*-------------------------------------------------------------------------*/')
+	print('/* %s%s   */' % (s, ''.join([' ' for i in xrange(69 - len(s))])))
+	print('/*-------------------------------------------------------------------------*/')
+	print('')
+
+#############################################################################
+
+def generate_comment(ctx, s):
+	n = 5
+	l = len(s)
+
+	if l > 5:
+		n -= 1
+		l -= 5
+
+	print('/*----------------------------------*/')
+	print('/* %s%s   */' % (s, ''.join([' ' for i in xrange(30 - len(s))])))
+	print('/*----------------------------------*/')
+	print('')
+
+#############################################################################
+
+def generate_prolog(ctx):
+	INT_ASSET = ctx['int_asset']
+
+	print('/* Authors : %s' % INT_ASSET['authors'])
+	print(' * Emails  : %s' % INT_ASSET['emails'])
 	print(' *')
-	print(' * Version : %d.%d (%s)' % (major, minor, a['date']))
+	print(' * Version : %d.%d (%s)' % (ctx['major'], ctx['minor'], INT_ASSET['date']))
 	print(' *')
-	print(' * %s' % a['description'])	
+	print(' * %s' % INT_ASSET['description'])	
 	print(' */')
 	print('')
 
-	generate_separator()
+	generate_separator(ctx)
 
-	print('#ifndef __%s_H' % name.upper())
-	print('#define __%s_H' % name.upper())
+	print('#ifndef __%s_H' % ctx['name'].upper())
+	print('#define __%s_H' % ctx['name'].upper())
 	print('')
 
-	generate_separator()
+	generate_separator(ctx)
 
 	print('#include <stddef.h>')
 	print('')
 
 #############################################################################
 
-def generate_epilog(name):
-
-	print('#endif /* __%s_H */' % name.upper())
+def generate_epilog(ctx):
+	print('#endif /* __%s_H */' % ctx['name'].upper())
 
 	print('')
-	generate_separator()
+	generate_separator(ctx)
 
 #############################################################################
 
-def generate_separator():
-	print('/*-------------------------------------------------------------------------*/')
-	print('')
-
-#############################################################################
-
-def generate_comment(s):
-	print('/* %s */' % s)
-	print('')
-
-#############################################################################
-
-def generate_box(s):
-	nr = 8 - len(s) / 8
-
-	print('/*-------------------------------------------------------------------------*/')
-	print('/* %s%s   */' % (s, ''.join(['\t' for i in xrange(nr)])))
-	print('/*-------------------------------------------------------------------------*/')
-	print('')
-
-#############################################################################
-
-def generate_type(t):
+def generate_type(ctx, t):
 	print('typedef %s %s;' % (t[0], t[1]['from']))
 
 #############################################################################
 
-def generate_enum(t, incCnt):
+def generate_enum(ctx, t):
 	print('typedef enum %s' % t[0])
 	print('{')
 
 	for u in t[1]:
 		for v in t[1][u]:
-			print('\t%s = 0x%X,' % (v['name'], incCnt()))
+			print('\t%s = 0x%X,' % (v['name'], cb.utils.getCnt(ctx)))
 
 	print('')
 	print('} %s;' % t[0])
 
 #############################################################################
 
-def generate_struct(t):
+def generate_struct(ctx, t):
 	print('typedef struct %s' % t[0])
 	print('{')
 
@@ -132,17 +144,139 @@ def generate_struct(t):
 
 #############################################################################
 
-def generate_profile(p, incCnt):
-	print('#define PROFILE_%s 0x%X' % (p.upper(), incCnt()))
+def generate_definitions(ctx):
+	name = ctx['name']
+	NAME = ctx['name'].upper()
+
+	generate_comment(ctx, 'PROFILES')
+
+	print('typedef enum %s_profiles_e' % name)
+	print('{')
+
+	for p in ctx['int_profiles']:
+		print('\t%s_%s\t= 0x%X,' % (NAME, p.upper(), cb.utils.getCnt(ctx)))
+
+	print('')
+	print('} %s_profiles_t;' % name)
+
+	print('')
+
+	generate_comment(ctx, 'EXTENTIONS')
+
+	print('typedef enum %s_extentions_e' % name)
+	print('{')
+
+	for e in ctx['int_extensions']:
+		print('\t%s_%s\t= 0x%X,' % (NAME, e['name'].upper(), cb.utils.getCnt(ctx)))
+
+	print('')
+	print('} %s_extentions_t;' % name)
+
+	print('')
+
+	generate_comment(ctx, 'METHODS')
+
+	print('typedef enum %s_methods_e' % name)
+	print('{')
+
+	for e in ctx['int_extensions']:
+
+		for m in e['methods']:
+			print('\t%s_%s_%s\t= 0x%X,' % (NAME, e['name'].upper(), m['name'].upper(), cb.utils.getCnt(ctx)))
+
+	print('')
+	print('} %s_methods_t;' % name)
 
 #############################################################################
 
-def generate_prototype(m, prefix, suffix = None):
+def generate_extension_struct(ctx):
+	print('typedef struct %s_s' % ctx['name'])
+	print('{')
 
-	if suffix is None:
-		proto = '%s %s_%s' % (m['type'], prefix, m['name'])
+	for e in ctx['int_extensions']:
+
+		print('\tstruct {')
+
+		for m in e['methods']:
+
+			print('\t\t'),
+			generate_prototype1(ctx, m, None, None)
+			print('\t\t'),
+			generate_prototype1(ctx, m, None, 'check')
+			print('\t\t'),
+			generate_prototype1(ctx, m, None, 'best')
+			print('')
+
+		print('\t} %s;\n' % e['name'])		
+
+	print('} %s_t;' % ctx['name'])
+
+#############################################################################
+
+def generate_extension_profiles(ctx):
+
+	for e in ctx['int_profiles']:
+
+		print('extern %s_t %s_%s;' % (ctx['name'], ctx['name'], e))
+
+#############################################################################
+
+def generate_global_methods(ctx):
+	name = ctx['name']
+
+	generate_comment(ctx, 'LOW LEVEL METHODS')
+
+	print('int getExtNr(void);')
+	print('const char *getExtName(int);')
+	print('')
+	print('int getMetNr(int);')
+	print('const char *getMetName(int, int);')
+
+	print('')
+
+	generate_comment(ctx, 'HIGH LEVEL METHODS')
+
+	print('bool checkExt(%s_profiles_t, %s_extentions_t);' % (name, name))
+	print('void *getExtAddr(%s_profiles_t, %s_extentions_t);' % (name, name))
+	print('')
+	print('bool checkMet(%s_profiles_t, %s_methods_t);' % (name, name))
+	print('void *getMetAddr(%s_profiles_t, %s_methods_t);' % (name, name))
+
+	print('')
+
+#############################################################################
+
+def generate_prototype1(ctx, m, prefix = None, suffix = None):
+
+	proto = '%s (* ' % m['type']
+
+	if not prefix is None:
+		proto += '%s_' % prefix
+	proto += m['name']
+	if not suffix is None:
+		proto += '_%s' % suffix
+
+	proto += ')('
+
+	if len(m['params']) > 0:
+		for p in m['params']:
+			proto += '%s %s,' % (p['type'], p['name'])
 	else:
-		proto = '%s %s_%s_%s' % (m['type'], prefix, m['name'], suffix)
+		proto += 'void,'
+
+	print(proto[: -1] + ');')
+
+#############################################################################
+
+def generate_prototype2(ctx, m, prefix = None, suffix = None):
+
+	proto = '%s ' % m['type']
+
+	if not prefix is None:
+		proto += '%s_' % prefix
+	proto += m['name']
+	if not suffix is None:
+		proto += '_%s' % suffix
 
 	proto += '('
 
