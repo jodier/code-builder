@@ -161,13 +161,14 @@ def implementation(ctx):
 	#####################################################################
 
 	for p in IMP_PROFILES:
-
 		if not INT_PROFILES.has_key(p):
 			cb.utils.error(ctx, 'Undefined profile \'%s\' !' % p)
 
 		##
 
-		for e in IMP_PROFILES[p]['extensions']:
+		IMP_EXTENSIONS = IMP_PROFILES[p]['extensions']
+
+		for e in IMP_EXTENSIONS:
 
 			EXT = cb.utils.getExtension(ctx, e)
 
@@ -175,7 +176,9 @@ def implementation(ctx):
 				cb.utils.error(ctx, 'Undefined extension \'%s\' !' % e)
 
 			else:
-				for m in IMP_PROFILES[p]['extensions'][e]['methods']:
+				IMP_METHODS = IMP_EXTENSIONS[e]['methods']
+
+				for m in IMP_METHODS:
 
 					MET = cb.utils.getMethod(EXT, m)
 
