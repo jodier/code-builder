@@ -233,9 +233,11 @@ def generate_global_methods(ctx):
 
 	print('int %s_getExtNr(void);' % name)
 	print('const char *%s_getExtName(int);' % name)
+	print('void *%s_getExtAddr(int);' % name)
 	print('')
 	print('int %s_getMetNr(int);' % name)
 	print('const char *%s_getMetName(int, int);' % name)
+	print('void *%s_getMetAddr(int);' % name)
 
 	print('')
 
