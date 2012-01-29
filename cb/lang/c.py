@@ -226,21 +226,28 @@ def generate_global_methods(ctx):
 
 	generate_comment(ctx, 'LOW LEVEL METHODS')
 
-	print('int getExtNr(void);')
-	print('const char *getExtName(int);')
+	print('int %s_getMajor(void);' % name)
+	print('int %s_getMinor(void);' % name)
+
 	print('')
-	print('int getMetNr(int);')
-	print('const char *getMetName(int, int);')
+
+	print('int %s_getExtNr(void);' % name)
+	print('const char *%s_getExtName(int);' % name)
+	print('')
+	print('int %s_getMetNr(int);' % name)
+	print('const char *%s_getMetName(int, int);' % name)
 
 	print('')
 
 	generate_comment(ctx, 'HIGH LEVEL METHODS')
 
-	print('bool checkExt(%s_profiles_t, %s_extentions_t);' % (name, name))
-	print('void *getExtAddr(%s_profiles_t, %s_extentions_t);' % (name, name))
+	print('bool %s_checkExt(%s_profiles_t, %s_extentions_t);' % (name, name, name))
+	print('const char *%s_getExtName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
+	print('void *%s_getExtAddr(%s_profiles_t, %s_extentions_t);' % (name, name, name))
 	print('')
-	print('bool checkMet(%s_profiles_t, %s_methods_t);' % (name, name))
-	print('void *getMetAddr(%s_profiles_t, %s_methods_t);' % (name, name))
+	print('bool %s_checkMet(%s_profiles_t, %s_methods_t);' % (name, name, name))
+	print('const char *%s_getMetName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
+	print('void *%s_getMetAddr(%s_profiles_t, %s_methods_t);' % (name, name, name))
 
 	print('')
 
