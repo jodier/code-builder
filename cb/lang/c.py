@@ -199,9 +199,11 @@ def generate_definitions(ctx):
 	print('')
 	print('} %s_methods_t;' % name)
 
+	print('')
+
 #############################################################################
 
-def generate_extension_struct(ctx):
+def generate_extension_structs(ctx):
 	print('typedef struct %s_s' % ctx['name'])
 	print('{')
 
@@ -223,6 +225,8 @@ def generate_extension_struct(ctx):
 
 	print('} %s_t;' % ctx['name'])
 
+	print('')
+
 #############################################################################
 
 def generate_extension_profiles(ctx):
@@ -230,6 +234,8 @@ def generate_extension_profiles(ctx):
 	for e in ctx['int_profiles']:
 
 		print('extern %s_t %s_%s;' % (ctx['name'], ctx['name'], e))
+
+	print('')
 
 #############################################################################
 

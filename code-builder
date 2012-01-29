@@ -27,9 +27,9 @@
 import sys
 
 import cb.utils
-import cb.parser
-import cb.checker
-import cb.generator
+import cb.parse
+import cb.check
+import cb.emit
 
 #############################################################################
 
@@ -85,26 +85,25 @@ def codebuilder_load(fileName):
 
 	#####################################################################
 
-	cb.parser.parseInterface(CTX,
+	cb.parse.parseInterface(CTX,
 		doc.getElementsByTagName('interface')
 	)
 
-	cb.parser.parseImplementation(CTX,
+	cb.parse.parseImplementation(CTX,
 		doc.getElementsByTagName('implementation')
 	)
 
 #############################################################################
 
 def codebuilder_check():
-	cb.checker.interface(CTX)
-	cb.checker.implementation(CTX)
-
-	cb.utils.status(CTX)
+	cb.check.interface(CTX)
+	cb.check.implementation(CTX)
 
 #############################################################################
 
 def codebuilder_emit():
-	cb.generator.generate(CTX)
+	cb.emit.interface(CTX)
+	cb.emit.implementation(CTX)
 
 #############################################################################
 
@@ -115,18 +114,18 @@ from optparse import OptionParser
 if __name__ == '__main__':
 	#####################################################################
 
-	parser = OptionParser('usage: %prog [options] [filename]')
+	parse = OptionParser('usage: %prog [options] [filename]')
 
-	parser.add_option('-a', '--authors',
+	parse.add_option('-a', '--authors',
 			action='store_true', dest='authors', help='show authors')
-	parser.add_option('-v', '--version',
+	parse.add_option('-v', '--version',
 			action='store_true', dest='version', help='show version')
-	parser.add_option('-l', '--lang',
+	parse.add_option('-l', '--lang',
 			action='store', dest='lang', help='???')
-	parser.add_option('', '--verbose',
+	parse.add_option('', '--verbose',
 			action='store_true', dest='verbose', help='set this program verbose')
 
-	(options, args) = parser.parse_args()
+	(options, args) = parse.parse_args()
 
 	CTX['options'] = options
 
@@ -151,13 +150,13 @@ if __name__ == '__main__':
 	elif len(args) == 1:
 		fileName = os.path.normcase(args[0])
 	else:
-		parser.error('syntax error')
+		parse.error('syntax error')
 		sys.exit(1)
 
 	#####################################################################
 
 	if not os.path.exists(fileName):
-		parser.error('incorrect filename \'%s\'' % fileName)
+		parse.error('incorrect filename \'%s\'' % fileName)
 		sys.exit(1)
 
 	#####################################################################
@@ -171,7 +170,7 @@ if __name__ == '__main__':
 		CTX['lang'] = sys.modules['cb.lang.c']
 
 	except ImportError, e:
-		parser.error('incorrect language \'%s\'' % options.lang)
+		parse.error('incorrect language \'%s\'' % options.lang)
 		sys.exit(1)
 
 	#####################################################################
@@ -179,6 +178,7 @@ if __name__ == '__main__':
 	codebuilder_load(fileName)
 
 	codebuilder_check()
+	cb.utils.status(CTX)
 	codebuilder_emit()
 
 #############################################################################

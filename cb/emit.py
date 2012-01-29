@@ -25,8 +25,10 @@
 import cb.utils
 
 #############################################################################
+# INTERFACE								    #
+#############################################################################
 
-def generate(ctx):
+def interface(ctx):
 	LANG = ctx['lang']
 
 	INT_TYPES_TYPES   = ctx['int_types']['types'  ]
@@ -70,17 +72,13 @@ def generate(ctx):
 
 	LANG.generate_definitions(ctx)
 
-	print('')
-
 	#####################################################################
 	# EXTENSION STRUCTS						    #
 	#####################################################################
 
 	LANG.generate_separator(ctx)
 
-	LANG.generate_extension_struct(ctx)
-
-	print('')
+	LANG.generate_extension_structs(ctx)
 
 	#####################################################################
 	# EXTENSION PROFILES						    #
@@ -89,8 +87,6 @@ def generate(ctx):
 	LANG.generate_separator(ctx)
 
 	LANG.generate_extension_profiles(ctx)
-
-	print('')
 
 	#####################################################################
 	# PROFILES							    #
@@ -107,6 +103,13 @@ def generate(ctx):
 	LANG.generate_separator(ctx)
 
 	LANG.generate_epilog(ctx)
+
+#############################################################################
+# IMPLEMENTATION							    #
+#############################################################################
+
+def implementation(ctx):
+	pass
 
 #############################################################################
 
