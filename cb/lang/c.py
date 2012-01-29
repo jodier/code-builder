@@ -241,7 +241,7 @@ def generate_global_methods(ctx):
 
 	generate_comment(ctx, 'HIGH LEVEL METHODS')
 
-	print('%s_t *%s_getInterface(%s_t);' % (name, name, name))
+	print('%s_t *%s_getInterface(%s_profile_t);' % (name, name, name))
 
 	print('bool %s_checkExt(%s_profiles_t, %s_extentions_t);' % (name, name, name))
 	print('const char *%s_getExtName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
