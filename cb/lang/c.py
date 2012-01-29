@@ -233,15 +233,15 @@ def generate_global_methods(ctx):
 
 	print('int %s_getExtNr(void);' % name)
 	print('const char *%s_getExtName(int);' % name)
-	print('void *%s_getExtAddr(int);' % name)
 	print('')
 	print('int %s_getMetNr(int);' % name)
 	print('const char *%s_getMetName(int, int);' % name)
-	print('void *%s_getMetAddr(int);' % name)
 
 	print('')
 
 	generate_comment(ctx, 'HIGH LEVEL METHODS')
+
+	print('%s_t *%s_getInterface(%s_t);' % (name, name, name))
 
 	print('bool %s_checkExt(%s_profiles_t, %s_extentions_t);' % (name, name, name))
 	print('const char *%s_getExtName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
