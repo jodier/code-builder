@@ -9,31 +9,33 @@
     <asset>
       <date>2012</date>
       <authors>Jerome ODIER, Christophe SMEKENS, Francois SMEKENS</authors>
-      <emails>--@--.com</emails>
-      <description>This is an example</description>
+      <emails>---@gmail.com, ---@gmail.com, ---@gmail.com</emails>
+      <description>This file is part of SIMPLE_API</description>
     </asset>
 
     <extensions>
 
-      <extension name="simple_extension1">
-
-        <method name="simple_method1" type="simple_uint64_t">
-          <param name="param1" type="simple_uint32_t" />
-          <param name="param2" type="simple_uint32_t" />
+      <extension name="context">
+        <method name="new" type="context_id" />
+        <method name="delete" type="void">
+          <param name="context" type="context_id" />
         </method>
+      </extension>
 
-        <method name="simple_method2" type="simple_uint64_t" optional="true">
-          <param name="param1" type="simple_uint64_t" />
-          <param name="param2" type="simple_uint64_t" />
+      <extension name="drawable" optional="yes">
+        <method name="new" type="drawable_id">
+          <param name="context" type="context_id" />
         </method>
-
+        <method name="delete" type="void">
+          <param name="context" type="drawable_id" />
+        </method>
       </extension>
 
     </extensions>
 
     <types>
-      <type name="simple_uint32_t" from="uint32_t" />
-      <type name="simple_uint64_t" from="uint64_t" />
+      <type name="context_id" from="uint32_t" />
+      <type name="drawable_id" from="uint32_t" />
 
       <enum name="simple_enum1">
         <value name="SIMPLE_ENUM1_VALUE1" />
@@ -42,17 +44,15 @@
       </enum>
 
       <struct name="simple_struct1">
-        <field name="field1" type="simple_uint32_t" />
-        <field name="field2" type="simple_uint64_t" />
+        <field name="field1" type="uint32_t" />
+        <field name="field2" type="uint64_t" />
         <field name="field3" type="simple_enum1" />
       </struct>
     </types>
 
     <profiles>
-
-      <profile name="simple_profile1" />
-      <profile name="simple_profile2" />
-
+      <profile name="profile1" />
+      <profile name="profile2" />
     </profiles>
 
     <constraints>
@@ -76,101 +76,95 @@
 
     <extra>
       <code condition="cond1">
-        <![CDATA[Hello world]]>
+        <![CDATA[Hello world 1]]>
+      </code>
+
+      <code condition="cond2">
+        <![CDATA[Hello world 2]]>
       </code>
     </extra>
 
     <init>
-      <code condition="cond2">
-        <![CDATA[Hello world]]>
+      <code condition="cond3">
+        <![CDATA[Hello world 3]]>
+      </code>
+
+      <code condition="cond4">
+        <![CDATA[Hello world 4]]>
       </code>
     </init>
 
-    <profile name="simple_profile1">
+    <profiles>
+      <profile name="profile1">
 
-      <extra>
-        <code condition="cond3">
-          <![CDATA[Hello world]]>
-        </code>
-      </extra>
+        <!-- ************************************************************ -->
 
-      <init>
-        <code condition="cond4">
-          <![CDATA[Hello world]]>
-        </code>
-      </init>
+        <extra>
+          <code condition="cond5">
+            <![CDATA[Hello world 5]]>
+          </code>
+          <code condition="cond6">
+            <![CDATA[Hello world 6]]>
+          </code>
+        </extra>
 
-      <extensions>
+        <!-- ************************************************************ -->
 
-        <extension name="simple_extension1">
+        <init>
+          <code condition="cond7">
+            <![CDATA[Hello world 7]]>
+          </code>
+          <code condition="cond8">
+            <![CDATA[Hello world 8]]>
+          </code>
+        </init>
 
-          <init>
-            <code condition="cond5">
-              <![CDATA[Hello world]]>
-            </code>
-          </init>
+        <!-- ************************************************************ -->
 
-          <method name="simple_method1">
-            <code condition="cond6">
-              <![CDATA[Hello world 1]]>
-              <![CDATA[Hello world 2]]>
-              <![CDATA[Hello world 3]]>
-            </code>
-          </method>
+        <extensions>
 
-          <method name="simple_method2">
-            <code condition="cond7">
-              <![CDATA[Hello world 1]]>
-              <![CDATA[Hello world 2]]>
-              <![CDATA[Hello world 3]]>
-            </code>
-          </method>
+          <!-- ********************************************************** -->
 
-        </extension>
+          <extension name="context">
 
-      </extensions>
+            <init>
+              <code>
+                <![CDATA[Hello world 9]]>
+              </code>
+            </init>
 
-    </profile>
+            <method name="new">
+              <code condition="cond1">
+                <![CDATA[Hello world A]]>
+                <![CDATA[Hello world B]]>
+                <![CDATA[Hello world C]]>
+              </code>
+            </method>
 
-    <profile name="simple_profile2">
+            <method name="delete">
+              <code condition="cond1">
+                <![CDATA[Hello world D]]>
+                <![CDATA[Hello world E]]>
+                <![CDATA[Hello world F]]>
+              </code>
+            </method>
+          </extension>
 
-      <extra>
-        <code condition="cond8">
-          <![CDATA[Hello world]]>
-        </code>
-      </extra>
+          <!-- ********************************************************** -->
 
-      <init>
-        <code condition="cond9">
-          <![CDATA[Hello world]]>
-        </code>
-      </init>
+        </extensions>
 
-      <extensions>
+        <!-- ************************************************************ -->
 
-        <extension name="simple_extension1">
+      </profile>
 
-          <init>
-            <code condition="cond10">
-              <![CDATA[Hello world]]>
-            </code>
-          </init>
-
-          <method name="simple_method1">
-            <code condition="cond11">
-              <![CDATA[Hello world 1]]>
-              <![CDATA[Hello world 2]]>
-              <![CDATA[Hello world 3]]>
-            </code>
-          </method>
-
-        </extension>
-
-      </extensions>
-
-    </profile>
+    </profiles>
 
   </implementation>
+
+<!-- ******************************************************************** -->
+
+  <include url="test.imp.xml" />
 
 <!-- ******************************************************************** -->
 
