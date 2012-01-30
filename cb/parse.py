@@ -307,9 +307,9 @@ def parseInterface(ctx, interfaces):
 
 	#####################################################################
 
-	ctx['int_name'] = interface.getAttribute('name')
-	ctx['int_major'] = int(interface.getAttribute('major'))
-	ctx['int_minor'] = int(interface.getAttribute('minor'))
+	ctx['name'] = interface.getAttribute('name')
+	ctx['major'] = int(interface.getAttribute('major'))
+	ctx['minor'] = int(interface.getAttribute('minor'))
 
 	#####################################################################
 

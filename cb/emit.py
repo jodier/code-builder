@@ -29,74 +29,84 @@ import cb.utils
 def interface(ctx):
 	LANG = ctx['lang']
 
-	#####################################################################
-	# PROLOG							    #
-	#####################################################################
+	try:
+		fp = open('%s.h' % ctx['name'], 'wt')
 
-	LANG.generate_prolog(ctx)
+		#############################################################
+		# PROLOG						    #
+		#############################################################
 
-	#####################################################################
-	# TYPES								    #
-	#####################################################################
+		LANG.generate_prolog(ctx, fp)
 
-	LANG.generate_COMMENT(ctx, 'TYPES')
+		#############################################################
+		# TYPES							    #
+		#############################################################
 
-	for t in ctx['int_types']['types'].iteritems():
-		LANG.generate_type(ctx, t)
+		LANG.generate_COMMENT(ctx, fp, 'TYPES')
 
-	print('')
+		for t in ctx['int_types']['types'].iteritems():
+			LANG.generate_type(ctx, fp, t)
 
-	LANG.generate_separator(ctx)
+		cb.utils.writeline(fp, '')
 
-	for t in ctx['int_types']['enums'].iteritems():
-		LANG.generate_enum(ctx, t)
-		print('')
+		LANG.generate_separator(ctx, fp)
 
-	LANG.generate_separator(ctx)
+		for t in ctx['int_types']['enums'].iteritems():
+			LANG.generate_enum(ctx, fp, t)
+			cb.utils.writeline(fp, '')
 
-	for t in ctx['int_types']['structs'].iteritems():
-		LANG.generate_struct(ctx, t)
-		print('')
+		LANG.generate_separator(ctx, fp)
 
-	#####################################################################
-	# DEFINITIONS							    #
-	#####################################################################
+		for t in ctx['int_types']['structs'].iteritems():
+			LANG.generate_struct(ctx, fp, t)
+			cb.utils.writeline(fp, '')
 
-	LANG.generate_COMMENT(ctx, 'IMPLEMENTATION')
+		#############################################################
+		# DEFINITIONS						    #
+		#############################################################
 
-	LANG.generate_definitions(ctx)
+		LANG.generate_COMMENT(ctx, fp, 'IMPLEMENTATION')
 
-	#####################################################################
-	# EXTENSION STRUCTS						    #
-	#####################################################################
+		LANG.generate_definitions(ctx, fp)
 
-	LANG.generate_separator(ctx)
+		#############################################################
+		# EXTENSION STRUCTS					    #
+		#############################################################
 
-	LANG.generate_extension_structs(ctx)
+		LANG.generate_separator(ctx, fp)
 
-	#####################################################################
-	# EXTENSION PROFILES						    #
-	#####################################################################
+		LANG.generate_extension_structs(ctx, fp)
 
-	LANG.generate_separator(ctx)
+		#############################################################
+		# EXTENSION PROFILES					    #
+		#############################################################
 
-	LANG.generate_extension_profiles(ctx)
+		LANG.generate_separator(ctx, fp)
 
-	#####################################################################
-	# PROFILES							    #
-	#####################################################################
+		LANG.generate_extension_profiles(ctx, fp)
 
-	LANG.generate_separator(ctx)
+		#############################################################
+		# PROFILES						    #
+		#############################################################
 
-	LANG.generate_global_methods(ctx)
+		LANG.generate_separator(ctx, fp)
 
-	#####################################################################
-	# EPILOG							    #
-	#####################################################################
+		LANG.generate_global_methods(ctx, fp)
 
-	LANG.generate_separator(ctx)
+		#############################################################
+		# EPILOG						    #
+		#############################################################
 
-	LANG.generate_epilog(ctx)
+		LANG.generate_separator(ctx, fp)
+
+		LANG.generate_epilog(ctx, fp)
+
+		#############################################################
+
+		fp.close()
+
+	except IOError:
+		cb.utils.error('Could not open \'%s.h\' !' % ctx['name'])
 
 #############################################################################
 
