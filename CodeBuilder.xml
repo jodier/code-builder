@@ -84,7 +84,7 @@
       </code>
     </extra>
 
-    <init>
+    <ctor>
       <code condition="cond3">
         <![CDATA[Hello world 3]]>
       </code>
@@ -92,7 +92,17 @@
       <code condition="cond4">
         <![CDATA[Hello world 4]]>
       </code>
-    </init>
+    </ctor>
+
+    <dtor>
+      <code condition="cond3">
+        <![CDATA[Hello world 3]]>
+      </code>
+
+      <code condition="cond4">
+        <![CDATA[Hello world 4]]>
+      </code>
+    </dtor>
 
     <profiles>
       <profile name="profile1">
@@ -110,14 +120,25 @@
 
         <!-- ************************************************************ -->
 
-        <init>
+        <ctor>
           <code condition="cond7">
             <![CDATA[Hello world 7]]>
           </code>
           <code condition="cond8">
             <![CDATA[Hello world 8]]>
           </code>
-        </init>
+        </ctor>
+
+        <!-- ************************************************************ -->
+
+        <dtor>
+          <code condition="cond7">
+            <![CDATA[Hello world 7]]>
+          </code>
+          <code condition="cond8">
+            <![CDATA[Hello world 8]]>
+          </code>
+        </dtor>
 
         <!-- ************************************************************ -->
 
@@ -127,14 +148,25 @@
 
           <extension name="context">
 
-            <init>
+            <ctor>
               <code>
                 <![CDATA[Hello world 9]]>
               </code>
-            </init>
+            </ctor>
+
+            <dtor>
+              <code>
+                <![CDATA[Hello world 9]]>
+              </code>
+            </dtor>
 
             <method name="new">
               <code condition="cond1">
+                <![CDATA[Hello world A]]>
+                <![CDATA[Hello world B]]>
+                <![CDATA[Hello world C]]>
+              </code>
+              <code condition="cond2">
                 <![CDATA[Hello world A]]>
                 <![CDATA[Hello world B]]>
                 <![CDATA[Hello world C]]>

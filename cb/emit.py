@@ -36,70 +36,61 @@ def interface(ctx):
 		# PROLOG						    #
 		#############################################################
 
-		LANG.generate_prolog(ctx, fp)
+		LANG.emit_prologPubInt(ctx, fp)
 
 		#############################################################
 		# TYPES							    #
 		#############################################################
 
-		LANG.generate_COMMENT(ctx, fp, 'TYPES')
+		LANG.emit_COMMENT(ctx, fp, 'TYPES')
 
 		for t in ctx['int_types']['types'].iteritems():
-			LANG.generate_type(ctx, fp, t)
+			LANG.emit_type(ctx, fp, t)
 
-		cb.utils.writeline(fp, '')
-
-		LANG.generate_separator(ctx, fp)
+		LANG.emit_separator(ctx, fp)
 
 		for t in ctx['int_types']['enums'].iteritems():
-			LANG.generate_enum(ctx, fp, t)
-			cb.utils.writeline(fp, '')
+			LANG.emit_enum(ctx, fp, t)
 
-		LANG.generate_separator(ctx, fp)
+		LANG.emit_separator(ctx, fp)
 
 		for t in ctx['int_types']['structs'].iteritems():
-			LANG.generate_struct(ctx, fp, t)
-			cb.utils.writeline(fp, '')
+			LANG.emit_struct(ctx, fp, t)
 
 		#############################################################
 		# DEFINITIONS						    #
 		#############################################################
 
-		LANG.generate_COMMENT(ctx, fp, 'IMPLEMENTATION')
-
-		LANG.generate_definitions(ctx, fp)
+		LANG.emit_COMMENT(ctx, fp, 'IMPLEMENTATION')
+		LANG.emit_definitions(ctx, fp)
 
 		#############################################################
 		# EXTENSION STRUCTS					    #
 		#############################################################
 
-		LANG.generate_separator(ctx, fp)
-
-		LANG.generate_extension_structs(ctx, fp)
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_extension_structs(ctx, fp)
 
 		#############################################################
 		# EXTENSION PROFILES					    #
 		#############################################################
 
-		LANG.generate_separator(ctx, fp)
-
-		LANG.generate_extension_profiles(ctx, fp)
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_extension_profiles(ctx, fp)
 
 		#############################################################
-		# PROFILES						    #
+		# METHODS						    #
 		#############################################################
 
-		LANG.generate_separator(ctx, fp)
-
-		LANG.generate_global_methods(ctx, fp)
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_global_methods(ctx, fp)
 
 		#############################################################
 		# EPILOG						    #
 		#############################################################
 
-		LANG.generate_separator(ctx, fp)
-
-		LANG.generate_epilog(ctx, fp)
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_epilogPubInt(ctx, fp)
 
 		#############################################################
 
@@ -111,7 +102,145 @@ def interface(ctx):
 #############################################################################
 
 def implementation(ctx):
-	pass
+	LANG = ctx['lang']
+
+	try:
+		fp = open('%s_internal.h' % ctx['name'], 'wt')
+
+		#############################################################
+		# PROLOG						    #
+		#############################################################
+
+		LANG.emit_prologPrivInt(ctx, fp)
+
+		#############################################################
+		# CONSTRAINTS						    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_constraints(ctx, fp)
+
+		#############################################################
+		# METHODS						    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_internal_methods(ctx, fp)
+
+		#############################################################
+		# EPILOG						    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_epilogPrivInt(ctx, fp)
+
+		#############################################################
+
+		fp.close()
+
+	except IOError:
+		cb.utils.error('Could not open \'%s_internal.h\' !' % ctx['name'])
+
+	##
+
+	try:
+		fp = open('%s.c' % ctx['name'], 'wt')
+
+		#############################################################
+		# PROLOG						    #
+		#############################################################
+
+		LANG.emit_prologImp(ctx, fp)
+
+		#############################################################
+		# CONSTRAINTS						    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_global_constraints(ctx, fp)
+
+		#############################################################
+		# CTORS							    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_global_ctor(ctx, fp)
+
+		#############################################################
+		# DTORS							    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_global_dtor(ctx, fp)
+
+		#############################################################
+		# EPILOG						    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_epilogImp(ctx, fp)
+
+		#############################################################
+
+		fp.close()
+
+	except IOError:
+		cb.utils.error('Could not open \'%s_internal.h\' !' % ctx['name'])
+
+	##
+
+	for p in ctx['imp_profiles']:
+
+		try:
+			fp = open('%s_%s.c' % (ctx['name'], p), 'wt')
+
+			#####################################################
+			# PROLOG					    #
+			#####################################################
+
+			LANG.emit_prologImp(ctx, fp)
+
+			#####################################################
+			# PROFILE					    #
+			#####################################################
+
+			LANG.emit_separator(ctx, fp)
+			LANG.emit_global_profile(ctx, fp, p)
+
+			#####################################################
+			# METHODS					    #
+			#####################################################
+
+			LANG.emit_separator(ctx, fp)
+			LANG.emit_methods(ctx, fp, p)
+
+			#####################################################
+			# CTORS						    #
+			#####################################################
+
+			LANG.emit_separator(ctx, fp)
+			LANG.emit_profile_ctor(ctx, fp, p)
+
+			#####################################################
+			# DTORS						    #
+			#####################################################
+
+			LANG.emit_separator(ctx, fp)
+			LANG.emit_profile_dtor(ctx, fp, p)
+
+			#####################################################
+			# EPILOG					    #
+			#####################################################
+
+			LANG.emit_separator(ctx, fp)
+			LANG.emit_epilogImp(ctx, fp)
+
+			#####################################################
+
+			fp.close()
+
+		except IOError:
+			cb.utils.error('Could not open \'%s_internal.h\' !' % ctx['name'])
 
 #############################################################################
 

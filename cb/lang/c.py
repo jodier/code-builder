@@ -50,22 +50,24 @@ QUALIFIERS = [
 ]
 
 #############################################################################
+# COMMENTS								    #
+#############################################################################
 
-def generate_separator(ctx, fp):
-	cb.utils.writeline(fp, '/*-------------------------------------------------------------------------*/')
-	cb.utils.writeline(fp, '')
+def emit_separator(ctx, fp):
+	cb.utils.printf(fp, '/*-------------------------------------------------------------------------*/')
+	cb.utils.printf(fp, '')
 
 #############################################################################
 
-def generate_COMMENT(ctx, fp, s):
-	cb.utils.writeline(fp, '/*-------------------------------------------------------------------------*/')
-	cb.utils.writeline(fp, '/* %s%s   */' % (s, ''.join([' ' for i in xrange(69 - len(s))])))
-	cb.utils.writeline(fp, '/*-------------------------------------------------------------------------*/')
-	cb.utils.writeline(fp, '')
+def emit_COMMENT(ctx, fp, s):
+	cb.utils.printf(fp, '/*-------------------------------------------------------------------------*/')
+	cb.utils.printf(fp, '/* %s%s   */' % (s, ''.join([' ' for i in xrange(69 - len(s))])))
+	cb.utils.printf(fp, '/*-------------------------------------------------------------------------*/')
+	cb.utils.printf(fp, '')
 
 #############################################################################
 
-def generate_comment(ctx, fp, s):
+def emit_comment(ctx, fp, s):
 	n = 5
 	l = len(s)
 
@@ -73,214 +75,110 @@ def generate_comment(ctx, fp, s):
 		n -= 1
 		l -= 5
 
-	cb.utils.writeline(fp, '/*----------------------------------*/')
-	cb.utils.writeline(fp, '/* %s%s   */' % (s, ''.join([' ' for i in xrange(30 - len(s))])))
-	cb.utils.writeline(fp, '/*----------------------------------*/')
-	cb.utils.writeline(fp, '')
+	cb.utils.printf(fp, '/*----------------------------------*/')
+	cb.utils.printf(fp, '/* %s%s   */' % (s, ''.join([' ' for i in xrange(30 - len(s))])))
+	cb.utils.printf(fp, '/*----------------------------------*/')
+	cb.utils.printf(fp, '')
 
 #############################################################################
+# PROLOGS								    #
+#############################################################################
 
-def generate_prolog(ctx, fp):
+def emit_prologPubInt(ctx, fp):
 	INT_ASSET = ctx['int_asset']
 
-	cb.utils.writeline(fp, '/* Authors : %s' % INT_ASSET['authors'])
-	cb.utils.writeline(fp, ' * Emails  : %s' % INT_ASSET['emails'])
-	cb.utils.writeline(fp, ' *')
-	cb.utils.writeline(fp, ' * Version : %d.%d (%s)' % (ctx['major'], ctx['minor'], INT_ASSET['date']))
-	cb.utils.writeline(fp, ' *')
-	cb.utils.writeline(fp, ' * %s' % INT_ASSET['description'])	
-	cb.utils.writeline(fp, ' */')
-	cb.utils.writeline(fp, '')
+	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
+	cb.utils.printf(fp, ' * Emails  : %s' % INT_ASSET['emails'])
+	cb.utils.printf(fp, ' *')
+	cb.utils.printf(fp, ' * Version : %d.%d (%s)' % (ctx['major'], ctx['minor'], INT_ASSET['date']))
+	cb.utils.printf(fp, ' *')
+	cb.utils.printf(fp, ' * %s' % INT_ASSET['description'])	
+	cb.utils.printf(fp, ' */')
+	cb.utils.printf(fp, '')
 
-	generate_separator(ctx, fp)
+	emit_separator(ctx, fp)
 
-	cb.utils.writeline(fp, '#ifndef __%s_H' % ctx['name'].upper())
-	cb.utils.writeline(fp, '#define __%s_H' % ctx['name'].upper())
-	cb.utils.writeline(fp, '')
+	cb.utils.printf(fp, '#ifndef __%s_H' % ctx['name'].upper())
+	cb.utils.printf(fp, '#define __%s_H' % ctx['name'].upper())
+	cb.utils.printf(fp, '')
 
-	generate_separator(ctx, fp)
+	emit_separator(ctx, fp)
 
-	cb.utils.writeline(fp, '#include <stddef.h>')
-	cb.utils.writeline(fp, '')
-
-#############################################################################
-
-def generate_epilog(ctx, fp):
-	cb.utils.writeline(fp, '#endif /* __%s_H */' % ctx['name'].upper())
-
-	cb.utils.writeline(fp, '')
-	generate_separator(ctx, fp)
+	cb.utils.printf(fp, '#include <stddef.h>')
+	cb.utils.printf(fp, '')
 
 #############################################################################
 
-def generate_type(ctx, fp, t):
-	cb.utils.writeline(fp, 'typedef %s %s;' % (t[0], t[1]['from']))
+def emit_prologPrivInt(ctx, fp):
+	INT_ASSET = ctx['int_asset']
+
+	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
+	cb.utils.printf(fp, ' * Emails  : %s' % INT_ASSET['emails'])
+	cb.utils.printf(fp, ' *')
+	cb.utils.printf(fp, ' * Version : %d.%d (%s)' % (ctx['major'], ctx['minor'], INT_ASSET['date']))
+	cb.utils.printf(fp, ' *')
+	cb.utils.printf(fp, ' * %s' % INT_ASSET['description'])	
+	cb.utils.printf(fp, ' */')
+	cb.utils.printf(fp, '')
+
+	emit_separator(ctx, fp)
+
+	cb.utils.printf(fp, '#ifndef __%s_INTERNAL_H' % ctx['name'].upper())
+	cb.utils.printf(fp, '#define __%s_INTERNAL_H' % ctx['name'].upper())
+	cb.utils.printf(fp, '')
+
+	emit_separator(ctx, fp)
+
+	cb.utils.printf(fp, '#include "%s.h"' % ctx['name'])
+	cb.utils.printf(fp, '')
 
 #############################################################################
 
-def generate_enum(ctx, fp, t):
-	cb.utils.writeline(fp, 'typedef enum %s' % t[0])
-	cb.utils.writeline(fp, '{')
+def emit_prologImp(ctx, fp):
+	INT_ASSET = ctx['int_asset']
 
-	for u in t[1]:
-		for v in t[1][u]:
-			cb.utils.writeline(fp, '\t%s = 0x%X,' % (v['name'], cb.utils.getCnt(ctx)))
+	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
+	cb.utils.printf(fp, ' * Emails  : %s' % INT_ASSET['emails'])
+	cb.utils.printf(fp, ' *')
+	cb.utils.printf(fp, ' * Version : %d.%d (%s)' % (ctx['major'], ctx['minor'], INT_ASSET['date']))
+	cb.utils.printf(fp, ' *')
+	cb.utils.printf(fp, ' * %s' % INT_ASSET['description'])	
+	cb.utils.printf(fp, ' */')
+	cb.utils.printf(fp, '')
 
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, '} %s;' % t[0])
+	emit_separator(ctx, fp)
+
+	cb.utils.printf(fp, '#include "%s_internal.h"' % ctx['name'])
+	cb.utils.printf(fp, '')
+
+#############################################################################
+# EPILOGS								    #
+#############################################################################
+
+def emit_epilogPubInt(ctx, fp):
+	cb.utils.printf(fp, '#endif /* __%s_H */' % ctx['name'].upper())
+
+	cb.utils.printf(fp, '')
+	emit_separator(ctx, fp)
 
 #############################################################################
 
-def generate_struct(ctx, fp, t):
-	cb.utils.writeline(fp, 'typedef struct %s' % t[0])
-	cb.utils.writeline(fp, '{')
+def emit_epilogPrivInt(ctx, fp):
+	cb.utils.printf(fp, '#endif /* __%s_INTERNAL_H */' % ctx['name'].upper())
 
-	for u in t[1]:
-		for v in t[1][u]:
-			cb.utils.writeline(fp, '\t%s %s;' % (v['type'], v['name']))
-
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, '} %s;' % t[0])
+	cb.utils.printf(fp, '')
+	emit_separator(ctx, fp)
 
 #############################################################################
 
-def generate_definitions(ctx, fp):
-	name = ctx['name']
-	NAME = ctx['name'].upper()
-
-	#####################################################################
-	# PROFILES							    #
-	#####################################################################
-
-	generate_comment(ctx, fp, 'PROFILES')
-
-	cb.utils.writeline(fp, 'typedef enum %s_profiles_e' % name)
-	cb.utils.writeline(fp, '{')
-
-	for p in ctx['int_profiles']:
-		cb.utils.writeline(fp, '\t%s_%s = 0x%X,' % (NAME, p.upper(), cb.utils.getCnt(ctx)))
-
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, '} %s_profiles_t;' % name)
-
-	cb.utils.writeline(fp, '')
-
-	#####################################################################
-	# EXTENTIONS							    #
-	#####################################################################
-
-	generate_comment(ctx, fp, 'EXTENTIONS')
-
-	cb.utils.writeline(fp, 'typedef enum %s_extentions_e' % name)
-	cb.utils.writeline(fp, '{')
-
-	for e in ctx['int_extensions']:
-		cb.utils.writeline(fp, '\t%s_%s = 0x%X,' % (NAME, e['name'].upper(), cb.utils.getCnt(ctx)))
-
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, '} %s_extentions_t;' % name)
-
-	cb.utils.writeline(fp, '')
-
-	#####################################################################
-	# METHODS							    #
-	#####################################################################
-
-	generate_comment(ctx, fp, 'METHODS')
-
-	cb.utils.writeline(fp, 'typedef enum %s_methods_e' % name)
-	cb.utils.writeline(fp, '{')
-
-	for e in ctx['int_extensions']:
-
-		for m in e['methods']:
-			cb.utils.writeline(fp, '\t%s_%s_%s = 0x%X,' % (NAME, e['name'].upper(), m['name'].upper(), cb.utils.getCnt(ctx)))
-
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, '} %s_methods_t;' % name)
-
-	cb.utils.writeline(fp, '')
+def emit_epilogImp(ctx, fp):
+	pass
 
 #############################################################################
-
-def generate_extension_structs(ctx, fp):
-	cb.utils.writeline(fp, 'typedef struct %s_s' % ctx['name'])
-	cb.utils.writeline(fp, '{')
-
-	for e in ctx['int_extensions']:
-
-		cb.utils.writeline(fp, '\tstruct {')
-
-		for m in e['methods']:
-
-			cb.utils.write(fp, '\t\t'),
-			generate_prototype1(ctx, fp, m, None, None)
-			cb.utils.write(fp, '\t\t'),
-			generate_prototype1(ctx, fp, m, None, 'check')
-			cb.utils.write(fp, '\t\t'),
-			generate_prototype1(ctx, fp, m, None, 'best')
-			cb.utils.writeline(fp, '')
-
-		cb.utils.writeline(fp, '\t} %s;\n' % e['name'])		
-
-	cb.utils.writeline(fp, '} %s_t;' % ctx['name'])
-
-	cb.utils.writeline(fp, '')
-
+# UTILS
 #############################################################################
 
-def generate_extension_profiles(ctx, fp):
-
-	for e in ctx['int_profiles']:
-
-		cb.utils.writeline(fp, 'extern %s_t %s_%s;' % (ctx['name'], ctx['name'], e))
-
-	cb.utils.writeline(fp, '')
-
-#############################################################################
-
-def generate_global_methods(ctx, fp):
-	name = ctx['name']
-
-	generate_comment(ctx, fp, 'LOW LEVEL METHODS')
-
-	cb.utils.writeline(fp, 'bool %s_initialize(void);' % name)
-	cb.utils.writeline(fp, 'bool %s_finalize(void);' % name)
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, 'int %s_getMajor(void);' % name)
-	cb.utils.writeline(fp, 'int %s_getMinor(void);' % name)
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, 'int %s_getProNr(void);' % name)
-	cb.utils.writeline(fp, 'const char *%s_getProName(int);' % name)
-	cb.utils.writeline(fp, 'const char *%s_getProDesc(int);' % name)
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, 'int %s_getExtNr(int);' % name)
-	cb.utils.writeline(fp, 'const char *%s_getExtName(int, int);' % name)
-	cb.utils.writeline(fp, 'const char *%s_getExtDesc(int, int);' % name)
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, 'int %s_getMetNr(int, int);' % name)
-	cb.utils.writeline(fp, 'const char *%s_getMetName(int, int, int);' % name)
-	cb.utils.writeline(fp, 'const char *%s_getMetDesc(int, int, int);' % name)
-
-	cb.utils.writeline(fp, '')
-
-	generate_comment(ctx, fp, 'HIGH LEVEL METHODS')
-
-	cb.utils.writeline(fp, '%s_t *%s_getInterface(%s_profiles_t);' % (name, name, name))
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, 'bool %s_checkExt(%s_profiles_t, %s_extentions_t);' % (name, name, name))
-	cb.utils.writeline(fp, 'const char *%s_getExtName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
-	cb.utils.writeline(fp, 'const char *%s_getExtDesc(%s_profiles_t, %s_extentions_t);' % (name, name, name))
-	cb.utils.writeline(fp, '')
-	cb.utils.writeline(fp, 'bool %s_checkMet(%s_profiles_t, %s_methods_t);' % (name, name, name))
-	cb.utils.writeline(fp, 'const char *%s_getMetName(%s_profiles_t, %s_methods_t);' % (name, name, name))
-	cb.utils.writeline(fp, 'const char *%s_getMetDesc(%s_profiles_t, %s_methods_t);' % (name, name, name))
-
-	cb.utils.writeline(fp, '')
-
-#############################################################################
-
-def generate_prototype1(ctx, fp, m, prefix = None, suffix = None):
+def emit_prototype1(ctx, fp, m, prefix = None, suffix = None):
 
 	proto = '%s (* ' % m['type']
 
@@ -298,11 +196,11 @@ def generate_prototype1(ctx, fp, m, prefix = None, suffix = None):
 	else:
 		proto += 'void,'
 
-	cb.utils.writeline(fp, proto[: -1] + ');')
+	cb.utils.printf(fp, proto[: -1] + ');')
 
 #############################################################################
 
-def generate_prototype2(ctx, fp, m, prefix = None, suffix = None):
+def emit_prototype2(ctx, fp, m, prefix = None, suffix = None):
 
 	proto = '%s ' % m['type']
 
@@ -320,7 +218,421 @@ def generate_prototype2(ctx, fp, m, prefix = None, suffix = None):
 	else:
 		proto += 'void,'
 
-	cb.utils.writeline(fp, proto[: -1] + ');')
+	cb.utils.printf(fp, proto[: -1] + ');')
+
+#############################################################################
+# PUBLIC INTERFACE							    #
+#############################################################################
+
+def emit_type(ctx, fp, t):
+	cb.utils.printf(fp, 'typedef %s %s;' % (t[0], t[1]['from']))
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_enum(ctx, fp, t):
+	cb.utils.printf(fp, 'typedef enum %s' % t[0])
+	cb.utils.printf(fp, '{')
+
+	for u in t[1]:
+		for v in t[1][u]:
+			cb.utils.printf(fp, '\t%s = 0x%X,' % (v['name'], cb.utils.getCnt(ctx)))
+
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '} %s;' % t[0])
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_struct(ctx, fp, t):
+	cb.utils.printf(fp, 'typedef struct %s' % t[0])
+	cb.utils.printf(fp, '{')
+
+	for u in t[1]:
+		for v in t[1][u]:
+			cb.utils.printf(fp, '\t%s %s;' % (v['type'], v['name']))
+
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '} %s;' % t[0])
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_definitions(ctx, fp):
+	name = ctx['name']
+	NAME = ctx['name'].upper()
+
+	#####################################################################
+	# PROFILES							    #
+	#####################################################################
+
+	emit_comment(ctx, fp, 'PROFILES')
+
+	cb.utils.printf(fp, 'typedef enum %s_profiles_e' % name)
+	cb.utils.printf(fp, '{')
+
+	for p in ctx['int_profiles']:
+		cb.utils.printf(fp, '\t%s_%s = 0x%X,' % (NAME, p.upper(), cb.utils.getCnt(ctx)))
+
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '} %s_profiles_t;' % name)
+
+	cb.utils.printf(fp, '')
+
+	#####################################################################
+	# EXTENTIONS							    #
+	#####################################################################
+
+	emit_comment(ctx, fp, 'EXTENTIONS')
+
+	cb.utils.printf(fp, 'typedef enum %s_extentions_e' % name)
+	cb.utils.printf(fp, '{')
+
+	for e in ctx['int_extensions']:
+		cb.utils.printf(fp, '\t%s_%s = 0x%X,' % (NAME, e['name'].upper(), cb.utils.getCnt(ctx)))
+
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '} %s_extentions_t;' % name)
+
+	cb.utils.printf(fp, '')
+
+	#####################################################################
+	# METHODS							    #
+	#####################################################################
+
+	emit_comment(ctx, fp, 'METHODS')
+
+	cb.utils.printf(fp, 'typedef enum %s_methods_e' % name)
+	cb.utils.printf(fp, '{')
+
+	for e in ctx['int_extensions']:
+
+		for m in e['methods']:
+			cb.utils.printf(fp, '\t%s_%s_%s = 0x%X,' % (NAME, e['name'].upper(), m['name'].upper(), cb.utils.getCnt(ctx)))
+
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '} %s_methods_t;' % name)
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_extension_structs(ctx, fp):
+	cb.utils.printf(fp, 'typedef struct %s_s' % ctx['name'])
+	cb.utils.printf(fp, '{')
+
+	for e in ctx['int_extensions']:
+
+		cb.utils.printf(fp, '\tstruct {')
+
+		for m in e['methods']:
+
+			cb.utils.writef(fp, '\t\t'),
+			emit_prototype1(ctx, fp, m, None, None)
+			cb.utils.writef(fp, '\t\t'),
+			emit_prototype1(ctx, fp, m, None, 'check')
+			cb.utils.writef(fp, '\t\t'),
+			emit_prototype1(ctx, fp, m, None, 'best')
+			cb.utils.printf(fp, '')
+
+		cb.utils.printf(fp, '\t} %s;\n' % e['name'])		
+
+	cb.utils.printf(fp, '} %s_t;' % ctx['name'])
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_extension_profiles(ctx, fp):
+
+	for e in ctx['int_profiles']:
+
+		cb.utils.printf(fp, 'extern %s_t %s_%s;' % (ctx['name'], ctx['name'], e))
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_global_methods(ctx, fp):
+	name = ctx['name']
+
+	emit_comment(ctx, fp, 'LOW LEVEL METHODS')
+
+	cb.utils.printf(fp, 'bool %s_initialize(void);' % name)
+	cb.utils.printf(fp, 'bool %s_finalize(void);' % name)
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, 'int %s_getMajor(void);' % name)
+	cb.utils.printf(fp, 'int %s_getMinor(void);' % name)
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, 'int %s_getProNr(void);' % name)
+	cb.utils.printf(fp, 'const char *%s_getProName(int);' % name)
+	cb.utils.printf(fp, 'const char *%s_getProDesc(int);' % name)
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, 'int %s_getExtNr(int);' % name)
+	cb.utils.printf(fp, 'const char *%s_getExtName(int, int);' % name)
+	cb.utils.printf(fp, 'const char *%s_getExtDesc(int, int);' % name)
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, 'int %s_getMetNr(int, int);' % name)
+	cb.utils.printf(fp, 'const char *%s_getMetName(int, int, int);' % name)
+	cb.utils.printf(fp, 'const char *%s_getMetDesc(int, int, int);' % name)
+
+	cb.utils.printf(fp, '')
+
+	emit_comment(ctx, fp, 'HIGH LEVEL METHODS')
+
+	cb.utils.printf(fp, '%s_t *%s_getInterface(%s_profiles_t);' % (name, name, name))
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, 'bool %s_checkExt(%s_profiles_t, %s_extentions_t);' % (name, name, name))
+	cb.utils.printf(fp, 'const char *%s_getExtName(%s_profiles_t, %s_extentions_t);' % (name, name, name))
+	cb.utils.printf(fp, 'const char *%s_getExtDesc(%s_profiles_t, %s_extentions_t);' % (name, name, name))
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, 'bool %s_checkMet(%s_profiles_t, %s_methods_t);' % (name, name, name))
+	cb.utils.printf(fp, 'const char *%s_getMetName(%s_profiles_t, %s_methods_t);' % (name, name, name))
+	cb.utils.printf(fp, 'const char *%s_getMetDesc(%s_profiles_t, %s_methods_t);' % (name, name, name))
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+# PRIVATE INTERFACE							    #
+#############################################################################
+
+def emit_constraints(ctx, fp):
+	INT_CONSTRAINTS = ctx['int_constraints']
+
+	for c in INT_CONSTRAINTS:
+		cb.utils.printf(fp, 'typedef enum %s_s' % c)
+		cb.utils.printf(fp, '{')
+
+		for key in INT_CONSTRAINTS[c]['keys']:
+			cb.utils.printf(fp, '\t%s,' % key.upper())
+
+		cb.utils.printf(fp, '')
+		cb.utils.printf(fp, '} %s_t;' % c)
+		cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_internal_methods(ctx, fp):
+
+	for c in ctx['int_constraints']:
+		cb.utils.printf(fp, 'extern enum %s_s %s;' % (c, c.upper()))
+
+	cb.utils.printf(fp, '')
+
+	emit_separator(ctx, fp)
+
+	cb.utils.printf(fp, 'bool __%s_ctor(void);' % ctx['name'])
+	cb.utils.printf(fp, 'bool __%s_dtor(void);' % ctx['name'])
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+# IMPLEMENTATION							    #
+#############################################################################
+
+def emit_Xtor(ctx, fp, Xtors, cnt):
+
+	#####################################################################
+	# UNCONDITIONAL XTORS						    #
+	#####################################################################
+
+	for Xtor in Xtors:
+
+		for code in Xtor:
+			condition = code['condition'].strip()
+
+			if len(condition) == 0:
+
+				cb.utils.printf(fp, '\t{')
+
+				for text in code['txts']:
+					cb.utils.printf(fp, text)
+
+				cb.utils.printf(fp, '\t}')
+
+	#####################################################################
+	# CONDITIONAL XTORS						    #
+	#####################################################################
+
+	for Xtor in Xtors:
+
+		for code in Xtor:
+			condition = code['condition'].strip()
+
+			if len(condition) >= 1:
+
+				if cnt == 0:
+					cb.utils.printf(fp, '\t/**/ if(%s)' % condition)
+				else:
+					cb.utils.printf(fp, '\telse if(%s)' % condition)
+
+				cb.utils.printf(fp, '\t{')
+
+				for text in code['txts']:
+					cb.utils.printf(fp, text)
+
+				cb.utils.printf(fp, '\t}')
+
+				cnt += 1
+
+#############################################################################
+# GLOBAL IMPLEMENTATION							    #
+#############################################################################
+
+def emit_global_constraints(ctx, fp):
+
+	for constraint in ctx['int_constraints']:
+		cb.utils.printf(fp, '%s_t %s = (%s_t) -1;' % (constraint, constraint.upper(), constraint))
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_global_ctor(ctx, fp):
+	cb.utils.printf(fp, 'bool __%s_ctor(void)' % ctx['name'])
+	cb.utils.printf(fp, '{')
+	cb.utils.printf(fp, '\tbool result = true;')
+	cb.utils.printf(fp, '')
+	emit_Xtor(ctx, fp, ctx['imp_ctors'], 0)
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\treturn result;')
+	cb.utils.printf(fp, '}')
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_global_dtor(ctx, fp):
+	cb.utils.printf(fp, 'bool __%s_dtor(void)' % ctx['name'])
+	cb.utils.printf(fp, '{')
+	cb.utils.printf(fp, '\tbool result = true;')
+	cb.utils.printf(fp, '')
+	emit_Xtor(ctx, fp, ctx['imp_dtors'], 0)
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\treturn result;')
+	cb.utils.printf(fp, '}')
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+# PROFILE IMPLEMENTATION						    #
+#############################################################################
+
+def emit_global_profile(ctx, fp, p):
+	cb.utils.printf(fp, '%s_t %s_%s = {};' % (ctx['name'], ctx['name'], p))
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_methods(ctx, fp, p):
+	pass
+
+#############################################################################
+
+def emit_profile_ctor(ctx, fp, p):
+	IMP_PROFILES = ctx['imp_profiles'][p]
+	IMP_EXTENSIONS = IMP_PROFILES['extensions']
+
+	cb.utils.printf(fp, 'bool %s_%s_ctor(void)' % (ctx['name'], p))
+	cb.utils.printf(fp, '{')
+	cb.utils.printf(fp, '\tif(__%s_ctor(void) == false)' % ctx['name'])
+	cb.utils.printf(fp, '\t{')
+	cb.utils.printf(fp, '\t\treturn false;')
+	cb.utils.printf(fp, '\t}')
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\tbool result = true;')
+	cb.utils.printf(fp, '')
+
+	emit_Xtor(ctx, fp, IMP_PROFILES['ctors'], 0)
+
+	for e in IMP_EXTENSIONS:
+		cb.utils.printf(fp, '')
+		cb.utils.printf(fp, '\t/* %s */' % e)
+		emit_Xtor(ctx, fp, IMP_EXTENSIONS[e]['ctors'], 99)
+
+	for e in IMP_EXTENSIONS:
+		IMP_METHODS = IMP_EXTENSIONS[e]['methods']
+
+		for m in IMP_METHODS:
+			cb.utils.printf(fp, '')
+			cb.utils.printf(fp, '\t/* %s::%s */' % (e, m))
+
+			#####################################################
+			# UNCONDITIONAL ASSIGNATION			    #
+			#####################################################
+
+			for (i, code) in enumerate(IMP_METHODS[m]):
+
+				condition = code['condition'].strip()
+
+				if len(condition) == 0:
+					cb.utils.printf(fp, '\t{')
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s = __%s%d;' % (ctx['name'], p, e, m, m, i))
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s_check = __%s%d_check;' % (ctx['name'], p, e, m, m, i))
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s_best = __%s%d;' % (ctx['name'], p, e, m, m, i))
+					cb.utils.printf(fp, '\t}')
+
+			#####################################################
+			# CONDITIONAL ASSIGNATION			    #
+			#####################################################
+
+			cnt = 0
+
+			for (i, code) in enumerate(IMP_METHODS[m]):
+
+				condition = code['condition'].strip()
+
+				if len(condition) >= 1:
+					if cnt == 0:
+						cb.utils.printf(fp, '\t/**/ if(%s)' % condition)
+					else:
+						cb.utils.printf(fp, '\telse if(%s)' % condition)
+
+					cb.utils.printf(fp, '\t{')
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s = __%s_%s%d;' % (ctx['name'], p, e, m, e, m, i))
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s_check = __%s_%s%d_check;' % (ctx['name'], p, e, m, e, m, i))
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s_best = __%s_%s%d_best;' % (ctx['name'], p, e, m, e, m, i))
+					cb.utils.printf(fp, '\t}')
+
+					cnt += 1
+
+			#####################################################
+
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\treturn result;')
+	cb.utils.printf(fp, '}')
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_profile_dtor(ctx, fp, p):
+	IMP_PROFILES = ctx['imp_profiles'][p]
+	IMP_EXTENSIONS = IMP_PROFILES['extensions']
+
+	cb.utils.printf(fp, 'bool %s_%s_dtor(void)' % (ctx['name'], p))
+	cb.utils.printf(fp, '{')
+	cb.utils.printf(fp, '\tif(__%s_dtor(void) == false)' % ctx['name'])
+	cb.utils.printf(fp, '\t{')
+	cb.utils.printf(fp, '\t\treturn false;')
+	cb.utils.printf(fp, '\t}')
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\tbool result = true;')
+	cb.utils.printf(fp, '')
+
+	emit_Xtor(ctx, fp, IMP_PROFILES['dtors'], 0)
+
+	for e in IMP_EXTENSIONS:
+		cb.utils.printf(fp, '')
+		cb.utils.printf(fp, '\t/* %s */' % e)
+		emit_Xtor(ctx, fp, IMP_EXTENSIONS[e]['dtors'], 99)
+
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\treturn result;')
+	cb.utils.printf(fp, '}')
+
+	cb.utils.printf(fp, '')
 
 #############################################################################
 

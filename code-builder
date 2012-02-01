@@ -55,7 +55,8 @@ CTX = {
 	'int_extensions': [],
 
 	'imp_extras': [],
-	'imp_inits': [],
+	'imp_ctors': [],
+	'imp_dtors': [],
 	'imp_profiles': {},
 
 	'options': None,

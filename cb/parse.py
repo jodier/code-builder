@@ -374,11 +374,18 @@ def parseImplementation(ctx, implementations):
 			ctx['imp_extras'].append(parseCode(node))
 
 		#############################################################
-		# INIT							    #
+		# CTOR							    #
 		#############################################################
 
-		if node.nodeName == 'init':
-			ctx['imp_inits'].append(parseCode(node))
+		if node.nodeName == 'ctor':
+			ctx['imp_ctors'].append(parseCode(node))
+
+		#############################################################
+		# DTOR							    #
+		#############################################################
+
+		if node.nodeName == 'dtor':
+			ctx['imp_dtors'].append(parseCode(node))
 
 		#############################################################
 		# PROFILES						    #
@@ -395,7 +402,8 @@ def parseImplementation(ctx, implementations):
 				if profileNode.nodeName == 'profile':
 
 					EXTRAS1 = []
-					INITS1 = []
+					CTORS1 = []
+					DTORS1 = []
 					EXTENSIONS = {}
 
 					for itemNode1 in profileNode.childNodes:
@@ -408,11 +416,18 @@ def parseImplementation(ctx, implementations):
 							EXTRAS1.append(parseCode(itemNode1))
 
 						#############################
-						# INIT			    #
+						# CTOR			    #
 						#############################
 
-						if itemNode1.nodeName == 'init':
-							INITS1.append(parseCode(itemNode1))
+						if itemNode1.nodeName == 'ctor':
+							CTORS1.append(parseCode(itemNode1))
+
+						#############################
+						# DTOR			    #
+						#############################
+
+						if itemNode1.nodeName == 'dtor':
+							DTORS1.append(parseCode(itemNode1))
 
 						#############################
 						# EXTENSIONS		    #
@@ -429,7 +444,8 @@ def parseImplementation(ctx, implementations):
 								if extensionNode.nodeName == 'extension':
 
 									EXTRAS2 = []
-									INITS2 = []
+									CTORS2 = []
+									DTORS2 = []
 									METHODS = {}
 
 									for itemNode2 in extensionNode.childNodes:
@@ -442,11 +458,18 @@ def parseImplementation(ctx, implementations):
 											EXTRAS2.append(parseCode(itemNode2))
 
 										#############
-										# INIT	    #
+										# CTOR	    #
 										#############
 
-										if itemNode2.nodeName == 'init':
-											INITS2.append(parseCode(itemNode2))
+										if itemNode2.nodeName == 'ctor':
+											CTORS2.append(parseCode(itemNode2))
+
+										#############
+										# DTOR	    #
+										#############
+
+										if itemNode2.nodeName == 'dtor':
+											DTORS2.append(parseCode(itemNode2))
 
 										#############
 										# METHOD    #
@@ -457,7 +480,8 @@ def parseImplementation(ctx, implementations):
 
 									dic = {
 										'extras': EXTRAS2,
-										'inits': INITS2,
+										'ctors': CTORS2,
+										'dtors': DTORS2,
 										'methods': METHODS,
 									}
 
@@ -465,7 +489,8 @@ def parseImplementation(ctx, implementations):
 
 					dic = {
 						'extras': EXTRAS1,
-						'inits': INITS1,
+						'ctors': CTORS1,
+						'dtors': DTORS1,
 						'extensions': EXTENSIONS,
 					}
 
@@ -511,9 +536,13 @@ def displayImplementation(ctx):
 	print('-----------------------------------------------------------------------------')
 	cb.utils.displayTree(ctx['imp_extras'])
 	print('-----------------------------------------------------------------------------')
-	print('| INITS                                                                     |')
+	print('| CTORS                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['imp_inits'])
+	cb.utils.displayTree(ctx['imp_ctors'])
+	print('-----------------------------------------------------------------------------')
+	print('| DTORS                                                                     |')
+	print('-----------------------------------------------------------------------------')
+	cb.utils.displayTree(ctx['imp_dtors'])
 	print('-----------------------------------------------------------------------------')
 	print('| PROFILES                                                                  |')
 	print('-----------------------------------------------------------------------------')
