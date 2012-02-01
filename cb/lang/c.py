@@ -628,6 +628,54 @@ def emit_profile_dtor(ctx, fp, p):
 		cb.utils.printf(fp, '\t/* %s */' % e)
 		emit_Xtor(ctx, fp, IMP_EXTENSIONS[e]['dtors'], 99)
 
+	for e in IMP_EXTENSIONS:
+		IMP_METHODS = IMP_EXTENSIONS[e]['methods']
+
+		for m in IMP_METHODS:
+			cb.utils.printf(fp, '')
+			cb.utils.printf(fp, '\t/* %s::%s */' % (e, m))
+
+			#####################################################
+			# UNCONDITIONAL ASSIGNATION			    #
+			#####################################################
+
+			for (i, code) in enumerate(IMP_METHODS[m]):
+
+				condition = code['condition'].strip()
+
+				if len(condition) == 0:
+					cb.utils.printf(fp, '\t{')
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s = NULL;' % (ctx['name'], p, e, m))
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s_check = NULL;' % (ctx['name'], p, e, m))
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s_best = NULL;' % (ctx['name'], p, e, m))
+					cb.utils.printf(fp, '\t}')
+
+			#####################################################
+			# CONDITIONAL ASSIGNATION			    #
+			#####################################################
+
+			cnt = 0
+
+			for (i, code) in enumerate(IMP_METHODS[m]):
+
+				condition = code['condition'].strip()
+
+				if len(condition) >= 1:
+					if cnt == 0:
+						cb.utils.printf(fp, '\t/**/ if(%s)' % condition)
+					else:
+						cb.utils.printf(fp, '\telse if(%s)' % condition)
+
+					cb.utils.printf(fp, '\t{')
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s = NULL;' % (ctx['name'], p, e, m))
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s_check = NULL;' % (ctx['name'], p, e, m))
+					cb.utils.printf(fp, '\t\t%s_%s.%s.%s_best = NULL;' % (ctx['name'], p, e, m))
+					cb.utils.printf(fp, '\t}')
+
+					cnt += 1
+
+			#####################################################
+
 	cb.utils.printf(fp, '')
 	cb.utils.printf(fp, '\treturn result;')
 	cb.utils.printf(fp, '}')
