@@ -36,7 +36,7 @@ def interface(ctx):
 		# PROLOG						    #
 		#############################################################
 
-		LANG.emit_prologPubInt(ctx, fp)
+		LANG.emit_intPubProlog(ctx, fp)
 
 		#############################################################
 		# TYPES							    #
@@ -45,52 +45,52 @@ def interface(ctx):
 		LANG.emit_COMMENT(ctx, fp, 'TYPES')
 
 		for t in ctx['int_types']['types'].iteritems():
-			LANG.emit_type(ctx, fp, t)
+			LANG.emit_impPubTypes(ctx, fp, t)
 
 		LANG.emit_separator(ctx, fp)
 
 		for t in ctx['int_types']['enums'].iteritems():
-			LANG.emit_enum(ctx, fp, t)
+			LANG.emit_impPubEnums(ctx, fp, t)
 
 		LANG.emit_separator(ctx, fp)
 
 		for t in ctx['int_types']['structs'].iteritems():
-			LANG.emit_struct(ctx, fp, t)
+			LANG.emit_impPubStructs(ctx, fp, t)
 
 		#############################################################
 		# DEFINITIONS						    #
 		#############################################################
 
 		LANG.emit_COMMENT(ctx, fp, 'IMPLEMENTATION')
-		LANG.emit_definitions(ctx, fp)
+		LANG.emit_impPubDefinitions(ctx, fp)
 
 		#############################################################
 		# EXTENSION STRUCTS					    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_extension_structs(ctx, fp)
+		LANG.emit_impPubExtensionStructs(ctx, fp)
 
 		#############################################################
 		# EXTENSION PROFILES					    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_extension_profiles(ctx, fp)
+		LANG.emit_impPubExtensionProfiles(ctx, fp)
 
 		#############################################################
-		# METHODS						    #
+		# METHOD PROTOTYPES					    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_global_methods(ctx, fp)
+		LANG.emit_impPubMethodPrototypes(ctx, fp)
 
 		#############################################################
 		# EPILOG						    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_epilogPubInt(ctx, fp)
+		LANG.emit_intPubEpilog(ctx, fp)
 
 		#############################################################
 
@@ -111,28 +111,28 @@ def implementation(ctx):
 		# PROLOG						    #
 		#############################################################
 
-		LANG.emit_prologPrivInt(ctx, fp)
+		LANG.emit_intPrivProlog(ctx, fp)
 
 		#############################################################
 		# CONSTRAINTS						    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_constraints(ctx, fp)
+		LANG.emit_impPrivConstraints(ctx, fp)
 
 		#############################################################
-		# METHODS						    #
+		# METHOD PROTOTYPES					    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_internal_methods(ctx, fp)
+		LANG.emit_impPrivMethodPrototypes(ctx, fp)
 
 		#############################################################
 		# EPILOG						    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_epilogPrivInt(ctx, fp)
+		LANG.emit_intPrivEpilog(ctx, fp)
 
 		#############################################################
 
@@ -150,35 +150,42 @@ def implementation(ctx):
 		# PROLOG						    #
 		#############################################################
 
-		LANG.emit_prologImp(ctx, fp)
+		LANG.emit_impProlog(ctx, fp)
 
 		#############################################################
 		# CONSTRAINTS						    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_global_constraints(ctx, fp)
+		LANG.emit_impConstraints(ctx, fp)
 
 		#############################################################
 		# CTORS							    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_global_ctor(ctx, fp)
+		LANG.emit_impCtor(ctx, fp)
 
 		#############################################################
 		# DTORS							    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_global_dtor(ctx, fp)
+		LANG.emit_impDtor(ctx, fp)
+
+		#############################################################
+		# HIGH LEVEL METHODS					    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_impHighLevelMethods(ctx, fp)
 
 		#############################################################
 		# EPILOG						    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_epilogImp(ctx, fp)
+		LANG.emit_impEpilog(ctx, fp)
 
 		#############################################################
 
@@ -198,42 +205,42 @@ def implementation(ctx):
 			# PROLOG					    #
 			#####################################################
 
-			LANG.emit_prologImp(ctx, fp)
+			LANG.emit_impProlog(ctx, fp)
 
 			#####################################################
 			# PROFILE					    #
 			#####################################################
 
 			LANG.emit_separator(ctx, fp)
-			LANG.emit_global_profile(ctx, fp, p)
+			LANG.emit_impProfileStruct(ctx, fp, p)
 
 			#####################################################
 			# METHODS					    #
 			#####################################################
 
 			LANG.emit_separator(ctx, fp)
-			LANG.emit_methods(ctx, fp, p)
+			LANG.emit_impProfileMethods(ctx, fp, p)
 
 			#####################################################
 			# CTORS						    #
 			#####################################################
 
 			LANG.emit_separator(ctx, fp)
-			LANG.emit_profile_ctor(ctx, fp, p)
+			LANG.emit_impProfileCtor(ctx, fp, p)
 
 			#####################################################
 			# DTORS						    #
 			#####################################################
 
 			LANG.emit_separator(ctx, fp)
-			LANG.emit_profile_dtor(ctx, fp, p)
+			LANG.emit_impProfileDtor(ctx, fp, p)
 
 			#####################################################
 			# EPILOG					    #
 			#####################################################
 
 			LANG.emit_separator(ctx, fp)
-			LANG.emit_epilogImp(ctx, fp)
+			LANG.emit_impEpilog(ctx, fp)
 
 			#####################################################
 

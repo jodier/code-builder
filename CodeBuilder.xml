@@ -167,20 +167,14 @@
               <code condition="cond1">
                 <![CDATA[Hello world A]]>
                 <![CDATA[Hello world B]]>
-                <![CDATA[Hello world C]]>
               </code>
               <code condition="cond2">
                 <![CDATA[Hello world A]]>
-                <![CDATA[Hello world B]]>
-                <![CDATA[Hello world C]]>
               </code>
             </method>
 
             <method name="delete">
               <code condition="cond1">
-                <![CDATA[Hello world D]]>
-                <![CDATA[Hello world E]]>
-                <![CDATA[Hello world F]]>
               </code>
             </method>
           </extension>
