@@ -121,7 +121,10 @@
         <!-- ************************************************************ -->
 
         <ctor>
-          <code condition="cond7">
+          <code>
+            <![CDATA[Hello world 7]]>
+          </code>
+          <code condition="SIMPLE_CONSTRAINT2 == SIMPLE_KEY3">
             <![CDATA[Hello world 7]]>
           </code>
           <code condition="cond8">
