@@ -72,13 +72,6 @@ def interface(ctx):
 		LANG.emit_impPubExtensionStructs(ctx, fp)
 
 		#############################################################
-		# EXTENSION PROFILES					    #
-		#############################################################
-
-		LANG.emit_separator(ctx, fp)
-		LANG.emit_impPubExtensionProfiles(ctx, fp)
-
-		#############################################################
 		# METHOD PROTOTYPES					    #
 		#############################################################
 
@@ -206,13 +199,6 @@ def implementation(ctx):
 			#####################################################
 
 			LANG.emit_impProlog(ctx, fp)
-
-			#####################################################
-			# PROFILE					    #
-			#####################################################
-
-			LANG.emit_separator(ctx, fp)
-			LANG.emit_impProfileStruct(ctx, fp, p)
 
 			#####################################################
 			# METHODS					    #
