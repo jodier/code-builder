@@ -198,7 +198,7 @@ def implementation(ctx):
 			# PROLOG					    #
 			#####################################################
 
-			LANG.emit_impProlog(ctx, fp)
+			LANG.emit_impProfileProlog(ctx, fp, p)
 
 			#####################################################
 			# METHODS					    #

@@ -105,6 +105,9 @@ def emit_intPubProlog(ctx, fp):
 	emit_separator(ctx, fp)
 
 	cb.utils.printf(fp, '#include <stddef.h>')
+	cb.utils.printf(fp, '#include <stdint.h>')
+	cb.utils.printf(fp, '#include <stdbool.h>')
+	cb.utils.printf(fp, '#include <stdlib.h>')
 	cb.utils.printf(fp, '')
 
 #############################################################################
@@ -151,6 +154,36 @@ def emit_impProlog(ctx, fp):
 	cb.utils.printf(fp, '#include "%s_internal.h"' % ctx['name'])
 	cb.utils.printf(fp, '')
 
+	emit_separator(ctx, fp)
+
+	emit_extras(ctx, fp, ctx['imp_extras'], 0)
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
+def emit_impProfileProlog(ctx, fp, p):
+	IMP_PROFILES = ctx['imp_profiles'][p]
+	INT_ASSET = ctx['int_asset']
+
+	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
+	cb.utils.printf(fp, ' * Emails  : %s' % INT_ASSET['emails'])
+	cb.utils.printf(fp, ' *')
+	cb.utils.printf(fp, ' * Version : %d.%d (%s)' % (ctx['major'], ctx['minor'], INT_ASSET['date']))
+	cb.utils.printf(fp, ' *')
+	cb.utils.printf(fp, ' * %s' % INT_ASSET['description'])	
+	cb.utils.printf(fp, ' */')
+	cb.utils.printf(fp, '')
+
+	emit_separator(ctx, fp)
+
+	cb.utils.printf(fp, '#include "%s_internal.h"' % ctx['name'])
+	cb.utils.printf(fp, '')
+
+	emit_separator(ctx, fp)
+
+	emit_extras(ctx, fp, IMP_PROFILES['extras'], 0)
+	cb.utils.printf(fp, '')
+
 #############################################################################
 # EPILOGS								    #
 #############################################################################
@@ -180,10 +213,32 @@ def emit_impEpilog(ctx, fp):
 
 def emit_pointerPrototype(ctx, fp, m, prefix = '', suffix = ''):
 
-	proto = '%s (* %s%s%s)(%s_t *self' % (m['type'], prefix, m['name'], suffix, ctx['name'])
+	proto = '%s (* %s%s%s)(struct %s_s *self' % (m['type'], prefix, m['name'], suffix, ctx['name'])
 
 	for p in m['params']:
 		proto += ', %s %s' % (p['type'], p['name'])
+
+	cb.utils.printf(fp, proto + ');')
+
+#############################################################################
+
+def emit_pointerPrototypeCheck(ctx, fp, m, prefix = '', suffix = ''):
+
+	proto = 'bool (* %s%s%s)(struct %s_s *self' % (prefix, m['name'], suffix, ctx['name'])
+
+	for p in m['params']:
+		proto += ', %s %s' % (p['type'], p['name'])
+
+	cb.utils.printf(fp, proto + ');')
+
+#############################################################################
+
+def emit_pointerPrototypeBest(ctx, fp, m, prefix = '', suffix = ''):
+
+	proto = 'bool (* %s%s%s)(struct %s_s *self' % (prefix, m['name'], suffix, ctx['name'])
+
+	for p in m['params']:
+		proto += ', %s *%s' % (p['type'], p['name'])
 
 	cb.utils.printf(fp, proto + ');')
 
@@ -225,7 +280,7 @@ def emit_functionPrototypeBest(ctx, fp, m, prefix = '', suffix = ''):
 #############################################################################
 
 def emit_impPubTypes(ctx, fp, t):
-	cb.utils.printf(fp, 'typedef %s %s;' % (t[0], t[1]['from']))
+	cb.utils.printf(fp, 'typedef %s %s;' % (t[1]['from'], t[0]))
 	cb.utils.printf(fp, '')
 
 #############################################################################
@@ -285,14 +340,14 @@ def emit_impPubDefinitions(ctx, fp):
 
 	emit_comment(ctx, fp, 'EXTENTIONS')
 
-	cb.utils.printf(fp, 'typedef enum %s_extentions_e' % name)
+	cb.utils.printf(fp, 'typedef enum %s_extensions_e' % name)
 	cb.utils.printf(fp, '{')
 
 	for e in ctx['int_extensions']:
 		cb.utils.printf(fp, '\t%s_EXTENSION_%s = 0x%X,' % (NAME, e['name'].upper(), cb.utils.getCnt(ctx)))
 
 	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, '} %s_extentions_t;' % name)
+	cb.utils.printf(fp, '} %s_extensions_t;' % name)
 
 	cb.utils.printf(fp, '')
 
@@ -330,9 +385,9 @@ def emit_impPubExtensionStructs(ctx, fp):
 			cb.utils.writef(fp, '\t\t'),
 			emit_pointerPrototype(ctx, fp, m, '', '')
 			cb.utils.writef(fp, '\t\t'),
-			emit_pointerPrototype(ctx, fp, m, '', '_check')
+			emit_pointerPrototypeCheck(ctx, fp, m, '', '_check')
 			cb.utils.writef(fp, '\t\t'),
-			emit_pointerPrototype(ctx, fp, m, '', '_best')
+			emit_pointerPrototypeBest(ctx, fp, m, '', '_best')
 			cb.utils.printf(fp, '')
 
 		cb.utils.printf(fp, '\t\tvoid *user;')
@@ -353,16 +408,16 @@ def emit_impPubMethodPrototypes(ctx, fp):
 	cb.utils.printf(fp, 'int %s_getMajor(void);' % name)
 	cb.utils.printf(fp, 'int %s_getMinor(void);' % name)
 	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, 'bool %s_initialize(%s_t *, %s_profile_t);' % (name, name, name))
-	cb.utils.printf(fp, 'bool %s_finalize(%s_t *, %s_profile_t);' % (name, name, name))
+	cb.utils.printf(fp, 'bool %s_initialize(struct %s_s *, %s_profiles_t);' % (name, name, name))
+	cb.utils.printf(fp, 'bool %s_finalize(struct %s_s *, %s_profiles_t);' % (name, name, name))
 	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, 'bool %s_checkExt(%s_t *, %s_extentions_t);' % (name, name, name))
-	cb.utils.printf(fp, 'const char *%s_getExtName(%s_t *, %s_extentions_t);' % (name, name, name))
-	cb.utils.printf(fp, 'const char *%s_getExtDesc(%s_t *, %s_extentions_t);' % (name, name, name))
+	cb.utils.printf(fp, 'bool %s_checkExt(struct %s_s *, %s_extensions_t);' % (name, name, name))
+	cb.utils.printf(fp, 'const char *%s_getExtName(struct %s_s *, %s_extensions_t);' % (name, name, name))
+	cb.utils.printf(fp, 'const char *%s_getExtDesc(struct %s_s *, %s_extensions_t);' % (name, name, name))
 	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, 'bool %s_checkMet(%s_t *, %s_methods_t);' % (name, name, name))
-	cb.utils.printf(fp, 'const char *%s_getMetName(%s_t *, %s_methods_t);' % (name, name, name))
-	cb.utils.printf(fp, 'const char *%s_getMetDesc(%s_t *, %s_methods_t);' % (name, name, name))
+	cb.utils.printf(fp, 'bool %s_checkMet(struct %s_s *, %s_methods_t);' % (name, name, name))
+	cb.utils.printf(fp, 'const char *%s_getMetName(struct %s_s *, %s_methods_t);' % (name, name, name))
+	cb.utils.printf(fp, 'const char *%s_getMetDesc(struct %s_s *, %s_methods_t);' % (name, name, name))
 	cb.utils.printf(fp, '')
 
 #############################################################################
@@ -394,14 +449,14 @@ def emit_impPrivMethodPrototypes(ctx, fp):
 
 	emit_separator(ctx, fp)
 
-	cb.utils.printf(fp, 'bool __%s_ctor(void);' % ctx['name'])
-	cb.utils.printf(fp, 'bool __%s_dtor(void);' % ctx['name'])
+	cb.utils.printf(fp, 'bool __%s_ctor(struct %s_s *);' % (ctx['name'], ctx['name']))
+	cb.utils.printf(fp, 'bool __%s_dtor(struct %s_s *);' % (ctx['name'], ctx['name']))
 
 	cb.utils.printf(fp, '')
 
 	for p in ctx['int_profiles']:
-		cb.utils.printf(fp, 'bool %s_%s_ctor(void);' % (ctx['name'], p))
-		cb.utils.printf(fp, 'bool %s_%s_dtor(void);' % (ctx['name'], p))
+		cb.utils.printf(fp, 'bool %s_%s_ctor(struct %s_s *);' % (ctx['name'], p, ctx['name']))
+		cb.utils.printf(fp, 'bool %s_%s_dtor(struct %s_s *);' % (ctx['name'], p, ctx['name']))
 
 		cb.utils.printf(fp, '')
 
@@ -453,6 +508,24 @@ def emit_Xtor(ctx, fp, Xtors, cnt):
 				cb.utils.printf(fp, '\t}')
 
 				cnt += 1
+
+#############################################################################
+
+def emit_extras(ctx, fp, extras, cnt):
+
+	#####################################################################
+	# UNCONDITIONAL EXTRAS						    #
+	#####################################################################
+
+	for e in extras:
+
+		for c in e:
+			condition = c['condition'].strip()
+
+			if len(condition) == 0:
+
+				for text in c['txts']:
+					cb.utils.printf(fp, text)
 
 #############################################################################
 # GLOBAL IMPLEMENTATION							    #
@@ -536,7 +609,7 @@ def emit_impHighLevelMethods(ctx, fp):
 	for p in ctx['int_profiles']:
 
 		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p.upper()))
-		cb.utils.printf(fp, '\t\t\tresult = %s_%s_ctor(self);' % (name, p))
+		cb.utils.printf(fp, '\t\t\tresult = %s_%s_ctor(interface);' % (name, p))
 		cb.utils.printf(fp, '\t\t\tbreak;')
 		cb.utils.printf(fp, '')
 
@@ -562,7 +635,7 @@ def emit_impHighLevelMethods(ctx, fp):
 	cb.utils.printf(fp, '\tbool result;')
 	cb.utils.printf(fp, '')
 
-	cb.utils.printf(fp, '\tswitch(profile)')
+	cb.utils.printf(fp, '\tswitch(extension)')
 	cb.utils.printf(fp, '\t{')
 
 	for e in ctx['int_extensions']:
@@ -714,7 +787,7 @@ def emit_impProfileCtor(ctx, fp, p):
 		IMP_METHODS = IMP_EXTENSIONS[e]['methods']
 
 		cb.utils.printf(fp, '')
-		cb.utils.printf(fp, '\t%s_%s.%s = malloc(sizeof(%s_%s.%s[0]));' % (ctx['name'], p, e, ctx['name'], p, e))
+		cb.utils.printf(fp, '\tself->%s = malloc(sizeof(self->%s[0]));' % (e, e))
 
 		for m in IMP_METHODS:
 			cb.utils.printf(fp, '')
@@ -730,9 +803,9 @@ def emit_impProfileCtor(ctx, fp, p):
 
 				if len(condition) == 0 and len(c['txts']) > 0:
 					cb.utils.printf(fp, '\t{')
-					cb.utils.printf(fp, '\t\t%s_%s.%s->%s = __%s%d;' % (ctx['name'], p, e, m, m, i))
-					cb.utils.printf(fp, '\t\t%s_%s.%s->%s_check = __%s%d_check;' % (ctx['name'], p, e, m, m, i))
-					cb.utils.printf(fp, '\t\t%s_%s.%s->%s_best = __%s%d;' % (ctx['name'], p, e, m, m, i))
+					cb.utils.printf(fp, '\t\tself->%s->%s = __%s_%s%d;' % (e, m, e, m, i))
+					cb.utils.printf(fp, '\t\tself->%s->%s_check = __%s_%s%d_check;' % (e, m, e, m, i))
+					cb.utils.printf(fp, '\t\tself->%s->%s_best = __%s_%s%d_best;' % (e, m, e, m, i))
 					cb.utils.printf(fp, '\t}')
 
 			#####################################################
@@ -752,9 +825,9 @@ def emit_impProfileCtor(ctx, fp, p):
 						cb.utils.printf(fp, '\telse if(%s)' % condition)
 
 					cb.utils.printf(fp, '\t{')
-					cb.utils.printf(fp, '\t\t%s_%s.%s->%s = __%s_%s%d;' % (ctx['name'], p, e, m, e, m, i))
-					cb.utils.printf(fp, '\t\t%s_%s.%s->%s_check = __%s_%s%d_check;' % (ctx['name'], p, e, m, e, m, i))
-					cb.utils.printf(fp, '\t\t%s_%s.%s->%s_best = __%s_%s%d_best;' % (ctx['name'], p, e, m, e, m, i))
+					cb.utils.printf(fp, '\t\tself->%s->%s = __%s_%s%d;' % (e, m, e, m, i))
+					cb.utils.printf(fp, '\t\tself->%s->%s_check = __%s_%s%d_check;' % (e, m, e, m, i))
+					cb.utils.printf(fp, '\t\tself->%s->%s_best = __%s_%s%d_best;' % (e, m, e, m, i))
 					cb.utils.printf(fp, '\t}')
 
 					cnt += 1
@@ -792,7 +865,7 @@ def emit_impProfileDtor(ctx, fp, p):
 
 	for e in IMP_EXTENSIONS:
 		cb.utils.printf(fp, '')
-		cb.utils.printf(fp, '\t%s_%s.%s = realloc(%s_%s.%s, 0);' % (ctx['name'], p, e, ctx['name'], p, e))
+		cb.utils.printf(fp, '\tself->%s = realloc(self->%s, 0);' % (e, e))
 
 	cb.utils.printf(fp, '')
 	cb.utils.printf(fp, '\treturn result;')
