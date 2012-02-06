@@ -163,11 +163,27 @@ def implementation(ctx):
 	#####################################################################
 
 	if len(ctx['imp_extras']) > 1:
-			cb.utils.error(ctx, 'Only one extra code allowed !')
+		cb.utils.error(ctx, 'Only one extra code allowed !')
+	elif len(ctx['imp_extras']) == 1:
+		for c in ctx['imp_extras'][0]:
+			if c['condition'] != '':
+				cb.utils.error(ctx, 'Only unconditional extra allowed !')
+			if len(c['txts']) > 1:
+				cb.utils.error(ctx, 'Only one CDATA allowed in extra !')
+
 	if len(ctx['imp_ctors']) > 1:
-			cb.utils.error(ctx, 'Only one ctors code allowed !')
+		cb.utils.error(ctx, 'Only one ctors code allowed !')
+	elif len(ctx['imp_ctors']) == 1:
+		for c in ctx['imp_ctors'][0]:
+			if len(c['txts']) > 1:
+				cb.utils.error(ctx, 'Only one CDATA allowed in ctor !')
+
 	if len(ctx['imp_dtors']) > 1:
-			cb.utils.error(ctx, 'Only one dtors code allowed !')
+		cb.utils.error(ctx, 'Only one dtors code allowed !')
+	elif len(ctx['imp_dtors']) == 1:
+		for c in ctx['imp_dtors'][0]:
+			if len(c['txts']) > 1:
+				cb.utils.error(ctx, 'Only one CDATA allowed in dtor !')
 
 	#####################################################################
 	# PROFILES							    #
@@ -201,18 +217,18 @@ def implementation(ctx):
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
 
 			if len(IMP_EXTENSIONS[e]['extras']) > 1:
-					cb.utils.error(ctx, 'Only one extra code allowed !')
+				cb.utils.error(ctx, 'Only one extra code allowed !')
 			if len(IMP_EXTENSIONS[e]['ctors']) > 1:
-					cb.utils.error(ctx, 'Only one ctors code allowed !')
+				cb.utils.error(ctx, 'Only one ctors code allowed !')
 			if len(IMP_EXTENSIONS[e]['dtors']) > 1:
-					cb.utils.error(ctx, 'Only one dtors code allowed !')
+				cb.utils.error(ctx, 'Only one dtors code allowed !')
 
 		if len(IMP_PROFILES[p]['extras']) > 1:
-				cb.utils.error(ctx, 'Only one extra code allowed !')
+			cb.utils.error(ctx, 'Only one extra code allowed !')
 		if len(IMP_PROFILES[p]['ctors']) > 1:
-				cb.utils.error(ctx, 'Only one ctors code allowed !')
+			cb.utils.error(ctx, 'Only one ctors code allowed !')
 		if len(IMP_PROFILES[p]['dtors']) > 1:
-				cb.utils.error(ctx, 'Only one dtors code allowed !')
+			cb.utils.error(ctx, 'Only one dtors code allowed !')
 
 #############################################################################
 
