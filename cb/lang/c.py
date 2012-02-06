@@ -111,7 +111,6 @@ def emit_intPubProlog(ctx, fp):
 	cb.utils.printf(fp, '#include <stddef.h>')
 	cb.utils.printf(fp, '#include <stdint.h>')
 	cb.utils.printf(fp, '#include <stdbool.h>')
-	cb.utils.printf(fp, '#include <stdlib.h>')
 	cb.utils.printf(fp, '')
 
 #############################################################################
@@ -180,6 +179,8 @@ def emit_impProfileProlog(ctx, fp, p):
 
 	emit_separator(ctx, fp)
 
+	cb.utils.printf(fp, '#include <stdlib.h>')
+	cb.utils.printf(fp, '')
 	cb.utils.printf(fp, '#include "%s_internal.h"' % ctx['name'])
 	cb.utils.printf(fp, '')
 
