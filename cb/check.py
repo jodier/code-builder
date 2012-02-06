@@ -33,68 +33,68 @@ def interface(ctx):
 	# TYPES								    #
 	#####################################################################
 
-	INT_TYPES_TYPES   = ctx['int_types']['types'  ]
-	INT_TYPES_ENUMS   = ctx['int_types']['enums'  ]
-	INT_TYPES_STRUCTS = ctx['int_types']['structs']
+	INT_TYPE = ctx['int_types']
 
 	#####################################################################
 
 	L = []
 
-	for name in INT_TYPES_TYPES:
-		L.append(name)
-	for name in INT_TYPES_ENUMS:
-		L.append(name)
-	for name in INT_TYPES_STRUCTS:
-		L.append(name)
+	for t in INT_TYPE:
+		L.append(t['name'])
 
 	L.extend(ctx['lang'].PRIMITIVES)
 
 	#####################################################################
 
-	for t in INT_TYPES_TYPES:
+	for t in INT_TYPE:
 
-		T = INT_TYPES_TYPES[t]['from']
+		#############################################################
+		# BASE TYPE						    #
+		#############################################################
 
-		if T in L:
-			if T == t:
-				cb.utils.error(ctx, 'Recursif type \'%s\' !' % T)
-		else:
-			cb.utils.error(ctx, 'Undefined type \'%s\' !' % T)
+		if t['class'] == 'base':
 
-	#####################################################################
+			T = t['from']
 
-	for t in INT_TYPES_ENUMS:
+			if T in L:
+				if T == t['name']:
+					cb.utils.error(ctx, 'Recursif type \'%s\' !' % T)
+			else:
+				cb.utils.error(ctx, 'Undefined type \'%s\' !' % T)
 
-		for u in INT_TYPES_ENUMS[t]:
+		#############################################################
+		# ENUM TYPE						    #
+		#############################################################
 
-			v = INT_TYPES_ENUMS[t][u]
+		if t['class'] == 'enum':
 
-			for i in xrange(0 + 0, len(v)):
-				for j in xrange(i + 1, len(v)):
+			values = t['values']
 
-					if v[i]['name'] == v[j]['name']:
-						cb.utils.error(ctx, 'Duplicated values \'%s\' and \'%s\' !' % (v[i]['name'], v[j]['name']))
+			for i in xrange(0 + 0, len(values)):
+				for j in xrange(i + 1, len(values)):
 
-	#####################################################################
+					if values[i]['name'] == values[j]['name']:
+						cb.utils.error(ctx, 'Duplicated fields \'%s\' and \'%s\' !' % (values[i]['name'], values[j]['name']))
 
-	for t in INT_TYPES_STRUCTS:
+		#############################################################
+		# STRUCT TYPE						    #
+		#############################################################
 
-		for u in INT_TYPES_STRUCTS[t]:
+		if t['class'] == 'struct':
 
-			v = INT_TYPES_STRUCTS[t][u]
+			fields = t['fields']
 
-			for i in xrange(0 + 0, len(v)):
-				for j in xrange(i + 1, len(v)):
+			for i in xrange(0 + 0, len(fields)):
+				for j in xrange(i + 1, len(fields)):
 
-					if v[i]['name'] == v[j]['name']:
-						cb.utils.error(ctx, 'Duplicated fields \'%s\' and \'%s\' !' % (v[i]['name'], v[j]['name']))
+					if fields[i]['name'] == fields[j]['name']:
+						cb.utils.error(ctx, 'Duplicated fields \'%s\' and \'%s\' !' % (fields[i]['name'], fields[j]['name']))
 
 			##
 
-			for w in v:
+			for f in fields:
 
-				T = w['type']
+				T = f['type']
 
 				if T in L:
 					if T == t:
@@ -154,13 +154,12 @@ def implementation(ctx):
 	# PROFILES							    #
 	#####################################################################
 
-	INT_PROFILES = ctx['int_profiles']
 	IMP_PROFILES = ctx['imp_profiles']
 
-	#####################################################################
-
 	for p in IMP_PROFILES:
-		if not INT_PROFILES.has_key(p):
+
+		PRO = cb.utils.getProfile(ctx, p)
+		if PRO is None:
 			cb.utils.error(ctx, 'Undefined profile \'%s\' !' % p)
 
 		##

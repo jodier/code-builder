@@ -113,10 +113,6 @@ def parseInterface(ctx, interfaces):
 
 		if node.nodeName == 'types':
 
-			TYPE = {}
-			ENUM = {}
-			STRUCT = {}
-
 			for typeNode in node.childNodes:
 
 				#############################################
@@ -126,10 +122,12 @@ def parseInterface(ctx, interfaces):
 				if typeNode.nodeName == 'type':
 
 					dic = {
-						'from': typeNode.getAttribute('from')
+						'class': 'base',
+						'name': typeNode.getAttribute('name'),
+						'from': typeNode.getAttribute('from'),
 					}
 
-					TYPE[typeNode.getAttribute('name')] = dic
+					ctx['int_types'].append(dic)
 
 				#############################################
 				# ENUM					    #
@@ -155,11 +153,12 @@ def parseInterface(ctx, interfaces):
 							VALUES.append(dic)
 
 					dic = {
+						'class': 'enum',
+						'name': typeNode.getAttribute('name'),
 						'values': VALUES
 					}
 
-					ENUM[typeNode.getAttribute('name')] = dic
-
+					ctx['int_types'].append(dic)
 
 				#############################################
 				# STRUCT				    #
@@ -185,16 +184,12 @@ def parseInterface(ctx, interfaces):
 							FIELDS.append(dic)
 
 					dic = {
+						'class': 'struct',
+						'name': typeNode.getAttribute('name'),
 						'fields': FIELDS
 					}
 
-					STRUCT[typeNode.getAttribute('name')] = dic
-
-			#####################################################
-
-			ctx['int_types']['types'] = TYPE
-			ctx['int_types']['enums'] = ENUM
-			ctx['int_types']['structs'] = STRUCT
+					ctx['int_types'].append(dic)
 
 		#############################################################
 		# PROFILES						    #
@@ -209,9 +204,10 @@ def parseInterface(ctx, interfaces):
 				if profileNode.nodeName == 'profile':
 
 					dic = {
+						'name': profileNode.getAttribute('name')
 					}
 
-					ctx['int_profiles'][profileNode.getAttribute('name')] = dic
+					ctx['int_profiles'].append(dic)
 
 		#############################################################
 		# EXTENSIONS						    #
@@ -300,10 +296,11 @@ def parseInterface(ctx, interfaces):
 							KEYS[keyNode.getAttribute('name')] = dic
 
 					dic = {
-						'keys': KEYS
+						'name': constraintNode.getAttribute('name'),
+						'keys': KEYS,
 					}
 
-					ctx['int_constraints'][constraintNode.getAttribute('name')] = dic
+					ctx['int_constraints'].append(dic)
 
 	#####################################################################
 

@@ -72,6 +72,18 @@ def displayTree(T, level = 0):
 
 #############################################################################
 
+def getProfile(ctx, name):
+	INT_PROFILES = ctx['int_profiles']
+
+	for p in INT_PROFILES:
+
+		if p['name'] == name:
+			return p
+
+	return None
+
+#############################################################################
+
 def getExtension(ctx, name):
 	INT_EXTENSIONS = ctx['int_extensions']
 

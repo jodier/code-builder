@@ -49,10 +49,10 @@ CTX = {
 	'minor': 0,
 
 	'int_asset': {},
-	'int_types': {},
-	'int_profiles': {},
-	'int_constraints': {},
+	'int_types': [],
+	'int_profiles': [],
 	'int_extensions': [],
+	'int_constraints': [],
 
 	'imp_extras': [],
 	'imp_ctors': [],
@@ -179,8 +179,8 @@ if __name__ == '__main__':
 	codebuilder_load(fileName)
 
 	codebuilder_check()
-	cb.utils.status(CTX)
-	codebuilder_emit()
+#	cb.utils.status(CTX)
+#	codebuilder_emit()
 
 #############################################################################
 
