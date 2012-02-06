@@ -39,10 +39,16 @@ def interface(ctx):
 
 	L = []
 
-	for t in INT_TYPE:
-		L.append(t['name'])
-
 	L.extend(ctx['lang'].PRIMITIVES)
+
+	for t in INT_TYPE:
+
+		T = t['name']
+
+		if T in L:
+			cb.utils.error(ctx, 'Re-defined type \'%s\' !' % T)
+		else:
+			L.append(T)
 
 	#####################################################################
 

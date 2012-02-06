@@ -179,7 +179,7 @@ if __name__ == '__main__':
 	codebuilder_load(fileName)
 
 	codebuilder_check()
-#	cb.utils.status(CTX)
+	cb.utils.status(CTX)
 #	codebuilder_emit()
 
 #############################################################################

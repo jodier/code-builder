@@ -44,7 +44,7 @@ def interface(ctx):
 
 		LANG.emit_COMMENT(ctx, fp, 'TYPES')
 
-		for t in ctx['int_types']['types'].iteritems():
+		for t in ctx['int_types']:
 			LANG.emit_impPubTypes(ctx, fp, t)
 
 		LANG.emit_separator(ctx, fp)
