@@ -76,31 +76,31 @@
 
     <extra>
       <code condition="cond1">
-        <![CDATA[Hello world 1]]>
+        <![CDATA[/* Hello world 1 */]]>
       </code>
 
       <code condition="cond2">
-        <![CDATA[Hello world 2]]>
+        <![CDATA[/* Hello world 2 */]]>
       </code>
     </extra>
 
     <ctor>
       <code condition="cond3">
-        <![CDATA[Hello world 3]]>
+        <![CDATA[printf("Hello world 3");]]>
       </code>
 
       <code condition="cond4">
-        <![CDATA[Hello world 4]]>
+        <![CDATA[printf("Hello world 4");]]>
       </code>
     </ctor>
 
     <dtor>
       <code condition="cond3">
-        <![CDATA[Hello world 5]]>
+        <![CDATA[printf("Hello world 5");]]>
       </code>
 
       <code condition="cond4">
-        <![CDATA[Hello world 6]]>
+        <![CDATA[printf("Hello world 6");]]>
       </code>
     </dtor>
 
@@ -111,10 +111,10 @@
 
         <extra>
           <code condition="cond5">
-            <![CDATA[Hello world 7]]>
+            <![CDATA[/* Hello world 7 */]]>
           </code>
           <code condition="cond6">
-            <![CDATA[Hello world 8]]>
+            <![CDATA[/* Hello world 8 */]]>
           </code>
         </extra>
 
@@ -122,13 +122,13 @@
 
         <ctor>
           <code>
-            <![CDATA[Hello world 9]]>
+            <![CDATA[printf("Hello world 9");]]>
           </code>
           <code condition="SIMPLE_CONSTRAINT2 == SIMPLE_KEY3">
-            <![CDATA[Hello world A]]>
+            <![CDATA[printf("Hello world A");]]>
           </code>
           <code condition="cond8">
-            <![CDATA[Hello world B]]>
+            <![CDATA[printf("Hello world B");]]>
           </code>
         </ctor>
 
@@ -136,10 +136,10 @@
 
         <dtor>
           <code condition="cond7">
-            <![CDATA[Hello world C]]>
+            <![CDATA[printf("Hello world C");]]>
           </code>
           <code condition="cond8">
-            <![CDATA[Hello world D]]>
+            <![CDATA[printf("Hello world D");]]>
           </code>
         </dtor>
 
@@ -153,28 +153,28 @@
 
             <ctor>
               <code>
-                <![CDATA[Hello world E]]>
+                <![CDATA[printf("Hello world E");]]>
               </code>
             </ctor>
 
             <dtor>
               <code>
-                <![CDATA[Hello world F]]>
+                <![CDATA[printf("Hello world F");]]>
               </code>
             </dtor>
 
             <method name="new">
               <code condition="cond1">
-                <![CDATA[Hello world G]]>
+                <![CDATA[printf("Hello world G");]]>
               </code>
               <code condition="cond2">
-                <![CDATA[Hello world H]]>
+                <![CDATA[printf("Hello world H");]]>
               </code>
             </method>
 
             <method name="delete">
               <code condition="cond1">
-                <![CDATA[Hello world I]]>
+                <![CDATA[printf("Hello world I");]]>
               </code>
             </method>
           </extension>

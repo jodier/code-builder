@@ -51,22 +51,15 @@ def interface(ctx):
 		# DEFINITIONS						    #
 		#############################################################
 
-		LANG.emit_COMMENT(ctx, fp, 'IMPLEMENTATION')
+		LANG.emit_COMMENT(ctx, fp, 'INTERFACE')
 		LANG.emit_impPubDefinitions(ctx, fp)
 
 		#############################################################
-		# EXTENSION STRUCTS					    #
+		# METHODS						    #
 		#############################################################
 
-		LANG.emit_separator(ctx, fp)
-		LANG.emit_impPubExtensionStructs(ctx, fp)
-
-		#############################################################
-		# METHOD PROTOTYPES					    #
-		#############################################################
-
-		LANG.emit_separator(ctx, fp)
-		LANG.emit_impPubMethodPrototypes(ctx, fp)
+		LANG.emit_COMMENT(ctx, fp, 'METHODS')
+		LANG.emit_impPubMethods(ctx, fp)
 
 		#############################################################
 		# EPILOG						    #
@@ -101,11 +94,11 @@ def interface(ctx):
 		LANG.emit_impPrivConstraints(ctx, fp)
 
 		#############################################################
-		# METHOD PROTOTYPES					    #
+		# METHODS						    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_impPrivMethodPrototypes(ctx, fp)
+		LANG.emit_impPrivMethods(ctx, fp)
 
 		#############################################################
 		# EPILOG						    #
@@ -159,11 +152,11 @@ def implementation(ctx):
 		LANG.emit_impCtor(ctx, fp)
 
 		#############################################################
-		# HIGH LEVEL METHODS					    #
+		# METHODS						    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_impHighLevelMethods(ctx, fp)
+		LANG.emit_impMethods(ctx, fp)
 
 		#############################################################
 		# EPILOG						    #
