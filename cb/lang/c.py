@@ -426,59 +426,6 @@ def emit_impPrivMethodPrototypes(ctx, fp):
 # IMPLEMENTATION							    #
 #############################################################################
 
-def emit_Xtor(ctx, fp, Xtors):
-	for Xtor in Xtors:
-		print(Xtor)
-
-#############################################################################
-
-def emit_Xtor(ctx, fp, Xtors, cnt):
-
-	#####################################################################
-	# UNCONDITIONAL XTORS						    #
-	#####################################################################
-
-	for Xtor in Xtors:
-
-		for code in Xtor:
-			condition = code['condition'].strip()
-
-			if len(condition) == 0:
-
-				cb.utils.printf(fp, '\t{')
-
-				for text in code['txts']:
-					cb.utils.printf(fp, text)
-
-				cb.utils.printf(fp, '\t}')
-
-	#####################################################################
-	# CONDITIONAL XTORS						    #
-	#####################################################################
-
-	for Xtor in Xtors:
-
-		for code in Xtor:
-			condition = code['condition'].strip()
-
-			if len(condition) >= 1:
-
-				if cnt == 0:
-					cb.utils.printf(fp, '\t/**/ if(%s)' % condition)
-				else:
-					cb.utils.printf(fp, '\telse if(%s)' % condition)
-
-				cb.utils.printf(fp, '\t{')
-
-				for text in code['txts']:
-					cb.utils.printf(fp, text)
-
-				cb.utils.printf(fp, '\t}')
-
-				cnt += 1
-
-#############################################################################
-
 def emit_extras(ctx, fp, extras, cnt):
 
 	#####################################################################
