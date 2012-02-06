@@ -44,7 +44,7 @@ def interface(ctx):
 	for t in INT_TYPE:
 
 		if t['name'] in L:
-			cb.utils.error(ctx, 'Re-defined type \'%s\' !' % t['name'])
+			cb.utils.error(ctx, 'Duplicated type \'%s\' !' % t['name'])
 		else:
 			L.append(t['name'])
 

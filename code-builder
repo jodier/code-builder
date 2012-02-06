@@ -100,6 +100,8 @@ def codebuilder_check(ctx):
 	cb.check.interface(ctx)
 	cb.check.implementation(ctx)
 
+	cb.utils.status(CTX)
+
 #############################################################################
 
 def codebuilder_emit(ctx):
@@ -179,8 +181,6 @@ if __name__ == '__main__':
 	codebuilder_load(CTX, fileName)
 
 	codebuilder_check(CTX)
-
-	cb.utils.status(CTX)
 
 	if CTX['error'] == 0:
 		codebuilder_emit(CTX)
