@@ -1064,7 +1064,7 @@ def emit_impExtensionCtor(ctx, fp, p, e):
 
 	for m in IMP_METHODS:
 		cb.utils.printf(fp, '')
-		cb.utils.printf(fp, '\t/* %s::%s */' % (e, m))
+		cb.utils.printf(fp, '\t/* %s */' % m)
 
 		#############################################################
 		# UNCONDITIONAL ASSIGNATION				    #
