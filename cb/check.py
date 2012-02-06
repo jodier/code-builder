@@ -103,6 +103,8 @@ def interface(ctx):
 				T = f['type']
 
 				if T in L:
+					print(T)
+					print(t)
 					if T == t:
 						cb.utils.debug(ctx, 'Undefined type \'%s\' !' % T)
 				else:
@@ -157,6 +159,17 @@ def interface(ctx):
 
 def implementation(ctx):
 	#####################################################################
+	# IMPLEMENTATION						    #
+	#####################################################################
+
+	if len(ctx['imp_extras']) > 1:
+			cb.utils.error(ctx, 'Only one extra code allowed !')
+	if len(ctx['imp_ctors']) > 1:
+			cb.utils.error(ctx, 'Only one ctors code allowed !')
+	if len(ctx['imp_dtors']) > 1:
+			cb.utils.error(ctx, 'Only one dtors code allowed !')
+
+	#####################################################################
 	# PROFILES							    #
 	#####################################################################
 
@@ -186,6 +199,20 @@ def implementation(ctx):
 					MET = cb.utils.int_getMethod(EXT, m)
 					if MET is None:
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
+
+			if len(IMP_EXTENSIONS[e]['extras']) > 1:
+					cb.utils.error(ctx, 'Only one extra code allowed !')
+			if len(IMP_EXTENSIONS[e]['ctors']) > 1:
+					cb.utils.error(ctx, 'Only one ctors code allowed !')
+			if len(IMP_EXTENSIONS[e]['dtors']) > 1:
+					cb.utils.error(ctx, 'Only one dtors code allowed !')
+
+		if len(IMP_PROFILES[p]['extras']) > 1:
+				cb.utils.error(ctx, 'Only one extra code allowed !')
+		if len(IMP_PROFILES[p]['ctors']) > 1:
+				cb.utils.error(ctx, 'Only one ctors code allowed !')
+		if len(IMP_PROFILES[p]['dtors']) > 1:
+				cb.utils.error(ctx, 'Only one dtors code allowed !')
 
 #############################################################################
 
