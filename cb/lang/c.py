@@ -538,7 +538,7 @@ def emit_impCtor(ctx, fp):
 			if len(code['condition']) == 0:
 				cb.utils.printf(fp, '\t{')
 				for txt in code['txts']:
-					cb.utils.printf(fp, '\t\tresult = result && __%s_ctor%d(self);' % (ctx['name'], i))
+					cb.utils.printf(fp, '\t\tresult = __%s_ctor%d(self);' % (ctx['name'], i))
 					i += 1
 				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
@@ -547,21 +547,19 @@ def emit_impCtor(ctx, fp):
 				cb.utils.printf(fp, '\tif(%s)' % code['condition'])
 				cb.utils.printf(fp, '\t{')
 				for txt in code['txts']:
-					cb.utils.printf(fp, '\t\tresult = result && __%s_ctor%d(self);' % (ctx['name'], i))
+					cb.utils.printf(fp, '\t\tresult = __%s_ctor%d(self);' % (ctx['name'], i))
 					i += 1
 				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
 
+	cb.utils.printf(fp, '')
+
 	if i > 0:
-		cb.utils.printf(fp, '')
-		cb.utils.printf(fp, '\treturn false;')
+		cb.utils.printf(fp, '\tresult = false;')
 		cb.utils.printf(fp, '')
 		cb.utils.printf(fp, '__next:')
-		cb.utils.printf(fp, '\treturn result;')
-	else:
-		cb.utils.printf(fp, '')
-		cb.utils.printf(fp, '\treturn result;')
 
+	cb.utils.printf(fp, '\treturn result;')
 	cb.utils.printf(fp, '}')
 	cb.utils.printf(fp, '')
 
@@ -604,7 +602,7 @@ def emit_impDtor(ctx, fp):
 			if len(code['condition']) == 0:
 				cb.utils.printf(fp, '\t{')
 				for txt in code['txts']:
-					cb.utils.printf(fp, '\t\tresult = result && __%s_dtor%d(self);' % (ctx['name'], i))
+					cb.utils.printf(fp, '\t\tresult = __%s_dtor%d(self);' % (ctx['name'], i))
 					i += 1
 				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
@@ -613,15 +611,18 @@ def emit_impDtor(ctx, fp):
 				cb.utils.printf(fp, '\tif(%s)' % code['condition'])
 				cb.utils.printf(fp, '\t{')
 				for txt in code['txts']:
-					cb.utils.printf(fp, '\t\tresult = result && __%s_dtor%d(self);' % (ctx['name'], i))
+					cb.utils.printf(fp, '\t\tresult = __%s_dtor%d(self);' % (ctx['name'], i))
 					i += 1
 				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
 
 	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, '\treturn false;')
-	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, '__next:')
+
+	if i > 0:
+		cb.utils.printf(fp, '\tresult = false;')
+		cb.utils.printf(fp, '')
+		cb.utils.printf(fp, '__next:')
+
 	cb.utils.printf(fp, '\treturn result;')
 	cb.utils.printf(fp, '}')
 	cb.utils.printf(fp, '')
@@ -820,6 +821,14 @@ def emit_impProfileCtor(ctx, fp, p):
 
 	cb.utils.printf(fp, 'bool __%s_%s_ctor(%s_t *self)' % (ctx['name'], p, ctx['name']))
 	cb.utils.printf(fp, '{')
+	cb.utils.printf(fp, '\tif(__%s_ctor(self) == false)' % ctx['name'])
+	cb.utils.printf(fp, '\t{')
+	cb.utils.printf(fp, '\t\treturn false;')
+	cb.utils.printf(fp, '\t}')
+	cb.utils.printf(fp, '')
+
+	##
+
 	cb.utils.printf(fp, '\tbool result = true;')
 
 	i = 0
@@ -835,7 +844,7 @@ def emit_impProfileCtor(ctx, fp, p):
 				for txt in code['txts']:
 					cb.utils.printf(fp, '\t\tresult = result && __%s_%s_ctor%d(self);' % (ctx['name'], p, i))
 					i += 1
-				cb.utils.printf(fp, '\t\tgoto __next;')
+				cb.utils.printf(fp, '\t\tgoto __next1;')
 				cb.utils.printf(fp, '\t}')
 
 			else:
@@ -844,41 +853,46 @@ def emit_impProfileCtor(ctx, fp, p):
 				for txt in code['txts']:
 					cb.utils.printf(fp, '\t\tresult = result && __%s_%s_ctor%d(self);' % (ctx['name'], p, i))
 					i += 1
-				cb.utils.printf(fp, '\t\tgoto __next;')
+				cb.utils.printf(fp, '\t\tgoto __next1;')
 				cb.utils.printf(fp, '\t}')
 
+	cb.utils.printf(fp, '')
+
 	if i > 0:
+		cb.utils.printf(fp, '\tresult = false;')
 		cb.utils.printf(fp, '')
-		cb.utils.printf(fp, '\treturn false;')
-		cb.utils.printf(fp, '')
-		cb.utils.printf(fp, '__next:')
-	else:
-		cb.utils.printf(fp, '')
+		cb.utils.printf(fp, '__next1:')
 
 	##
 
+	i = 0
+
 	if len(IMP_PROFILES['extensions']) > 0:
 
-		cb.utils.printf(fp, '\tif(result == false)')
+		cb.utils.printf(fp, '\tif(result != false)')
 		cb.utils.printf(fp, '\t{')
-		cb.utils.printf(fp, '\t\treturn false;')
+
+		for e in IMP_PROFILES['extensions']:
+			cb.utils.printf(fp, '\t\tif((result = __%s_%s_%s_ctor(self)) == false)' % (ctx['name'], p, e))
+			cb.utils.printf(fp, '\t\t{')
+			cb.utils.printf(fp, '\t\t\tgoto __next2;')
+			cb.utils.printf(fp, '\t\t}')
+
+			i += 1
+
 		cb.utils.printf(fp, '\t}')
 		cb.utils.printf(fp, '')
 
-		ee = {}
+	if i > 0:
+		cb.utils.printf(fp, '__next2:')
 
-		for e in IMP_PROFILES['extensions']:
-			cb.utils.printf(fp, '\tif(__%s_%s_%s_ctor(self) == false)' % (ctx['name'], p, e))
-			cb.utils.printf(fp, '\t{')
+	##
 
-			for eee in ee:
-				cb.utils.printf(fp, '\t\t__%s_%s_%s_dtor(self);' % (ctx['name'], p, eee))
-
-			cb.utils.printf(fp, '\t\treturn false;')
-			cb.utils.printf(fp, '\t}')
-
-			ee[e] = e
-			cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\tif(result == false)')
+	cb.utils.printf(fp, '\t{')
+	cb.utils.printf(fp, '\t\t__%s_%s_ctor(self)' % (ctx['name'], p))
+	cb.utils.printf(fp, '\t}')
+	cb.utils.printf(fp, '')
 
 	##
 
@@ -1040,28 +1054,29 @@ def emit_impExtensionCtor(ctx, fp, p, e):
 			if len(code['condition']) == 0:
 				cb.utils.printf(fp, '\t{')
 				for txt in code['txts']:
-					cb.utils.printf(fp, '\t\tresult = result && __%s_%s_%s_ctor%d(self);' % (ctx['name'], p, e, i))
+					cb.utils.printf(fp, '\t\tresult = __%s_%s_%s_ctor%d(self);' % (ctx['name'], p, e, i))
 					i += 1
-				cb.utils.printf(fp, '\t\treturn result;')
+				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
 
 			else:
 				cb.utils.printf(fp, '\tif(%s)' % code['condition'])
 				cb.utils.printf(fp, '\t{')
 				for txt in code['txts']:
-					cb.utils.printf(fp, '\t\tresult = result && __%s_%s_%s_ctor%d(self);' % (ctx['name'], p, e, i))
+					cb.utils.printf(fp, '\t\tresult = __%s_%s_%s_ctor%d(self);' % (ctx['name'], p, e, i))
 					i += 1
-				cb.utils.printf(fp, '\t\treturn result;')
+				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
 
 
 	cb.utils.printf(fp, '')
 
-	if i == 0:
-		cb.utils.printf(fp, '\treturn result;')
-	else:
-		cb.utils.printf(fp, '\treturn false;')
+	if i > 0:
+		cb.utils.printf(fp, '\tresult = false;')
+		cb.utils.printf(fp, '')
+		cb.utils.printf(fp, '__next:')
 
+	cb.utils.printf(fp, '\treturn result;')
 	cb.utils.printf(fp, '}')
 	cb.utils.printf(fp, '')
 
