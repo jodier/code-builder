@@ -96,11 +96,11 @@
 
     <dtor>
       <code condition="cond3">
-        <![CDATA[Hello world 3]]>
+        <![CDATA[Hello world 5]]>
       </code>
 
       <code condition="cond4">
-        <![CDATA[Hello world 4]]>
+        <![CDATA[Hello world 6]]>
       </code>
     </dtor>
 
@@ -111,10 +111,10 @@
 
         <extra>
           <code condition="cond5">
-            <![CDATA[Hello world 5]]>
+            <![CDATA[Hello world 7]]>
           </code>
           <code condition="cond6">
-            <![CDATA[Hello world 6]]>
+            <![CDATA[Hello world 8]]>
           </code>
         </extra>
 
@@ -122,13 +122,13 @@
 
         <ctor>
           <code>
-            <![CDATA[Hello world 7]]>
+            <![CDATA[Hello world 9]]>
           </code>
           <code condition="SIMPLE_CONSTRAINT2 == SIMPLE_KEY3">
-            <![CDATA[Hello world 7]]>
+            <![CDATA[Hello world A]]>
           </code>
           <code condition="cond8">
-            <![CDATA[Hello world 8]]>
+            <![CDATA[Hello world B]]>
           </code>
         </ctor>
 
@@ -136,10 +136,10 @@
 
         <dtor>
           <code condition="cond7">
-            <![CDATA[Hello world 7]]>
+            <![CDATA[Hello world C]]>
           </code>
           <code condition="cond8">
-            <![CDATA[Hello world 8]]>
+            <![CDATA[Hello world D]]>
           </code>
         </dtor>
 
@@ -153,34 +153,28 @@
 
             <ctor>
               <code>
-                <![CDATA[Hello world 9]]>
+                <![CDATA[Hello world E]]>
               </code>
             </ctor>
 
             <dtor>
               <code>
-                <![CDATA[Hello world 9]]>
+                <![CDATA[Hello world F]]>
               </code>
             </dtor>
 
             <method name="new">
               <code condition="cond1">
-                <![CDATA[Hello world A]]>
-                <![CDATA[Hello world B]]>
-                <![CDATA[Hello world C]]>
+                <![CDATA[Hello world G]]>
               </code>
               <code condition="cond2">
-                <![CDATA[Hello world A]]>
-                <![CDATA[Hello world B]]>
-                <![CDATA[Hello world C]]>
+                <![CDATA[Hello world H]]>
               </code>
             </method>
 
             <method name="delete">
               <code condition="cond1">
-                <![CDATA[Hello world D]]>
-                <![CDATA[Hello world E]]>
-                <![CDATA[Hello world F]]>
+                <![CDATA[Hello world I]]>
               </code>
             </method>
           </extension>

@@ -43,30 +43,25 @@ def interface(ctx):
 
 	for t in INT_TYPE:
 
-		T = t['name']
-
-		if T in L:
-			cb.utils.error(ctx, 'Re-defined type \'%s\' !' % T)
+		if t['name'] in L:
+			cb.utils.error(ctx, 'Re-defined type \'%s\' !' % t['name'])
 		else:
-			L.append(T)
+			L.append(t['name'])
 
 	#####################################################################
 
 	for t in INT_TYPE:
-
 		#############################################################
 		# BASE TYPE						    #
 		#############################################################
 
 		if t['class'] == 'base':
 
-			name = t['from']
-
-			if name in L:
-				if name == t['name']:
-					cb.utils.error(ctx, 'Recursif type \'%s\' !' % name)
+			if t['from'] in L:
+				if t['from'] == t['name']:
+					cb.utils.error(ctx, 'Recursif type \'%s\' !' % t['from'])
 			else:
-				cb.utils.error(ctx, 'Undefined type \'%s\' !' % name)
+				cb.utils.error(ctx, 'Undefined type \'%s\' !' % t['from'])
 
 		#############################################################
 		# ENUM TYPE						    #
@@ -80,7 +75,7 @@ def interface(ctx):
 				for j in xrange(i + 1, len(values)):
 
 					if values[i]['name'] == values[j]['name']:
-						cb.utils.error(ctx, 'Duplicated values \'%s\' !' % values[i]['name'])
+						cb.utils.error(ctx, 'Duplicated values \'%s\' for type \'%s\' !' % (values[i]['name'], t['name']))
 
 		#############################################################
 		# STRUCT TYPE						    #
@@ -94,19 +89,17 @@ def interface(ctx):
 				for j in xrange(i + 1, len(fields)):
 
 					if fields[i]['name'] == fields[j]['name']:
-						cb.utils.error(ctx, 'Duplicated fields \'%s\' !' % fields[i]['name'])
+						cb.utils.error(ctx, 'Duplicated fields \'%s\' for type \'%s\' !' % (fields[i]['name'], t['name']))
 
 			##
 
 			for f in fields:
 
-				name = f['type']
-
-				if name in L:
-					if name == t['name']:
-						cb.utils.debug(ctx, 'Recursif type \'%s\' !' % name)
+				if f['type'] in L:
+					if f['type'] == t['name']:
+						cb.utils.debug(ctx, 'Recursif type \'%s\' !' % f['type'])
 				else:
-					cb.utils.error(ctx, 'Undefined type \'%s\' !' % name)
+					cb.utils.error(ctx, 'Undefined type \'%s\' !' % f['type'])
 
 	#####################################################################
 	# EXTENSIONS							    #
@@ -133,7 +126,7 @@ def interface(ctx):
 				for j in xrange(i + 1, len(p)):
 
 					if p[i]['name'] == p[j]['name']:
-						cb.utils.error(ctx, 'Duplicated param \'%s\' and \'%s\' !' % (p[i]['name'], p[j]['name']))
+						cb.utils.error(ctx, 'Duplicated param \'%s\' !' % p[i]['name'])
 
 		m = e['methods']
 
@@ -141,7 +134,7 @@ def interface(ctx):
 			for j in xrange(i + 1, len(m)):
 
 				if m[i]['name'] == m[j]['name']:
-					cb.utils.error(ctx, 'Duplicated method \'%s\' and \'%s\' !' % (m[i]['name'], m[j]['name']))
+					cb.utils.error(ctx, 'Duplicated method \'%s\' !' % m[i]['name'])
 
 	e = INT_EXTENSIONS
 
@@ -149,55 +142,74 @@ def interface(ctx):
 		for j in xrange(i + 1, len(e)):
 
 			if e[i]['name'] == e[j]['name']:
-				cb.utils.error(ctx, 'Duplicated extension \'%s\' and \'%s\' !' % (e[i]['name'], e[j]['name']))
+				cb.utils.error(ctx, 'Duplicated extension \'%s\' !' % e[i]['name'])
 
 #############################################################################
 # IMPLEMENTATION							    #
 #############################################################################
 
-def checkExtraXtor(ctx, extras, ctors, dtors):
+def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
+	#####################################################################
+	# EXTRAS							    #
+	#####################################################################
 
-	if len(extras) > 1:
-		cb.utils.error(ctx, 'Only one extra code allowed !')
-	elif len(extras) == 1:
-		for c in extras[0]:
-			if c['condition'] != '':
-				cb.utils.error(ctx, 'Only unconditional extra allowed !')
-			if len(c['txts']) > 1:
-				cb.utils.error(ctx, 'Only one CDATA allowed in extra !')
+	if len(EXTRAS) > 1:
+		cb.utils.error(ctx, 'Only one extra allowed !')
 
-	if len(ctors) > 1:
-		cb.utils.error(ctx, 'Only one ctors code allowed !')
-	elif len(ctors) == 1:
-		for c in ctors[0]:
+	for e in EXTRAS:
+		for c in e:
 			if len(c['txts']) > 1:
-				cb.utils.error(ctx, 'Only one CDATA allowed in ctor !')
+				cb.utils.error(ctx, 'Up to one CDATA allowed for extra !')
 
-	if len(dtors) > 1:
-		cb.utils.error(ctx, 'Only one dtors code allowed !')
-	elif len(dtors) == 1:
-		for c in dtors[0]:
+			if len(c['condition'].strip()) > 0:
+				cb.utils.ooops(ctx, 'Only unconditional extra allowed !')
+
+	#####################################################################
+	# CTORS								    #
+	#####################################################################
+
+	if len(CTORS) > 1:
+		cb.utils.error(ctx, 'Only one ctor allowed !')
+
+	for x in CTORS:
+		for c in x:
 			if len(c['txts']) > 1:
-				cb.utils.error(ctx, 'Only one CDATA allowed in dtor !')
+				cb.utils.error(ctx, 'Up to one CDATA allowed for ctor !')
+
+	#####################################################################
+	# DTORS								    #
+	#####################################################################
+
+	if len(DTORS) > 1:
+		cb.utils.error(ctx, 'Only one dtor allowed !')
+
+	for x in DTORS:
+		for c in x:
+			if len(c['txts']) > 1:
+				cb.utils.error(ctx, 'Up to one CDATA allowed for dtor !')
+
+#############################################################################
+
+def checkCodes(ctx, CODES):
+	#####################################################################
+	# CODES								    #
+	#####################################################################
+
+	for c in CODES:
+
+		if len(c['txts']) != 1:
+			cb.utils.error(ctx, 'Only one CDATA allowed for method !')
 
 #############################################################################
 
 def implementation(ctx):
 	#####################################################################
-	# IMPLEMENTATION						    #
-	#####################################################################
-
-	checkExtraXtor(ctx,
-		ctx['imp_extras'],
-		ctx['imp_ctors'],
-		ctx['imp_dtors']
-	)
-
-	#####################################################################
 	# PROFILES							    #
 	#####################################################################
 
 	IMP_PROFILES = ctx['imp_profiles']
+
+	#####################################################################
 
 	for p in IMP_PROFILES:
 
@@ -205,41 +217,59 @@ def implementation(ctx):
 		if PRO is None:
 			cb.utils.error(ctx, 'Undefined profile \'%s\' !' % p)
 
-		##
+		else:
+			#####################################################
+			# EXTENSIONS					    #
+			#####################################################
 
-		IMP_EXTENSIONS = IMP_PROFILES[p]['extensions']
+			IMP_EXTENSIONS = IMP_PROFILES[p]['extensions']
 
-		for e in IMP_EXTENSIONS:
+			#####################################################
 
-			EXT = cb.utils.int_getExtension(ctx, e)
-			if EXT is None:
-				cb.utils.error(ctx, 'Undefined extension \'%s\' !' % e)
+			for e in IMP_EXTENSIONS:
 
-			else:
-				IMP_METHODS = IMP_EXTENSIONS[e]['methods']
+				EXT = cb.utils.int_getExtension(ctx, e)
+				if EXT is None:
+					cb.utils.error(ctx, 'Undefined extension \'%s\' !' % e)
 
-				for m in IMP_METHODS:
+				else:
+					#####################################
+					# METHODS			    #
+					#####################################
 
-					MET = cb.utils.int_getMethod(EXT, m)
-					if MET is None:
-						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
+					IMP_METHODS = IMP_EXTENSIONS[e]['methods']
 
-					for met in IMP_METHODS[m]:
+					#####################################
 
-						if len(met['txts']) > 1:
-							cb.utils.error(ctx, 'Only one CDATA allowed in method \'%s\' !' % m)
+					for m in IMP_METHODS:
 
-			checkExtraXtor(ctx,
-				IMP_EXTENSIONS[e]['extras'],
-				IMP_EXTENSIONS[e]['ctors'],
-				IMP_EXTENSIONS[e]['dtors']
-			)
+						MET = cb.utils.int_getMethod(EXT, m)
+						if MET is None:
+							cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
+
+						checkCodes(ctx,
+							IMP_METHODS[m]
+						)
+
+				checkExtraXtor(ctx,
+					IMP_EXTENSIONS[e]['extras'],
+					IMP_EXTENSIONS[e]['ctors'],
+					IMP_EXTENSIONS[e]['dtors']
+				)
 
 		checkExtraXtor(ctx,
 			IMP_PROFILES[p]['extras'],
 			IMP_PROFILES[p]['ctors'],
 			IMP_PROFILES[p]['dtors']
 		)
+
+	#####################################################################
+
+	checkExtraXtor(ctx,
+		ctx['imp_extras'],
+		ctx['imp_ctors'],
+		ctx['imp_dtors']
+	)
 
 #############################################################################
 

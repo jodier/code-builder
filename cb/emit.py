@@ -29,6 +29,8 @@ import cb.utils
 def interface(ctx):
 	LANG = ctx['lang']
 
+	#####################################################################
+
 	try:
 		fp = open('%s.h' % ctx['name'], 'wt')
 
@@ -80,10 +82,7 @@ def interface(ctx):
 	except IOError:
 		cb.utils.error('Could not open \'%s.h\' !' % ctx['name'])
 
-#############################################################################
-
-def implementation(ctx):
-	LANG = ctx['lang']
+	#####################################################################
 
 	try:
 		fp = open('%s_internal.h' % ctx['name'], 'wt')
@@ -122,7 +121,12 @@ def implementation(ctx):
 	except IOError:
 		cb.utils.error('Could not open \'%s_internal.h\' !' % ctx['name'])
 
-	##
+#############################################################################
+
+def implementation(ctx):
+	LANG = ctx['lang']
+
+	#####################################################################
 
 	try:
 		fp = open('%s.c' % ctx['name'], 'wt')
@@ -175,7 +179,7 @@ def implementation(ctx):
 	except IOError:
 		cb.utils.error('Could not open \'%s_internal.h\' !' % ctx['name'])
 
-	##
+	#####################################################################
 
 	for p in ctx['imp_profiles']:
 

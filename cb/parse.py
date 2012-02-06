@@ -99,13 +99,13 @@ def parseInterface(ctx, interfaces):
 			for assetNode in node.childNodes:
 
 				if assetNode.nodeName == 'date':
-					date = assetNode.getTEXTs()[0]
+					date = assetNode.getTEXTs()[0].strip()
 				if assetNode.nodeName == 'authors':
-					authors = assetNode.getTEXTs()[0]
+					authors = assetNode.getTEXTs()[0].strip()
 				if assetNode.nodeName == 'emails':
-					emails = assetNode.getTEXTs()[0]
+					emails = assetNode.getTEXTs()[0].strip()
 				if assetNode.nodeName == 'description':
-					description = assetNode.getTEXTs()[0]
+					description = assetNode.getTEXTs()[0].strip()
 
 		#############################################################
 		# TYPES							    #
@@ -123,8 +123,8 @@ def parseInterface(ctx, interfaces):
 
 					dic = {
 						'class': 'base',
-						'name': typeNode.getAttribute('name'),
-						'from': typeNode.getAttribute('from'),
+						'name': typeNode.getAttribute('name').strip(),
+						'from': typeNode.getAttribute('from').strip(),
 					}
 
 					ctx['int_types'].append(dic)
@@ -146,15 +146,15 @@ def parseInterface(ctx, interfaces):
 						if valueNode.nodeName == 'value':
 
 							dic = {
-								'name': valueNode.getAttribute('name'),
-								'init': valueNode.getAttribute('init'),
+								'name': valueNode.getAttribute('name').strip(),
+								'init': valueNode.getAttribute('init').strip(),
 							}
 
 							VALUES.append(dic)
 
 					dic = {
 						'class': 'enum',
-						'name': typeNode.getAttribute('name'),
+						'name': typeNode.getAttribute('name').strip(),
 						'values': VALUES
 					}
 
@@ -177,15 +177,15 @@ def parseInterface(ctx, interfaces):
 						if fieldNode.nodeName == 'field':
 
 							dic = {
-								'name': fieldNode.getAttribute('name'),
-								'type': fieldNode.getAttribute('type'),
+								'name': fieldNode.getAttribute('name').strip(),
+								'type': fieldNode.getAttribute('type').strip(),
 							}
 
 							FIELDS.append(dic)
 
 					dic = {
 						'class': 'struct',
-						'name': typeNode.getAttribute('name'),
+						'name': typeNode.getAttribute('name').strip(),
 						'fields': FIELDS
 					}
 
@@ -204,7 +204,7 @@ def parseInterface(ctx, interfaces):
 				if profileNode.nodeName == 'profile':
 
 					dic = {
-						'name': profileNode.getAttribute('name')
+						'name': profileNode.getAttribute('name').strip()
 					}
 
 					ctx['int_profiles'].append(dic)
@@ -244,23 +244,23 @@ def parseInterface(ctx, interfaces):
 								if paramNode.nodeName == 'param':
 
 									dic = {
-										'name': paramNode.getAttribute('name'),
-										'type': paramNode.getAttribute('type'),
+										'name': paramNode.getAttribute('name').strip(),
+										'type': paramNode.getAttribute('type').strip(),
 									}
 
 									PARAMS.append(dic)
 
 							dic = {
-								'name': methodNode.getAttribute('name'),
-								'type': methodNode.getAttribute('type'),
+								'name': methodNode.getAttribute('name').strip(),
+								'type': methodNode.getAttribute('type').strip(),
 								'params': PARAMS
 							}
 
 							METHODS.append(dic)
 
 					dic = {
-						'name': extensionNode.getAttribute('name'),
-					#	'type': extensionNode.getAttribute('type'),
+						'name': extensionNode.getAttribute('name').strip(),
+					#	'type': extensionNode.getAttribute('type').strip(),
 						'methods': METHODS
 					}
 
@@ -280,7 +280,7 @@ def parseInterface(ctx, interfaces):
 
 				if constraintNode.nodeName == 'constraint':
 
-					KEYS = {}
+					KEYS = []
 
 					for keyNode in constraintNode.childNodes:
 
@@ -291,12 +291,13 @@ def parseInterface(ctx, interfaces):
 						if keyNode.nodeName == 'key':
 
 							dic = {
+								'name': keyNode.getAttribute('name').strip()
 							}
 
-							KEYS[keyNode.getAttribute('name')] = dic
+							KEYS.append(dic)
 
 					dic = {
-						'name': constraintNode.getAttribute('name'),
+						'name': constraintNode.getAttribute('name').strip(),
 						'keys': KEYS,
 					}
 
@@ -304,9 +305,9 @@ def parseInterface(ctx, interfaces):
 
 	#####################################################################
 
-	ctx['name'] = interface.getAttribute('name')
-	ctx['major'] = int(interface.getAttribute('major'))
-	ctx['minor'] = int(interface.getAttribute('minor'))
+	ctx['name'] = interface.getAttribute('name').strip()
+	ctx['major'] = int(interface.getAttribute('major').strip())
+	ctx['minor'] = int(interface.getAttribute('minor').strip())
 
 	#####################################################################
 
@@ -338,7 +339,7 @@ def parseCode(node):
 		if codeNode.nodeName == 'code':
 
 			dic = {
-				'condition': codeNode.getAttribute('condition'),
+				'condition': codeNode.getAttribute('condition').strip(),
 				'txts': codeNode.getCDATAs()
 			}
 
@@ -473,7 +474,7 @@ def parseImplementation(ctx, implementations):
 										#############
 
 										if itemNode2.nodeName == 'method':
-											METHODS[itemNode2.getAttribute('name')] = parseCode(itemNode2)
+											METHODS[itemNode2.getAttribute('name').strip()] = parseCode(itemNode2)
 
 									dic = {
 										'extras': EXTRAS2,
@@ -482,7 +483,7 @@ def parseImplementation(ctx, implementations):
 										'methods': METHODS,
 									}
 
-									EXTENSIONS[extensionNode.getAttribute('name')] = dic
+									EXTENSIONS[extensionNode.getAttribute('name').strip()] = dic
 
 					dic = {
 						'extras': EXTRAS1,
@@ -491,7 +492,7 @@ def parseImplementation(ctx, implementations):
 						'extensions': EXTENSIONS,
 					}
 
-					ctx['imp_profiles'][profileNode.getAttribute('name')] = dic
+					ctx['imp_profiles'][profileNode.getAttribute('name').strip()] = dic
 
 	#####################################################################
 

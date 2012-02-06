@@ -73,7 +73,7 @@ CTX = {
 # CODE-BUILDER								    #
 #############################################################################
 
-def codebuilder_load(fileName):
+def codebuilder_load(ctx, fileName):
 	#####################################################################
 
 	try:
@@ -86,25 +86,25 @@ def codebuilder_load(fileName):
 
 	#####################################################################
 
-	cb.parse.parseInterface(CTX,
+	cb.parse.parseInterface(ctx,
 		doc.getElementsByTagName('interface')
 	)
 
-	cb.parse.parseImplementation(CTX,
+	cb.parse.parseImplementation(ctx,
 		doc.getElementsByTagName('implementation')
 	)
 
 #############################################################################
 
-def codebuilder_check():
-	cb.check.interface(CTX)
-	cb.check.implementation(CTX)
+def codebuilder_check(ctx):
+	cb.check.interface(ctx)
+	cb.check.implementation(ctx)
 
 #############################################################################
 
-def codebuilder_emit():
-	cb.emit.interface(CTX)
-	cb.emit.implementation(CTX)
+def codebuilder_emit(ctx):
+	cb.emit.interface(ctx)
+	cb.emit.implementation(ctx)
 
 #############################################################################
 
@@ -176,11 +176,14 @@ if __name__ == '__main__':
 
 	#####################################################################
 
-	codebuilder_load(fileName)
+	codebuilder_load(CTX, fileName)
 
-	codebuilder_check()
+	codebuilder_check(CTX)
+
 	cb.utils.status(CTX)
-	codebuilder_emit()
+
+	if CTX['error'] == 0:
+		codebuilder_emit(CTX)
 
 #############################################################################
 

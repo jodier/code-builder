@@ -157,10 +157,10 @@ def emit_impProlog(ctx, fp):
 	cb.utils.printf(fp, '#include "%s_internal.h"' % ctx['name'])
 	cb.utils.printf(fp, '')
 
-	emit_separator(ctx, fp)
+	if len(ctx['imp_extras']) > 0:
+		emit_separator(ctx, fp)
 
-	emit_extras(ctx, fp, ctx['imp_extras'], 0)
-	cb.utils.printf(fp, '')
+		emit_extras(ctx, fp, ctx['imp_extras'], 0)
 
 #############################################################################
 
@@ -184,10 +184,10 @@ def emit_impProfileProlog(ctx, fp, p):
 	cb.utils.printf(fp, '#include "%s_internal.h"' % ctx['name'])
 	cb.utils.printf(fp, '')
 
-	emit_separator(ctx, fp)
+	if len(IMP_PROFILES['extras']) > 0:
+		emit_separator(ctx, fp)
 
-	emit_extras(ctx, fp, IMP_PROFILES['extras'], 0)
-	cb.utils.printf(fp, '')
+		emit_extras(ctx, fp, IMP_PROFILES['extras'], 0)
 
 #############################################################################
 # EPILOGS								    #
@@ -390,14 +390,14 @@ def emit_impPrivConstraints(ctx, fp):
 	INT_CONSTRAINTS = ctx['int_constraints']
 
 	for c in INT_CONSTRAINTS:
-		cb.utils.printf(fp, 'typedef enum %s_s' % c)
+		cb.utils.printf(fp, 'typedef enum %s_s' % c['name'])
 		cb.utils.printf(fp, '{')
 
-		for key in c['keys']:
-			cb.utils.printf(fp, '\t%s,' % key.upper())
+		for k in c['keys']:
+			cb.utils.printf(fp, '\t%s,' % k['name'].upper())
 
 		cb.utils.printf(fp, '')
-		cb.utils.printf(fp, '} %s_t;' % c)
+		cb.utils.printf(fp, '} %s_t;' % c['name'])
 		cb.utils.printf(fp, '')
 
 #############################################################################
@@ -428,19 +428,14 @@ def emit_impPrivMethodPrototypes(ctx, fp):
 
 def emit_extras(ctx, fp, extras, cnt):
 
-	#####################################################################
-	# UNCONDITIONAL EXTRAS						    #
-	#####################################################################
-
 	for e in extras:
 
 		for c in e:
-			condition = c['condition'].strip()
 
-			if len(condition) == 0:
+			for text in c['txts']:
+				cb.utils.printf(fp, text)
 
-				for text in c['txts']:
-					cb.utils.printf(fp, text)
+	cb.utils.printf(fp, '')
 
 #############################################################################
 # GLOBAL IMPLEMENTATION							    #
