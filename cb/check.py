@@ -37,9 +37,9 @@ def interface(ctx):
 
 	#####################################################################
 
-	L = []
+	L = list(ctx['lang'].PRIMITIVES)
 
-	L.extend(ctx['lang'].PRIMITIVES)
+	#####################################################################
 
 	for t in INT_TYPE:
 
@@ -164,7 +164,7 @@ def implementation(ctx):
 
 	for p in IMP_PROFILES:
 
-		PRO = cb.utils.getProfile(ctx, p)
+		PRO = cb.utils.int_getProfile(ctx, p)
 		if PRO is None:
 			cb.utils.error(ctx, 'Undefined profile \'%s\' !' % p)
 
@@ -174,7 +174,7 @@ def implementation(ctx):
 
 		for e in IMP_EXTENSIONS:
 
-			EXT = cb.utils.getExtension(ctx, e)
+			EXT = cb.utils.int_getExtension(ctx, e)
 			if EXT is None:
 				cb.utils.error(ctx, 'Undefined extension \'%s\' !' % e)
 
@@ -183,7 +183,7 @@ def implementation(ctx):
 
 				for m in IMP_METHODS:
 
-					MET = cb.utils.getMethod(EXT, m)
+					MET = cb.utils.int_getMethod(EXT, m)
 					if MET is None:
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
 
