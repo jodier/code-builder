@@ -43,19 +43,7 @@ def interface(ctx):
 		#############################################################
 
 		LANG.emit_COMMENT(ctx, fp, 'TYPES')
-
-		for t in ctx['int_types']:
-			LANG.emit_impPubTypes(ctx, fp, t)
-
-		LANG.emit_separator(ctx, fp)
-
-		for t in ctx['int_types']['enums'].iteritems():
-			LANG.emit_impPubEnums(ctx, fp, t)
-
-		LANG.emit_separator(ctx, fp)
-
-		for t in ctx['int_types']['structs'].iteritems():
-			LANG.emit_impPubStructs(ctx, fp, t)
+		LANG.emit_impPubTypes(ctx, fp)
 
 		#############################################################
 		# DEFINITIONS						    #

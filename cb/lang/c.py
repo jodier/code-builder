@@ -240,37 +240,42 @@ def emit_functionPrototype(ctx, fp, m, prefix = '', suffix = ''):
 # PUBLIC INTERFACE							    #
 #############################################################################
 
-def emit_impPubTypes(ctx, fp, t):
-	cb.utils.printf(fp, 'typedef %s %s;' % (t[1]['from'], t[0]))
-	cb.utils.printf(fp, '')
+def emit_impPubTypes(ctx, fp):
+	INT_TYPES = ctx['int_types']
 
-#############################################################################
+	for t in INT_TYPES:
 
-def emit_impPubEnums(ctx, fp, t):
-	cb.utils.printf(fp, 'typedef enum %s' % t[0])
-	cb.utils.printf(fp, '{')
+		#############################################################
 
-	for u in t[1]:
-		for v in t[1][u]:
-			cb.utils.printf(fp, '\t%s = 0x%X,' % (v['name'], cb.utils.getCnt(ctx)))
+		if t['class'] == 'base':
+			cb.utils.printf(fp, 'typedef %s %s;' % (t['from'], t['name']))
+			cb.utils.printf(fp, '')
 
-	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, '} %s;' % t[0])
-	cb.utils.printf(fp, '')
+		#############################################################
 
-#############################################################################
+		if t['class'] == 'enum':
+			cb.utils.printf(fp, 'typedef enum %s' % t['name'])
+			cb.utils.printf(fp, '{')
 
-def emit_impPubStructs(ctx, fp, t):
-	cb.utils.printf(fp, 'typedef struct %s' % t[0])
-	cb.utils.printf(fp, '{')
+			for v in t['values']:
+				cb.utils.printf(fp, '\t%s = 0x%X,' % (v['name'], cb.utils.getCnt(ctx)))
 
-	for u in t[1]:
-		for v in t[1][u]:
-			cb.utils.printf(fp, '\t%s %s;' % (v['type'], v['name']))
+			cb.utils.printf(fp, '')
+			cb.utils.printf(fp, '} %s;' % t['name'])
+			cb.utils.printf(fp, '')
 
-	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, '} %s;' % t[0])
-	cb.utils.printf(fp, '')
+		#############################################################
+
+		if t['class'] == 'struct':
+			cb.utils.printf(fp, 'typedef struct %s' % t['name'])
+			cb.utils.printf(fp, '{')
+
+			for f in t['fields']:
+				cb.utils.printf(fp, '\t%s %s;' % (f['type'], f['name']))
+
+			cb.utils.printf(fp, '')
+			cb.utils.printf(fp, '} %s;' % t['name'])
+			cb.utils.printf(fp, '')
 
 #############################################################################
 
@@ -288,7 +293,7 @@ def emit_impPubDefinitions(ctx, fp):
 	cb.utils.printf(fp, '{')
 
 	for p in ctx['int_profiles']:
-		cb.utils.printf(fp, '\t%s_PROFILE_%s = 0x%X,' % (NAME, p.upper(), cb.utils.getCnt(ctx)))
+		cb.utils.printf(fp, '\t%s_PROFILE_%s = 0x%X,' % (NAME, p['name'].upper(), cb.utils.getCnt(ctx)))
 
 	cb.utils.printf(fp, '')
 	cb.utils.printf(fp, '} %s_profiles_t;' % name)
@@ -388,7 +393,7 @@ def emit_impPrivConstraints(ctx, fp):
 		cb.utils.printf(fp, 'typedef enum %s_s' % c)
 		cb.utils.printf(fp, '{')
 
-		for key in INT_CONSTRAINTS[c]['keys']:
+		for key in c['keys']:
 			cb.utils.printf(fp, '\t%s,' % key.upper())
 
 		cb.utils.printf(fp, '')
@@ -400,7 +405,7 @@ def emit_impPrivConstraints(ctx, fp):
 def emit_impPrivMethodPrototypes(ctx, fp):
 
 	for c in ctx['int_constraints']:
-		cb.utils.printf(fp, 'extern enum %s_s %s;' % (c, c.upper()))
+		cb.utils.printf(fp, 'extern enum %s_s %s;' % (c['name'], c['name'].upper()))
 
 	cb.utils.printf(fp, '')
 
@@ -497,7 +502,7 @@ def emit_extras(ctx, fp, extras, cnt):
 def emit_impConstraints(ctx, fp):
 
 	for constraint in ctx['int_constraints']:
-		cb.utils.printf(fp, '%s_t %s = (%s_t) -1;' % (constraint, constraint.upper(), constraint))
+		cb.utils.printf(fp, '%s_t %s = (%s_t) -1;' % (constraint['name'], constraint['name'].upper(), constraint))
 
 	cb.utils.printf(fp, '')
 
@@ -563,7 +568,6 @@ def emit_impCtor(ctx, fp):
 	cb.utils.printf(fp, '\treturn result;')
 	cb.utils.printf(fp, '}')
 	cb.utils.printf(fp, '')
-
 
 #############################################################################
 
@@ -669,9 +673,8 @@ def emit_impHighLevelMethods(ctx, fp):
 	cb.utils.printf(fp, '\t{')
 
 	for p in ctx['int_profiles']:
-
-		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p.upper()))
-		cb.utils.printf(fp, '\t\t\tresult = %s_%s_ctor(interface);' % (name, p))
+		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p['name'].upper()))
+		cb.utils.printf(fp, '\t\t\tresult = %s_%s_ctor(interface);' % (name, p['name']))
 		cb.utils.printf(fp, '\t\t\tbreak;')
 		cb.utils.printf(fp, '')
 

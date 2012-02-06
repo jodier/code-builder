@@ -180,7 +180,7 @@ if __name__ == '__main__':
 
 	codebuilder_check()
 	cb.utils.status(CTX)
-#	codebuilder_emit()
+	codebuilder_emit()
 
 #############################################################################
 

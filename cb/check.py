@@ -80,7 +80,7 @@ def interface(ctx):
 				for j in xrange(i + 1, len(values)):
 
 					if values[i]['name'] == values[j]['name']:
-						cb.utils.error(ctx, 'Duplicated fields \'%s\' and \'%s\' !' % (values[i]['name'], values[j]['name']))
+						cb.utils.error(ctx, 'Duplicated values \'%s\' and \'%s\' !' % (values[i]['name'], values[j]['name']))
 
 		#############################################################
 		# STRUCT TYPE						    #
