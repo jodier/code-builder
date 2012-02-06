@@ -72,7 +72,7 @@ def displayTree(T, level = 0):
 
 #############################################################################
 
-def getProfile(ctx, name):
+def int_getProfile(ctx, name):
 	INT_PROFILES = ctx['int_profiles']
 
 	for p in INT_PROFILES:
@@ -84,7 +84,7 @@ def getProfile(ctx, name):
 
 #############################################################################
 
-def getExtension(ctx, name):
+def int_getExtension(ctx, name):
 	INT_EXTENSIONS = ctx['int_extensions']
 
 	for e in INT_EXTENSIONS:
@@ -96,7 +96,7 @@ def getExtension(ctx, name):
 
 #############################################################################
 
-def getMethod(ext, name):
+def int_getMethod(ext, name):
 	INT_METHODS = ext['methods']
 
 	for m in INT_METHODS:
