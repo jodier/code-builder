@@ -881,6 +881,10 @@ def emit_impProfileCtor(ctx, fp, p):
 		cb.utils.printf(fp, '\t{')
 
 		for e in INT_EXTENSIONS:
+
+			if IMP_PROFILES['extensions'].has_key(e['name']) == False:
+				pass
+
 			cb.utils.printf(fp, '\t\tif((result = __%s_%s_%s_ctor(self)) == false)' % (ctx['name'], p, e['name']))
 			cb.utils.printf(fp, '\t\t{')
 			cb.utils.printf(fp, '\t\t\tgoto __next2;')
@@ -952,7 +956,8 @@ def emit_impProfileDtor(ctx, fp, p):
 	cb.utils.printf(fp, '')
 
 	for e in reversed(INT_EXTENSIONS):
-		cb.utils.printf(fp, '\tresult = result && __%s_%s_%s_dtor(self);' % (ctx['name'], p, e['name']))
+		if IMP_PROFILES['extensions'].has_key(e['name']) != False:
+			cb.utils.printf(fp, '\tresult = result && __%s_%s_%s_dtor(self);' % (ctx['name'], p, e['name']))
 
 	##
 
@@ -1000,6 +1005,10 @@ def emit_impProfileDtor(ctx, fp, p):
 
 def emit_impExtensionCtor(ctx, fp, p, e):
 	IMP_PROFILES = ctx['imp_profiles'][p]
+
+	if IMP_PROFILES['extensions'].has_key(e) == False:
+		return
+
 	IMP_EXTENSIONS = IMP_PROFILES['extensions'][e]
 
 	i = 0
