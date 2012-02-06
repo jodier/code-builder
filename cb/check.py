@@ -181,7 +181,6 @@ def checkExtraXtor(ctx, extras, ctors, dtors):
 			if len(c['txts']) > 1:
 				cb.utils.error(ctx, 'Only one CDATA allowed in dtor !')
 
-
 #############################################################################
 
 def implementation(ctx):
