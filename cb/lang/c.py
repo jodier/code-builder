@@ -1118,6 +1118,10 @@ def emit_impExtensionCtor(ctx, fp, p, e):
 
 def emit_impExtensionDtor(ctx, fp, p, e):
 	IMP_PROFILES = ctx['imp_profiles'][p]
+
+	if IMP_PROFILES['extensions'].has_key(e) == False:
+		return
+
 	IMP_EXTENSIONS = IMP_PROFILES['extensions'][e]
 
 	i = 0
