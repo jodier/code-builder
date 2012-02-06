@@ -157,33 +157,39 @@ def interface(ctx):
 # IMPLEMENTATION							    #
 #############################################################################
 
-def implementation(ctx):
-	#####################################################################
-	# IMPLEMENTATION						    #
-	#####################################################################
-
-	if len(ctx['imp_extras']) > 1:
+def checkExtraXtor(ctx, extras, ctors, dtors):
+	if len(extras) > 1:
 		cb.utils.error(ctx, 'Only one extra code allowed !')
-	elif len(ctx['imp_extras']) == 1:
-		for c in ctx['imp_extras'][0]:
+	elif len(extras) == 1:
+		for c in extras[0]:
 			if c['condition'] != '':
 				cb.utils.error(ctx, 'Only unconditional extra allowed !')
 			if len(c['txts']) > 1:
 				cb.utils.error(ctx, 'Only one CDATA allowed in extra !')
 
-	if len(ctx['imp_ctors']) > 1:
+	if len(ctors) > 1:
 		cb.utils.error(ctx, 'Only one ctors code allowed !')
-	elif len(ctx['imp_ctors']) == 1:
-		for c in ctx['imp_ctors'][0]:
+	elif len(ctors) == 1:
+		for c in ctors[0]:
 			if len(c['txts']) > 1:
 				cb.utils.error(ctx, 'Only one CDATA allowed in ctor !')
 
-	if len(ctx['imp_dtors']) > 1:
+	if len(dtors) > 1:
 		cb.utils.error(ctx, 'Only one dtors code allowed !')
-	elif len(ctx['imp_dtors']) == 1:
-		for c in ctx['imp_dtors'][0]:
+	elif len(dtors) == 1:
+		for c in dtors[0]:
 			if len(c['txts']) > 1:
 				cb.utils.error(ctx, 'Only one CDATA allowed in dtor !')
+
+
+#############################################################################
+
+def implementation(ctx):
+	#####################################################################
+	# IMPLEMENTATION						    #
+	#####################################################################
+
+	checkExtraXtor(ctx, ctx['imp_extras'], ctx['imp_ctors'], ctx['imp_dtors'])
 
 	#####################################################################
 	# PROFILES							    #
@@ -216,19 +222,9 @@ def implementation(ctx):
 					if MET is None:
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
 
-			if len(IMP_EXTENSIONS[e]['extras']) > 1:
-				cb.utils.error(ctx, 'Only one extra code allowed !')
-			if len(IMP_EXTENSIONS[e]['ctors']) > 1:
-				cb.utils.error(ctx, 'Only one ctors code allowed !')
-			if len(IMP_EXTENSIONS[e]['dtors']) > 1:
-				cb.utils.error(ctx, 'Only one dtors code allowed !')
+			checkExtraXtor(ctx, IMP_EXTENSIONS[e]['extras'], IMP_EXTENSIONS[e]['ctors'], IMP_EXTENSIONS[e]['dtors'])
 
-		if len(IMP_PROFILES[p]['extras']) > 1:
-			cb.utils.error(ctx, 'Only one extra code allowed !')
-		if len(IMP_PROFILES[p]['ctors']) > 1:
-			cb.utils.error(ctx, 'Only one ctors code allowed !')
-		if len(IMP_PROFILES[p]['dtors']) > 1:
-			cb.utils.error(ctx, 'Only one dtors code allowed !')
+		checkExtraXtor(ctx, IMP_PROFILES[p]['extras'], IMP_PROFILES[p]['ctors'], IMP_PROFILES[p]['dtors'])
 
 #############################################################################
 
