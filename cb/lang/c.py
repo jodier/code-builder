@@ -449,7 +449,7 @@ def emit_extras(ctx, fp, extras, cnt):
 def emit_impConstraints(ctx, fp):
 
 	for constraint in ctx['int_constraints']:
-		cb.utils.printf(fp, '%s_t %s = (%s_t) -1;' % (constraint['name'], constraint['name'].upper(), constraint))
+		cb.utils.printf(fp, '%s_t %s = (%s_t) -1;' % (constraint['name'], constraint['name'].upper(), constraint['name']))
 
 	cb.utils.printf(fp, '')
 
