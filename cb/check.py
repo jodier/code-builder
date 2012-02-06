@@ -158,6 +158,7 @@ def interface(ctx):
 #############################################################################
 
 def checkExtraXtor(ctx, extras, ctors, dtors):
+
 	if len(extras) > 1:
 		cb.utils.error(ctx, 'Only one extra code allowed !')
 	elif len(extras) == 1:
@@ -220,6 +221,10 @@ def implementation(ctx):
 					MET = cb.utils.int_getMethod(EXT, m)
 					if MET is None:
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
+
+					for met in IMP_METHODS[m]:
+						if len(met['txts']) > 1:
+							cb.utils.error(ctx, 'Only one CDATA allowed in method \'%s\' !' % m)
 
 			checkExtraXtor(ctx, IMP_EXTENSIONS[e]['extras'], IMP_EXTENSIONS[e]['ctors'], IMP_EXTENSIONS[e]['dtors'])
 
