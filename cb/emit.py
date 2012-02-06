@@ -153,18 +153,18 @@ def implementation(ctx):
 		LANG.emit_impConstraints(ctx, fp)
 
 		#############################################################
-		# CTORS							    #
-		#############################################################
-
-		LANG.emit_separator(ctx, fp)
-		LANG.emit_impCtor(ctx, fp)
-
-		#############################################################
 		# DTORS							    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
 		LANG.emit_impDtor(ctx, fp)
+
+		#############################################################
+		# CTORS							    #
+		#############################################################
+
+		LANG.emit_separator(ctx, fp)
+		LANG.emit_impCtor(ctx, fp)
 
 		#############################################################
 		# HIGH LEVEL METHODS					    #
@@ -208,18 +208,18 @@ def implementation(ctx):
 			LANG.emit_impProfileMethods(ctx, fp, p)
 
 			#####################################################
-			# CTORS						    #
-			#####################################################
-
-			LANG.emit_separator(ctx, fp)
-			LANG.emit_impProfileCtor(ctx, fp, p)
-
-			#####################################################
 			# DTORS						    #
 			#####################################################
 
 			LANG.emit_separator(ctx, fp)
 			LANG.emit_impProfileDtor(ctx, fp, p)
+
+			#####################################################
+			# CTORS						    #
+			#####################################################
+
+			LANG.emit_separator(ctx, fp)
+			LANG.emit_impProfileCtor(ctx, fp, p)
 
 			#####################################################
 			# EPILOG					    #
