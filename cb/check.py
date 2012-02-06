@@ -80,7 +80,7 @@ def interface(ctx):
 				for j in xrange(i + 1, len(values)):
 
 					if values[i]['name'] == values[j]['name']:
-						cb.utils.error(ctx, 'Duplicated values \'%s\' and \'%s\' !' % (values[i]['name'], values[j]['name']))
+						cb.utils.error(ctx, 'Duplicated values \'%s\' !' % values[i]['name'])
 
 		#############################################################
 		# STRUCT TYPE						    #
@@ -94,7 +94,7 @@ def interface(ctx):
 				for j in xrange(i + 1, len(fields)):
 
 					if fields[i]['name'] == fields[j]['name']:
-						cb.utils.error(ctx, 'Duplicated fields \'%s\' and \'%s\' !' % (fields[i]['name'], fields[j]['name']))
+						cb.utils.error(ctx, 'Duplicated fields \'%s\' !' % fields[i]['name'])
 
 			##
 
@@ -103,10 +103,8 @@ def interface(ctx):
 				T = f['type']
 
 				if T in L:
-					print(T)
-					print(t)
-					if T == t:
-						cb.utils.debug(ctx, 'Undefined type \'%s\' !' % T)
+					if T == t['name']:
+						cb.utils.debug(ctx, 'Recursif type \'%s\' !' % T)
 				else:
 					cb.utils.error(ctx, 'Undefined type \'%s\' !' % T)
 
@@ -189,7 +187,11 @@ def implementation(ctx):
 	# IMPLEMENTATION						    #
 	#####################################################################
 
-	checkExtraXtor(ctx, ctx['imp_extras'], ctx['imp_ctors'], ctx['imp_dtors'])
+	checkExtraXtor(ctx,
+		ctx['imp_extras'],
+		ctx['imp_ctors'],
+		ctx['imp_dtors']
+	)
 
 	#####################################################################
 	# PROFILES							    #
@@ -223,12 +225,21 @@ def implementation(ctx):
 						cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
 
 					for met in IMP_METHODS[m]:
+
 						if len(met['txts']) > 1:
 							cb.utils.error(ctx, 'Only one CDATA allowed in method \'%s\' !' % m)
 
-			checkExtraXtor(ctx, IMP_EXTENSIONS[e]['extras'], IMP_EXTENSIONS[e]['ctors'], IMP_EXTENSIONS[e]['dtors'])
+			checkExtraXtor(ctx,
+				IMP_EXTENSIONS[e]['extras'],
+				IMP_EXTENSIONS[e]['ctors'],
+				IMP_EXTENSIONS[e]['dtors']
+			)
 
-		checkExtraXtor(ctx, IMP_PROFILES[p]['extras'], IMP_PROFILES[p]['ctors'], IMP_PROFILES[p]['dtors'])
+		checkExtraXtor(ctx,
+			IMP_PROFILES[p]['extras'],
+			IMP_PROFILES[p]['ctors'],
+			IMP_PROFILES[p]['dtors']
+		)
 
 #############################################################################
 
