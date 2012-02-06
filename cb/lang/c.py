@@ -417,8 +417,8 @@ def emit_impPrivMethodPrototypes(ctx, fp):
 	cb.utils.printf(fp, '')
 
 	for p in ctx['int_profiles']:
-		cb.utils.printf(fp, 'bool %s_%s_ctor(struct %s_s *);' % (ctx['name'], p, ctx['name']))
-		cb.utils.printf(fp, 'bool %s_%s_dtor(struct %s_s *);' % (ctx['name'], p, ctx['name']))
+		cb.utils.printf(fp, 'bool %s_%s_ctor(struct %s_s *);' % (ctx['name'], p['name'], ctx['name']))
+		cb.utils.printf(fp, 'bool %s_%s_dtor(struct %s_s *);' % (ctx['name'], p['name'], ctx['name']))
 
 		cb.utils.printf(fp, '')
 
@@ -884,13 +884,12 @@ def emit_impProfileCtor(ctx, fp, p):
 
 			if IMP_PROFILES['extensions'].has_key(e['name']) != False:
 
-				if len(IMP_PROFILES['extensions'][e['name']]['ctors']) > 0:
-					cb.utils.printf(fp, '\t\tif((result = __%s_%s_%s_ctor(self)) == false)' % (ctx['name'], p, e['name']))
-					cb.utils.printf(fp, '\t\t{')
-					cb.utils.printf(fp, '\t\t\tgoto __next2;')
-					cb.utils.printf(fp, '\t\t}')
+				cb.utils.printf(fp, '\t\tif((result = __%s_%s_%s_ctor(self)) == false)' % (ctx['name'], p, e['name']))
+				cb.utils.printf(fp, '\t\t{')
+				cb.utils.printf(fp, '\t\t\tgoto __next2;')
+				cb.utils.printf(fp, '\t\t}')
 
-					i += 1
+				i += 1
 
 		cb.utils.printf(fp, '\t}')
 		cb.utils.printf(fp, '')
@@ -961,9 +960,7 @@ def emit_impProfileDtor(ctx, fp, p):
 
 			if IMP_PROFILES['extensions'].has_key(e['name']) != False:
 
-				if len(IMP_PROFILES['extensions'][e['name']]['ctors']) > 0:
-
-					cb.utils.printf(fp, '\tresult = result && __%s_%s_%s_dtor(self);' % (ctx['name'], p, e['name']))
+				cb.utils.printf(fp, '\tresult = result && __%s_%s_%s_dtor(self);' % (ctx['name'], p, e['name']))
 
 	##
 
