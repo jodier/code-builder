@@ -156,6 +156,8 @@ def emit_impProlog(ctx, fp):
 
 	emit_separator(ctx, fp)
 
+	cb.utils.printf(fp, '#include <string.h>')
+	cb.utils.printf(fp, '')
 	cb.utils.printf(fp, '#include "%s_internal.h"' % ctx['name'])
 	cb.utils.printf(fp, '')
 
@@ -182,6 +184,7 @@ def emit_impProfileProlog(ctx, fp, p):
 	emit_separator(ctx, fp)
 
 	cb.utils.printf(fp, '#include <stdlib.h>')
+	cb.utils.printf(fp, '#include <string.h>')
 	cb.utils.printf(fp, '')
 	cb.utils.printf(fp, '#include "%s_internal.h"' % ctx['name'])
 	cb.utils.printf(fp, '')
@@ -480,6 +483,8 @@ def emit_impCtor(ctx, fp):
 
 	cb.utils.printf(fp, 'bool __%s_ctor(%s_t *self)' % (ctx['name'], ctx['name']))
 	cb.utils.printf(fp, '{')
+	cb.utils.printf(fp, '\tmemset(self, 0x00, sizeof(%s_t));' % ctx['name'])
+	cb.utils.printf(fp, '')
 	cb.utils.printf(fp, '\tbool result = true;')
 	cb.utils.printf(fp, '')
 
@@ -1028,6 +1033,8 @@ def emit_impExtensionCtor(ctx, fp, p, e):
 
 	cb.utils.printf(fp, '')
 	cb.utils.printf(fp, '\tself->%s = malloc(sizeof(self->%s[0]));' % (e, e))
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\tmemset(self->%s, 0x00, sizeof(self->%s[0]));' % (e, e))
 
 	i = 0
 
@@ -1185,7 +1192,10 @@ def emit_impExtensionDtor(ctx, fp, p, e):
 
 	##
 
-	cb.utils.printf(fp, '\tself->%s = realloc(self->%s, 0);' % (e, e))
+	cb.utils.printf(fp, '\tif(self->%s != NULL)' % (e))
+	cb.utils.printf(fp, '\t{')
+	cb.utils.printf(fp, '\t\tself->%s = realloc(self->%s, 0);' % (e, e))
+	cb.utils.printf(fp, '\t}')
 	cb.utils.printf(fp, '')
 
 	cb.utils.printf(fp, '\treturn result;')
