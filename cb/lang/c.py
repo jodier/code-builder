@@ -422,8 +422,8 @@ def emit_impPrivMethods(ctx, fp):
 	cb.utils.printf(fp, '')
 
 	for p in ctx['int_profiles']:
-		cb.utils.printf(fp, 'bool %s_%s_ctor(struct %s_s *);' % (ctx['name'], p['name'], ctx['name']))
-		cb.utils.printf(fp, 'bool %s_%s_dtor(struct %s_s *);' % (ctx['name'], p['name'], ctx['name']))
+		cb.utils.printf(fp, 'bool __%s_%s_ctor(struct %s_s *);' % (ctx['name'], p['name'], ctx['name']))
+		cb.utils.printf(fp, 'bool __%s_%s_dtor(struct %s_s *);' % (ctx['name'], p['name'], ctx['name']))
 
 		cb.utils.printf(fp, '')
 
@@ -609,7 +609,38 @@ def emit_impMethods(ctx, fp):
 
 	for p in ctx['int_profiles']:
 		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p['name'].upper()))
-		cb.utils.printf(fp, '\t\t\tresult = %s_%s_ctor(interface);' % (name, p['name']))
+		cb.utils.printf(fp, '\t\t\tresult = __%s_%s_ctor(interface);' % (name, p['name']))
+		cb.utils.printf(fp, '\t\t\tbreak;')
+		cb.utils.printf(fp, '')
+
+	cb.utils.printf(fp, '\t\tdefault:')
+	cb.utils.printf(fp, '\t\t\tresult = false;')
+	cb.utils.printf(fp, '\t\t\tbreak;')
+
+	cb.utils.printf(fp, '\t}')
+
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\treturn result;')
+	cb.utils.printf(fp, '}')
+	cb.utils.printf(fp, '')
+
+	#####################################################################
+
+	emit_separator(ctx, fp)
+
+	#####################################################################
+
+	cb.utils.printf(fp, 'bool %s_finalize(%s_t *interface, %s_profiles_t profile)' % (name, name, name))
+	cb.utils.printf(fp, '{')
+	cb.utils.printf(fp, '\tbool result;')
+	cb.utils.printf(fp, '')
+
+	cb.utils.printf(fp, '\tswitch(profile)')
+	cb.utils.printf(fp, '\t{')
+
+	for p in ctx['int_profiles']:
+		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p['name'].upper()))
+		cb.utils.printf(fp, '\t\t\tresult = __%s_%s_dtor(interface);' % (name, p['name']))
 		cb.utils.printf(fp, '\t\t\tbreak;')
 		cb.utils.printf(fp, '')
 
@@ -859,7 +890,7 @@ def emit_impProfileCtor(ctx, fp, p):
 
 	cb.utils.printf(fp, '\tif(result == false)')
 	cb.utils.printf(fp, '\t{')
-	cb.utils.printf(fp, '\t\t%s_%s_dtor(self);' % (ctx['name'], p))
+	cb.utils.printf(fp, '\t\t__%s_%s_dtor(self);' % (ctx['name'], p))
 	cb.utils.printf(fp, '\t}')
 	cb.utils.printf(fp, '')
 
@@ -995,6 +1026,9 @@ def emit_impExtensionCtor(ctx, fp, p, e):
 	cb.utils.printf(fp, '{')
 	cb.utils.printf(fp, '\tbool result = true;')
 
+	cb.utils.printf(fp, '')
+	cb.utils.printf(fp, '\tself->%s = malloc(sizeof(self->%s[0]));' % (e, e))
+
 	i = 0
 
 	for ctor in IMP_EXTENSIONS['ctors']:
@@ -1031,9 +1065,6 @@ def emit_impExtensionCtor(ctx, fp, p, e):
 	##
 
 	IMP_METHODS = IMP_EXTENSIONS['methods']
-
-	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, '\tself->%s = malloc(sizeof(self->%s[0]));' % (e, e))
 
 	for m in IMP_METHODS:
 		cb.utils.printf(fp, '')
@@ -1118,13 +1149,6 @@ def emit_impExtensionDtor(ctx, fp, p, e):
 
 	##
 
-	IMP_METHODS = IMP_EXTENSIONS['methods']
-
-	cb.utils.printf(fp, '\tself->%s = realloc(self->%s, sizeof(self->%s[0]));' % (e, e, e))
-	cb.utils.printf(fp, '')
-
-	##
-
 	cb.utils.printf(fp, '\tbool result = true;')
 
 	i = 0
@@ -1158,6 +1182,11 @@ def emit_impExtensionDtor(ctx, fp, p, e):
 		cb.utils.printf(fp, '\tresult = false;')
 		cb.utils.printf(fp, '')
 		cb.utils.printf(fp, '__next:')
+
+	##
+
+	cb.utils.printf(fp, '\tself->%s = realloc(self->%s, 0);' % (e, e))
+	cb.utils.printf(fp, '')
 
 	cb.utils.printf(fp, '\treturn result;')
 	cb.utils.printf(fp, '}')
