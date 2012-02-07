@@ -465,7 +465,7 @@ def emit_impCtor(ctx, fp):
 
 			for txt in code['txts']:
 
-				cb.utils.printf(fp, 'static bool __%s_ctor%d(%s_t *self)' % (ctx['name'], i, ctx['name']))
+				cb.utils.printf(fp, 'bool __%s_ctor%d(%s_t *self)' % (ctx['name'], i, ctx['name']))
 				cb.utils.printf(fp, '{')
 				cb.utils.printf(fp, '%s' % txt)
 				cb.utils.printf(fp, '}')
@@ -478,7 +478,7 @@ def emit_impCtor(ctx, fp):
 
 	i = 0
 
-	cb.utils.printf(fp, 'static bool __%s_ctor(%s_t *self)' % (ctx['name'], ctx['name']))
+	cb.utils.printf(fp, 'bool __%s_ctor(%s_t *self)' % (ctx['name'], ctx['name']))
 	cb.utils.printf(fp, '{')
 	cb.utils.printf(fp, '\tbool result = true;')
 	cb.utils.printf(fp, '')
@@ -522,7 +522,7 @@ def emit_impDtor(ctx, fp):
 
 			for txt in code['txts']:
 
-				cb.utils.printf(fp, 'static bool __%s_dtor%d(%s_t *self)' % (ctx['name'], i, ctx['name']))
+				cb.utils.printf(fp, 'bool __%s_dtor%d(%s_t *self)' % (ctx['name'], i, ctx['name']))
 				cb.utils.printf(fp, '{')
 				cb.utils.printf(fp, '%s' % txt)
 				cb.utils.printf(fp, '}')
@@ -535,7 +535,7 @@ def emit_impDtor(ctx, fp):
 
 	i = 0
 
-	cb.utils.printf(fp, 'static bool __%s_dtor(%s_t *self)' % (ctx['name'], ctx['name']))
+	cb.utils.printf(fp, 'bool __%s_dtor(%s_t *self)' % (ctx['name'], ctx['name']))
 	cb.utils.printf(fp, '{')
 	cb.utils.printf(fp, '\tbool result = true;')
 	cb.utils.printf(fp, '')
