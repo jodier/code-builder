@@ -22,7 +22,7 @@
 #
 #############################################################################
 
-import os, sys, glob
+import os, re, sys, glob
 
 #############################################################################
 # PATHS									    #
@@ -35,6 +35,27 @@ def buildPaths(pwd, s):
 		s = os.path.join(pwd, s)
 
 	return [os.path.normpath(f).replace('\\', '/') for f in glob.iglob(s)]
+
+#############################################################################
+# TYPES									    #
+#############################################################################
+
+def extractType(ctx, s):
+	L = []
+
+	for word in re.split('\W+', s):
+
+		if len(word) > 0 and not word in ctx['lang'].QUALIFIERS:
+
+			if word[0] < '0'\
+			   or		\
+			   word[0] > '9':
+				L.append(word)
+
+	if len(L) == 1:
+		return L[0]
+	else:
+		return None
 
 #############################################################################
 # TREES									    #
@@ -50,25 +71,36 @@ def myprint(s, shift):
 #############################################################################
 
 def displayTree(T, level = 0):
+	#####################################################################
+	# LISTS								    #
+	#####################################################################
 
-		if   type(T).__name__ == 'list':
+	if   type(T).__name__ == 'list':
 
-			for item in enumerate(T):
+		for item in enumerate(T):
 
-				myprint('idx: %d' % item[0], level)
+			myprint('idx: %d' % item[0], level)
 
-				displayTree(item[1], level + 4)
+			displayTree(item[1], level + 4)
 
-		elif type(T).__name__ == 'dict':
+	#####################################################################
+	# DICTS								    #
+	#####################################################################
 
-			for item in T.iteritems():
+	elif type(T).__name__ == 'dict':
 
-				myprint('key: %s' % item[0], level)
+		for item in T.iteritems():
 
-				displayTree(item[1], level + 4)
+			myprint('key: %s' % item[0], level)
 
-		else:
-			myprint(T, level)
+			displayTree(item[1], level + 4)
+
+	#####################################################################
+	# LEAFS								    #
+	#####################################################################
+
+	else:
+		myprint(T, level)
 
 #############################################################################
 

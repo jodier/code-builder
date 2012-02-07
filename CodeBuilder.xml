@@ -37,6 +37,8 @@
       <type name="context_id" from="uint32_t" />
       <type name="drawable_id" from="uint32_t" />
 
+      <type name="glob" from="uint32_t *" />
+
       <enum name="simple_enum1">
         <value name="SIMPLE_ENUM1_VALUE1" />
         <value name="SIMPLE_ENUM1_VALUE2" />
