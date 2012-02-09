@@ -25,6 +25,14 @@
 import os, re, sys, glob
 
 #############################################################################
+
+try:
+	import xml.dom.minidom
+
+except ImportError, e:
+	cb.utils.fatal(e)
+
+#############################################################################
 # PATHS									    #
 #############################################################################
 
@@ -37,22 +45,30 @@ def buildPaths(pwd, s):
 	return [os.path.normpath(f).replace('\\', '/') for f in glob.iglob(s)]
 
 #############################################################################
-# TYPES									    #
+# XML									    #
 #############################################################################
 
-def extractTypes(ctx, s):
-	L = []
+def getStripedAttribute(self, name):
+	return self.getAttribute(name).strip()
 
-	for word in re.split('\W+', s):
+xml.dom.minidom.Element.getStripedAttribute = \
+					getStripedAttribute
 
-		if len(word) > 0 and not word in ctx['lang'].QUALIFIERS:
+#############################################################################
 
-			if word[0] < '0'\
-			   or		\
-			   word[0] > '9':
-				L.append(word)
+def getStripedLAttribute(self, name):
+	return self.getAttribute(name).strip().lower()
 
-	return L
+xml.dom.minidom.Element.getStripedLAttribute = \
+					getStripedLAttribute
+
+#############################################################################
+
+def getStripedUAttribute(self, name):
+	return self.getAttribute(name).strip().upper()
+
+xml.dom.minidom.Element.getStripedUAttribute = \
+					getStripedUAttribute
 
 #############################################################################
 # PROFILES								    #
@@ -146,6 +162,24 @@ def int_getMethod(ext, name):
 			return m
 
 	return None
+
+#############################################################################
+# TYPES									    #
+#############################################################################
+
+def extractTypes(ctx, s):
+	L = []
+
+	for word in re.split('\W+', s):
+
+		if len(word) > 0 and not word in ctx['lang'].QUALIFIERS:
+
+			if word[0] < '0'\
+			   or		\
+			   word[0] > '9':
+				L.append(word)
+
+	return L
 
 #############################################################################
 # IO									    #
