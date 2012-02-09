@@ -80,7 +80,7 @@ def codebuilder_load_xml(ctx, fileName):
 		doc = xml.dom.minidom.parse(fileName)
 
 	except:
-		print('[Error] XML error in file `%s` !' % fileName)
+		print('[Error] XML error in file `%s`, %s !' % (fileName, sys.exc_info()[1]))
 
 		sys.exit(1)
 
@@ -114,8 +114,6 @@ def codebuilder_load_xml(ctx, fileName):
 
 def codebuilder_load(ctx, fileName):
 	doc = codebuilder_load_xml(ctx, fileName)
-
-	print(doc.toxml())
 
 	cb.parse.parseInterface(ctx,
 		doc.getElementsByTagName('interface')
