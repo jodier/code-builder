@@ -73,7 +73,7 @@ CTX = {
 # CODE-BUILDER								    #
 #############################################################################
 
-def codebuilder_load(ctx, fileName):
+def codebuilder_load_xml(ctx, fileName):
 	#####################################################################
 
 	try:
@@ -85,6 +85,37 @@ def codebuilder_load(ctx, fileName):
 		sys.exit(1)
 
 	#####################################################################
+
+	includes = doc.getElementsByTagName('include')
+
+	if len(includes) > 0:
+		dirName = os.path.dirname(fileName)
+
+		if len(dirName) == 0:
+			dirName = '.'
+
+		for include in includes:
+			url = include.getAttribute('url').strip()
+
+			if url[0] != os.sep:
+				url = dirName + os.sep + url
+
+			subdoc = codebuilder_load_xml(ctx, url)
+
+			for node1 in subdoc.getElementsByTagName('xml'):
+				for node2 in node1.childNodes:
+					include.parentNode.appendChild(node2.cloneNode(1))
+
+	#####################################################################
+
+	return doc
+
+#############################################################################
+
+def codebuilder_load(ctx, fileName):
+	doc = codebuilder_load_xml(ctx, fileName)
+
+	print(doc.toxml())
 
 	cb.parse.parseInterface(ctx,
 		doc.getElementsByTagName('interface')
@@ -125,6 +156,8 @@ if __name__ == '__main__':
 			action='store_true', dest='version', help='show version')
 	parse.add_option('-l', '--lang',
 			action='store', dest='lang', help='???')
+	parse.add_option('-p', '--profiles',
+			action='store', dest='profiles', help='???')
 	parse.add_option('', '--verbose',
 			action='store_true', dest='verbose', help='set this program verbose')
 

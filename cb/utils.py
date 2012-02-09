@@ -40,7 +40,7 @@ def buildPaths(pwd, s):
 # TYPES									    #
 #############################################################################
 
-def extractType(ctx, s):
+def extractTypes(ctx, s):
 	L = []
 
 	for word in re.split('\W+', s):
@@ -52,10 +52,19 @@ def extractType(ctx, s):
 			   word[0] > '9':
 				L.append(word)
 
-	if len(L) == 1:
-		return L[0]
-	else:
-		return None
+	return L
+
+#############################################################################
+# PROFILES								    #
+#############################################################################
+
+def selectedProfiles(ctx):
+	L = None
+
+	if not ctx['options'].profiles is None:
+		L = re.split('\W+', ctx['options'].profiles)
+
+	return L
 
 #############################################################################
 # TREES									    #

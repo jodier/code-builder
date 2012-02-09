@@ -57,13 +57,15 @@ def interface(ctx):
 
 		if t['class'] == 'base':
 
-			t__trom__ = cb.utils.extractType(ctx, t['from'])
+			types = cb.utils.extractTypes(ctx, t['from'])
 
-			if t__trom__ in L:
-				if t__trom__ == t['name']:
-					cb.utils.error(ctx, 'Recursif type \'%s\' !' % t__trom__)
-			else:
-				cb.utils.error(ctx, 'Undefined type \'%s\' !' % t__trom__)
+			for type in types:
+
+				if type in L:
+					if type == t['name']:
+						cb.utils.error(ctx, 'Recursif type \'%s\' !' % type)
+				else:
+					cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
 
 		#############################################################
 		# ENUM TYPE						    #
@@ -97,13 +99,15 @@ def interface(ctx):
 
 			for f in fields:
 
-				f__type__ = cb.utils.extractType(ctx, f['type'])
+				types = cb.utils.extractTypes(ctx, f['type'])
 
-				if f__type__ in L:
-					if f__type__ == t['name']:
-						cb.utils.debug(ctx, 'Recursif type \'%s\' !' % f__type__)
-				else:
-					cb.utils.error(ctx, 'Undefined type \'%s\' !' % f__type__)
+				for type in types:
+
+					if type in L:
+						if type == t['name']:
+							cb.utils.debug(ctx, 'Recursif type \'%s\' !' % type)
+					else:
+						cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
 
 	#####################################################################
 	# EXTENSIONS							    #

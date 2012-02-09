@@ -72,12 +72,15 @@ def parseInterface(ctx, interfaces):
 	#####################################################################
 
 	if len(interfaces) != 1:
-		if len(interfaces) > 1:
-			cb.utils.error('Only one interface allowed !')
+		cb.utils.error(ctx, 'Only one interface allowed, \'%d\' found !' % len(interfaces))
 
 		return
 
 	interface = interfaces[0]
+
+	#####################################################################
+
+	SELECTED_PROFILES = cb.utils.selectedProfiles(ctx)
 
 	#####################################################################
 
@@ -207,7 +210,8 @@ def parseInterface(ctx, interfaces):
 						'name': profileNode.getAttribute('name').strip()
 					}
 
-					ctx['int_profiles'].append(dic)
+					if SELECTED_PROFILES is None or dic['name'] in SELECTED_PROFILES:
+						ctx['int_profiles'].append(dic)
 
 		#############################################################
 		# EXTENSIONS						    #
@@ -353,12 +357,15 @@ def parseImplementation(ctx, implementations):
 	#####################################################################
 
 	if len(implementations) != 1:
-		if len(implementations) > 1:
-			cb.utils.error('Only one implementation allowed !')
+		cb.utils.error(ctx, 'Only one implementation allowed !')
 
 		return
 
 	implementation = implementations[0]
+
+	#####################################################################
+
+	SELECTED_PROFILES = cb.utils.selectedProfiles(ctx)
 
 	#####################################################################
 
@@ -492,7 +499,8 @@ def parseImplementation(ctx, implementations):
 						'extensions': EXTENSIONS,
 					}
 
-					ctx['imp_profiles'][profileNode.getAttribute('name').strip()] = dic
+					if SELECTED_PROFILES is None or profileNode.getAttribute('name').strip() in SELECTED_PROFILES:
+						ctx['imp_profiles'][profileNode.getAttribute('name').strip()] = dic
 
 	#####################################################################
 
