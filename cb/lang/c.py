@@ -234,7 +234,7 @@ def emit_pointerPrototype(ctx, fp, m, prefix = '', suffix = ''):
 
 def emit_functionPrototype(ctx, fp, m, prefix = '', suffix = ''):
 
-	proto = '%s %s%s%s(%s_t *self' % (m['type'], prefix, m['name'], suffix, ctx.name)
+	proto = 'static %s %s%s%s(%s_t *self' % (m['type'], prefix, m['name'], suffix, ctx.name)
 
 	for p in m['params']:
 		proto += ', %s %s' % (p['type'], p['name'])
