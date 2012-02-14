@@ -22,17 +22,20 @@
 #
 #############################################################################
 
-import re, cb.utils
+import cb.utils
 
 #############################################################################
 
 def interface(ctx):
-	LANG = ctx['lang']
+	#####################################################################
+
+	NAME = ctx.name
+	LANG = ctx.lang
 
 	#####################################################################
 
 	try:
-		fp = open('%s.h' % ctx['name'], 'wt')
+		fp = open('%s.h' % NAME, 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -73,12 +76,12 @@ def interface(ctx):
 		fp.close()
 
 	except IOError:
-		cb.utils.error('Could not open \'%s.h\' !' % ctx['name'])
+		cb.utils.error('Could not open \'%s.h\' !' % NAME)
 
 	#####################################################################
 
 	try:
-		fp = open('%s_internal.h' % ctx['name'], 'wt')
+		fp = open('%s_internal.h' % NAME, 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -112,17 +115,20 @@ def interface(ctx):
 		fp.close()
 
 	except IOError:
-		cb.utils.error('Could not open \'%s_internal.h\' !' % ctx['name'])
+		cb.utils.error('Could not open \'%s_internal.h\' !' % NAME)
 
 #############################################################################
 
 def implementation(ctx):
-	LANG = ctx['lang']
+	#####################################################################
+
+	NAME = ctx.name
+	LANG = ctx.lang
 
 	#####################################################################
 
 	try:
-		fp = open('%s.c' % ctx['name'], 'wt')
+		fp = open('%s.c' % NAME, 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -170,14 +176,14 @@ def implementation(ctx):
 		fp.close()
 
 	except IOError:
-		cb.utils.error('Could not open \'%s_internal.h\' !' % ctx['name'])
+		cb.utils.error('Could not open \'%s_internal.h\' !' % NAME)
 
 	#####################################################################
 
-	for p in ctx['imp_profiles']:
+	for p in ctx.imp_profiles:
 
 		try:
-			fp = open('%s_%s.c' % (ctx['name'], p), 'wt')
+			fp = open('%s_%s.c' % (NAME, p), 'wt')
 	
 			#####################################################
 			# PROLOG					    #
@@ -218,7 +224,7 @@ def implementation(ctx):
 			fp.close()
 
 		except IOError:
-			cb.utils.error('Could not open \'%s_internal.h\' !' % ctx['name'])
+			cb.utils.error('Could not open \'%s_internal.h\' !' % NAME)
 
 #############################################################################
 

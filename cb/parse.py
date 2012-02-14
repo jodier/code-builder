@@ -22,15 +22,7 @@
 #
 #############################################################################
 
-import cb.utils
-
-#############################################################################
-
-try:
-	import xml.dom.minidom
-
-except ImportError, e:
-	cb.utils.fatal(e)
+import cb.utils, xml.dom.minidom
 
 #############################################################################
 # UTILS									    #
@@ -130,7 +122,7 @@ def parseInterface(ctx, interfaces):
 						'from': typeNode.getStripedAttribute('from'),
 					}
 
-					ctx['int_types'].append(dic)
+					ctx.int_types.append(dic)
 
 				#############################################
 				# ENUM					    #
@@ -161,7 +153,7 @@ def parseInterface(ctx, interfaces):
 						'values': VALUES
 					}
 
-					ctx['int_types'].append(dic)
+					ctx.int_types.append(dic)
 
 				#############################################
 				# STRUCT				    #
@@ -192,7 +184,7 @@ def parseInterface(ctx, interfaces):
 						'fields': FIELDS
 					}
 
-					ctx['int_types'].append(dic)
+					ctx.int_types.append(dic)
 
 		#############################################################
 		# PROFILES						    #
@@ -214,7 +206,7 @@ def parseInterface(ctx, interfaces):
 					   or			    \
 					   profileNode.getStripedAttribute('name') in SELECTED_PROFILES:
 
-						ctx['int_profiles'].append(dic)
+						ctx.int_profiles.append(dic)
 
 		#############################################################
 		# EXTENSIONS						    #
@@ -271,7 +263,7 @@ def parseInterface(ctx, interfaces):
 						'methods': METHODS
 					}
 
-					ctx['int_extensions'].append(dic)
+					ctx.int_extensions.append(dic)
 
 		#############################################################
 		# CONSTRAINTS						    #
@@ -308,24 +300,24 @@ def parseInterface(ctx, interfaces):
 						'keys': KEYS,
 					}
 
-					ctx['int_constraints'].append(dic)
+					ctx.int_constraints.append(dic)
 
 	#####################################################################
 
-	ctx['name'] = interface.getStripedAttribute('name')
-	ctx['major'] = int(interface.getStripedAttribute('major'))
-	ctx['minor'] = int(interface.getStripedAttribute('minor'))
+	ctx.name = interface.getStripedAttribute('name')
+	ctx.major = int(interface.getStripedAttribute('major'))
+	ctx.minor = int(interface.getStripedAttribute('minor'))
 
 	#####################################################################
 
-	ctx['int_asset']['date'] = date
-	ctx['int_asset']['authors'] = authors
-	ctx['int_asset']['emails'] = emails
-	ctx['int_asset']['description'] = description
+	ctx.int_asset['date'] = date
+	ctx.int_asset['authors'] = authors
+	ctx.int_asset['emails'] = emails
+	ctx.int_asset['description'] = description
 
 	#####################################################################
 
-	if ctx['options'].verbose:
+	if ctx.verbose:
 		displayInterface(ctx)
 
 #############################################################################
@@ -379,21 +371,21 @@ def parseImplementation(ctx, implementations):
 		#############################################################
 
 		if node.nodeName == 'extra':
-			ctx['imp_extras'].append(parseCode(node))
+			ctx.imp_extras.append(parseCode(node))
 
 		#############################################################
 		# CTOR							    #
 		#############################################################
 
 		if node.nodeName == 'ctor':
-			ctx['imp_ctors'].append(parseCode(node))
+			ctx.imp_ctors.append(parseCode(node))
 
 		#############################################################
 		# DTOR							    #
 		#############################################################
 
 		if node.nodeName == 'dtor':
-			ctx['imp_dtors'].append(parseCode(node))
+			ctx.imp_dtors.append(parseCode(node))
 
 		#############################################################
 		# PROFILES						    #
@@ -506,11 +498,11 @@ def parseImplementation(ctx, implementations):
 					   or			    \
 					   profileNode.getStripedAttribute('name') in SELECTED_PROFILES:
 
-						ctx['imp_profiles'][profileNode.getStripedAttribute('name')] = dic
+						ctx.imp_profiles[profileNode.getStripedAttribute('name')] = dic
 
 	#####################################################################
 
-	if ctx['options'].verbose:
+	if ctx.verbose:
 		displayImplementation(ctx)
 
 #############################################################################
@@ -519,23 +511,23 @@ def displayInterface(ctx):
 	print('-----------------------------------------------------------------------------')
 	print('| ASSET                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['int_asset'])
+	cb.utils.displayTree(ctx.int_asset)
 	print('-----------------------------------------------------------------------------')
 	print('| TYPES                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['int_types'])
+	cb.utils.displayTree(ctx.int_types)
 	print('-----------------------------------------------------------------------------')
 	print('| PROFILES                                                                  |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['int_profiles'])
+	cb.utils.displayTree(ctx.int_profiles)
 	print('-----------------------------------------------------------------------------')
 	print('| CONSTRAINTS                                                               |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['int_constraints'])
+	cb.utils.displayTree(ctx.int_constraints)
 	print('-----------------------------------------------------------------------------')
 	print('| EXTENSIONS                                                                |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['int_extensions'])
+	cb.utils.displayTree(ctx.int_extensions)
 	print('-----------------------------------------------------------------------------')
 	print('')
 
@@ -545,19 +537,19 @@ def displayImplementation(ctx):
 	print('-----------------------------------------------------------------------------')
 	print('| EXTRAS                                                                    |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['imp_extras'])
+	cb.utils.displayTree(ctx.imp_extras)
 	print('-----------------------------------------------------------------------------')
 	print('| CTORS                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['imp_ctors'])
+	cb.utils.displayTree(ctx.imp_ctors)
 	print('-----------------------------------------------------------------------------')
 	print('| DTORS                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['imp_dtors'])
+	cb.utils.displayTree(ctx.imp_dtors)
 	print('-----------------------------------------------------------------------------')
 	print('| PROFILES                                                                  |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx['imp_profiles'])
+	cb.utils.displayTree(ctx.imp_profiles)
 	print('-----------------------------------------------------------------------------')
 	print('')
 

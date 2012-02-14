@@ -24,50 +24,12 @@
 #
 #############################################################################
 
-import sys
+import os, sys, xml.dom.minidom
 
 import cb.utils
 import cb.parse
 import cb.check
 import cb.emit
-
-#############################################################################
-
-try:
-	import os, xml.dom.minidom
-
-except ImportError, e:
-	cb.utils.fatal(e)
-
-#############################################################################
-# VARIABLES								    #
-#############################################################################
-
-CTX = {
-	'name': 'noname',
-	'major': 0,
-	'minor': 0,
-
-	'int_asset': {},
-	'int_types': [],
-	'int_profiles': [],
-	'int_extensions': [],
-	'int_constraints': [],
-
-	'imp_extras': [],
-	'imp_ctors': [],
-	'imp_dtors': [],
-	'imp_profiles': {},
-
-	'options': None,
-	'lang': None,
-
-	'debug': 0,
-	'ooops': 0,
-	'error': 0,
-
-	'cnt': 0x10000,
-}
 
 #############################################################################
 # CODE-BUILDER								    #
@@ -76,7 +38,7 @@ CTX = {
 def codebuilder_load_xml(ctx, fileName):
 	#####################################################################
 
-	if ctx['options'].verbose:
+	if ctx.verbose:
 		print('Loading \'%s\'...' % fileName)
 
 	#####################################################################
@@ -110,74 +72,133 @@ def codebuilder_load_xml(ctx, fileName):
 				#############################################
 
 	except:
-		print('[Error] XML error in file `%s`, %s !' % (fileName, sys.exc_info()[1]))
-
-		sys.exit(1)
+		cb.utils.fatal(ctx, 'XML error in file `%s`, %s !' % (fileName, sys.exc_info()[1]))
 
 	return doc
 
 #############################################################################
-
-def codebuilder_load(ctx, fileName):
-	doc = codebuilder_load_xml(ctx, fileName)
-
-	cb.parse.parseInterface(ctx,
-		doc.getElementsByTagName('interface')
-	)
-
-	cb.parse.parseImplementation(ctx,
-		doc.getElementsByTagName('implementation')
-	)
-
+import cb.lang.c
 #############################################################################
 
-def codebuilder_check(ctx):
-	cb.check.interface(ctx)
-	cb.check.implementation(ctx)
-
-	cb.utils.status(CTX)
-
-#############################################################################
-
-def codebuilder_emit(ctx):
-	cb.emit.interface(ctx)
-	cb.emit.implementation(ctx)
-
-#############################################################################
-
-from optparse import OptionParser
-
-#############################################################################
-
-if __name__ == '__main__':
+class codebuilder:
 	#####################################################################
 
-	parse = OptionParser('usage: %prog [options] [filename]')
+	def __init__(self):
+		self.lang = cb.lang.c
 
-	parse.add_option('-a', '--authors',
-			action='store_true', dest='authors', help='show authors')
-	parse.add_option('-v', '--version',
-			action='store_true', dest='version', help='show version')
-	parse.add_option('-l', '--lang',
-			action='store', dest='lang', help='???')
-	parse.add_option('-p', '--profiles',
-			action='store', dest='profiles', help='???')
-	parse.add_option('', '--verbose',
-			action='store_true', dest='verbose', help='set this program verbose')
+		#############################################################
+		# INTERFACE						    #
+		#############################################################
 
-	(options, args) = parse.parse_args()
+		self.name = 'noname'
 
-	CTX['options'] = options
+		self.major = 0
+		self.minor = 0
+
+		self.int_asset = {}
+		self.int_types = []
+		self.int_profiles = []
+		self.int_extensions = []
+		self.int_constraints = []
+
+		#############################################################
+		# IMPLEMENTATION					    #
+		#############################################################
+
+		self.imp_extras = []
+		self.imp_ctors = []
+		self.imp_dtors = []
+		self.imp_profiles = {}
+
+		#############################################################
+
+		self.verbose = False
+
+		self.language = 'c'
+		self.profiles = '*'
+
+		self.debug = 0
+		self.ooops = 0
+		self.error = 0
+
+		self.cnt = 0x10000
 
 	#####################################################################
 
-	if options.authors:
-		print('Jerome ODIER, Christophe SMEKENS')
-		sys.exit()
+	def parse(self, fileName):
+		doc = codebuilder_load_xml(self, fileName)
 
-	if options.version:
-		print('code-builder-1.0')
-		sys.exit()
+		cb.parse.parseInterface(self,
+			doc.getElementsByTagName('interface')
+		)
+
+		cb.parse.parseImplementation(self,
+			doc.getElementsByTagName('implementation')
+		)
+
+	#####################################################################
+
+	def check(self):
+		cb.check.interface(self)
+		cb.check.implementation(self)
+
+		cb.utils.status(self)
+
+	#####################################################################
+
+	def emit(self):
+		cb.emit.interface(self)
+		cb.emit.implementation(self)
+		pass
+
+#############################################################################
+
+def entry_point(argv):
+	#####################################################################
+
+	ctx = codebuilder()
+
+	#####################################################################
+
+	flag = 0
+
+	args = []
+
+	for arg in argv[1:]:
+
+		arg = arg.strip()
+
+		if   flag == 1:
+			ctx.language = arg
+
+		elif flag == 2:
+			ctx.profiles = arg
+
+		else:
+			flag = 0
+
+			if   arg == '--authors':
+				print('Jerome ODIER, Christophe SMEKENS')
+				return 0
+
+			elif arg == '--version':
+				print('codebuilder-1.0')
+				return 0
+
+			elif arg == '-v' or arg == '--verbose':
+				ctx.verbose = True
+
+			elif arg == '-l' or arg == '--language':
+				flag = 1
+
+			elif arg == '-p' or arg == '--profiles':
+				flag = 2
+			else:
+				if arg[0] != '-':
+					args.append(arg)
+				else:
+					print('%s: ' % argv[0])
+					return 1
 
 	#####################################################################
 
@@ -190,37 +211,31 @@ if __name__ == '__main__':
 	elif len(args) == 1:
 		fileName = os.path.normcase(args[0])
 	else:
-		parse.error('syntax error')
-		sys.exit(1)
+		cb.utils.fatal(ctx, 'Syntax error !')
 
 	#####################################################################
 
-	if not os.path.exists(fileName):
-		parse.error('incorrect filename \'%s\'' % fileName)
-		sys.exit(1)
+	ctx.parse(fileName)
 
 	#####################################################################
 
-	try:
-		if options.lang:
-			__import__('cb.lang.%s' % options.lang)
-		else:
-			__import__('cb.lang.%s' %     'c'     )
+	ctx.check()
 
-		CTX['lang'] = sys.modules['cb.lang.c']
+	if ctx.error == 0:
 
-	except ImportError, e:
-		parse.error('incorrect language \'%s\'' % options.lang)
-		sys.exit(1)
+		ctx.emit()
 
 	#####################################################################
 
-	codebuilder_load(CTX, fileName)
+	return 0
 
-	codebuilder_check(CTX)
+#############################################################################
 
-	if CTX['error'] == 0:
-		codebuilder_emit(CTX)
+def target(*args):
+	return entry_point, None
+    
+if __name__ == '__main__':
+	entry_point(sys.argv)
 
 #############################################################################
 

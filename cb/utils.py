@@ -22,15 +22,7 @@
 #
 #############################################################################
 
-import os, re, sys
-
-#############################################################################
-
-try:
-	import xml.dom.minidom
-
-except ImportError, e:
-	cb.utils.fatal(e)
+import os, re, sys, xml.dom.minidom
 
 #############################################################################
 # XML									    #
@@ -65,8 +57,8 @@ xml.dom.minidom.Element.getStripedUAttribute = \
 def selectedProfiles(ctx):
 	L = None
 
-	if not ctx['options'].profiles is None:
-		L = re.split('\W+', ctx['options'].profiles)
+	if ctx.profiles != '*':
+		L = re.split('\W+', ctx.profiles)
 
 	return L
 
@@ -118,7 +110,7 @@ def displayTree(T, level = 0):
 #############################################################################
 
 def int_getProfile(ctx, name):
-	INT_PROFILES = ctx['int_profiles']
+	INT_PROFILES = ctx.int_profiles
 
 	for p in INT_PROFILES:
 
@@ -130,7 +122,7 @@ def int_getProfile(ctx, name):
 #############################################################################
 
 def int_getExtension(ctx, name):
-	INT_EXTENSIONS = ctx['int_extensions']
+	INT_EXTENSIONS = ctx.int_extensions
 
 	for e in INT_EXTENSIONS:
 
@@ -160,7 +152,7 @@ def extractTypes(ctx, s):
 
 	for word in re.split('\W+', s):
 
-		if len(word) > 0 and not word in ctx['lang'].QUALIFIERS:
+		if len(word) > 0 and not word in ctx.lang.QUALIFIERS:
 
 			if word[0] < '0'\
 			   or		\
@@ -187,19 +179,19 @@ def printf(fp, s):
 
 def debug(ctx, msg):
 	print('[Debug] %s' % msg)
-	ctx['debug'] += 1
+	ctx.debug += 1
 
 #############################################################################
 
 def ooops(ctx, msg):
 	print('[Ooops] %s' % msg)
-	ctx['ooops'] += 1
+	ctx.ooops += 1
 
 #############################################################################
 
 def error(ctx, msg):
 	print('[Error] %s' % msg)
-	ctx['error'] += 1
+	ctx.error += 1
 
 #############################################################################
 
@@ -210,31 +202,31 @@ def fatal(ctx, msg):
 #############################################################################
 
 def status(ctx):
-	if ctx['debug'] > 0\
+	if ctx.debug > 0\
 	   or		   \
-	   ctx['ooops'] > 0\
+	   ctx.ooops > 0\
 	   or		   \
-	   ctx['error'] > 0:
+	   ctx.error > 0:
 
 		print('')
 
-		if ctx['debug'] > 0:
-			print('There are %d \'debug\' messages !' % ctx['debug'])
+		if ctx.debug > 0:
+			print('There are %d \'debug\' messages !' % ctx.debug)
 
-		if ctx['ooops'] > 0:
-			print('There are %d \'ooops\' messages !' % ctx['ooops'])
+		if ctx.ooops > 0:
+			print('There are %d \'ooops\' messages !' % ctx.ooops)
 
-		if ctx['error'] > 0:
-			print('There are %d \'error\' messages !' % ctx['error'])
+		if ctx.error > 0:
+			print('There are %d \'error\' messages !' % ctx.error)
 
 #############################################################################
 # COUNTER								    #
 #############################################################################
 
 def getCnt(ctx):
-	ctx['cnt'] += 1
+	ctx.cnt += 1
 
-	return ctx['cnt']
+	return ctx.cnt
 
 #############################################################################
 

@@ -33,11 +33,11 @@ def interface(ctx):
 	# TYPES								    #
 	#####################################################################
 
-	INT_TYPE = ctx['int_types']
+	INT_TYPE = ctx.int_types
 
 	#####################################################################
 
-	L = list(ctx['lang'].PRIMITIVES)
+	L = list(ctx.lang.PRIMITIVES)
 
 	#####################################################################
 
@@ -113,7 +113,7 @@ def interface(ctx):
 	# EXTENSIONS							    #
 	#####################################################################
 
-	INT_EXTENSIONS = ctx['int_extensions']
+	INT_EXTENSIONS = ctx.int_extensions
 
 	#####################################################################
 
@@ -215,7 +215,7 @@ def implementation(ctx):
 	# PROFILES							    #
 	#####################################################################
 
-	IMP_PROFILES = ctx['imp_profiles']
+	IMP_PROFILES = ctx.imp_profiles
 
 	#####################################################################
 
@@ -274,9 +274,9 @@ def implementation(ctx):
 	#####################################################################
 
 	checkExtraXtor(ctx,
-		ctx['imp_extras'],
-		ctx['imp_ctors'],
-		ctx['imp_dtors']
+		ctx.imp_extras,
+		ctx.imp_ctors,
+		ctx.imp_dtors
 	)
 
 #############################################################################
