@@ -624,7 +624,7 @@ def emit_impMethods(ctx, fp):
 
 	#####################################################################
 
-	cb.utils.printf(fp, 'bool %s_initialize(%s_t *interface, %s_profiles_t profile)' % (name, name, name))
+	cb.utils.printf(fp, 'bool %s_initialize(%s_t *__interface, %s_profiles_t profile)' % (name, name, name))
 	cb.utils.printf(fp, '{')
 	cb.utils.printf(fp, '\tbool result;')
 	cb.utils.printf(fp, '')
@@ -634,7 +634,7 @@ def emit_impMethods(ctx, fp):
 
 	for p in ctx.int_profiles:
 		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p['name'].upper()))
-		cb.utils.printf(fp, '\t\t\tresult = __%s_%s_ctor(interface);' % (name, p['name']))
+		cb.utils.printf(fp, '\t\t\tresult = __%s_%s_ctor(__interface);' % (name, p['name']))
 		cb.utils.printf(fp, '\t\t\tbreak;')
 		cb.utils.printf(fp, '')
 
@@ -655,7 +655,7 @@ def emit_impMethods(ctx, fp):
 
 	#####################################################################
 
-	cb.utils.printf(fp, 'bool %s_finalize(%s_t *interface, %s_profiles_t profile)' % (name, name, name))
+	cb.utils.printf(fp, 'bool %s_finalize(%s_t *__interface, %s_profiles_t profile)' % (name, name, name))
 	cb.utils.printf(fp, '{')
 	cb.utils.printf(fp, '\tbool result;')
 	cb.utils.printf(fp, '')
@@ -665,7 +665,7 @@ def emit_impMethods(ctx, fp):
 
 	for p in ctx.int_profiles:
 		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p['name'].upper()))
-		cb.utils.printf(fp, '\t\t\tresult = __%s_%s_dtor(interface);' % (name, p['name']))
+		cb.utils.printf(fp, '\t\t\tresult = __%s_%s_dtor(__interface);' % (name, p['name']))
 		cb.utils.printf(fp, '\t\t\tbreak;')
 		cb.utils.printf(fp, '')
 
@@ -686,7 +686,7 @@ def emit_impMethods(ctx, fp):
 
 	#####################################################################
 
-	cb.utils.printf(fp, '%s_extension_status_t %s_checkExt(%s_t *interface, %s_extensions_t extension)' % (name, name, name, name))
+	cb.utils.printf(fp, '%s_extension_status_t %s_checkExt(%s_t *__interface, %s_extensions_t extension)' % (name, name, name, name))
 	cb.utils.printf(fp, '{')
 	cb.utils.printf(fp, '\t%s_extension_status_t result;' % name)
 	cb.utils.printf(fp, '')
@@ -706,7 +706,7 @@ def emit_impMethods(ctx, fp):
 		cb.utils.printf(fp, '')
 
 		for m in e['methods']:
-			cb.utils.printf(fp, '\t\t\tif(interface->%s.%s != NULL) {' % (e['name'], m['name']))
+			cb.utils.printf(fp, '\t\t\tif(__interface->%s.%s != NULL) {' % (e['name'], m['name']))
 			cb.utils.printf(fp, '\t\t\t\tmet_cnt++;')
 			cb.utils.printf(fp, '\t\t\t}')
 
@@ -737,7 +737,7 @@ def emit_impMethods(ctx, fp):
 
 	#####################################################################
 
-	cb.utils.printf(fp, 'bool %s_checkMet(%s_t *interface, %s_methods_t method)' % (name, name, name))
+	cb.utils.printf(fp, 'bool %s_checkMet(%s_t *__interface, %s_methods_t method)' % (name, name, name))
 	cb.utils.printf(fp, '{')
 	cb.utils.printf(fp, '\tbool result;')
 	cb.utils.printf(fp, '')
@@ -749,7 +749,7 @@ def emit_impMethods(ctx, fp):
 
 		for m in e['methods']:
 			cb.utils.printf(fp, '\t\tcase %s_METHOD_%s_%s:' % (name.upper(), e['name'].upper(), m['name'].upper()))
-			cb.utils.printf(fp, '\t\t\tresult = interface->%s.%s != NULL;' % (e['name'], m['name']))
+			cb.utils.printf(fp, '\t\t\tresult = __interface->%s.%s != NULL;' % (e['name'], m['name']))
 			cb.utils.printf(fp, '\t\t\tbreak;')
 			cb.utils.printf(fp, '')
 
