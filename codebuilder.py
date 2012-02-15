@@ -197,7 +197,17 @@ def entry_point(argv):
 				if arg[0] != '-':
 					args.append(arg)
 				else:
-					print('%s: ' % argv[0])
+					print('Usage: %s [options] [filename]' % argv[0])
+					print('')
+					print('Options:')
+					print('  -h, --help          show this help message and exit')
+					print('  --authors           show authors')
+					print('  --version           show version')
+					print('  -v --verbose        set this program verbose')
+					print('')
+					print('  -l --language LANG  ')
+					print('  -p --profiles LIST  ')
+
 					return 1
 
 	#####################################################################
