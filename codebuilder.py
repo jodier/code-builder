@@ -204,8 +204,10 @@ def entry_point(argv):
 					print('  --authors           show authors')
 					print('  --version           show version')
 					print('  -v --verbose        set this program verbose')
+					print('')
 					print('  -l --language LANG  ')
 					print('  -p --profiles LIST  ')
+
 					return 1
 
 	#####################################################################
