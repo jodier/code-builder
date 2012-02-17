@@ -94,6 +94,7 @@ class codebuilder:
 		self.minor = 0
 
 		self.int_asset = {}
+		self.int_extras = []
 		self.int_types = []
 		self.int_profiles = []
 		self.int_extensions = []
@@ -173,19 +174,21 @@ def entry_point(argv):
 
 		if   flag == 1:
 			ctx.language = arg
+			flag = 0
 
 		elif flag == 2:
 			ctx.profiles = arg
+			flag = 0
 
 		elif flag == 3:
 			ctx.intext = arg
+			flag = 0
 
 		elif flag == 4:
 			ctx.impext = arg
-
-		else:
 			flag = 0
 
+		else:
 			if   arg == '--authors':
 				print('Jerome ODIER, Christophe SMEKENS')
 				return 0

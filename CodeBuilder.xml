@@ -13,6 +13,12 @@
       <description>This file is part of SIMPLE_API</description>
     </asset>
 
+    <extra>
+      <code>
+        <![CDATA[#include <ctnr.h>]]>
+      </code>
+    </extra>
+
     <extensions>
 
       <extension name="context">
@@ -27,7 +33,7 @@
           <param name="context" type="context_id" />
         </method>
         <method name="delete" type="void">
-          <param type="void *" />
+          <param name="context" type="drawable_id" />
         </method>
       </extension>
 
@@ -50,8 +56,6 @@
         <field name="field2" type="uint64_t" />
         <field name="field3" type="simple_enum1" />
       </struct>
-
-      <extern name="ctnr_vector_t" />
     </types>
 
     <profiles>

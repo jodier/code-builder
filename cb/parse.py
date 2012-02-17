@@ -60,6 +60,32 @@ xml.dom.minidom.Element.getCDATAs = __getCDATAs
 # PARSERS								    #
 #############################################################################
 
+def parseCode(node):
+	#####################################################################
+
+	CODES = []
+
+	#####################################################################
+
+	for codeNode in node.childNodes:
+
+		#############################################################
+		# CODE							    #
+		#############################################################
+
+		if codeNode.nodeName == 'code':
+
+			dic = {
+				'condition': codeNode.getStripedAttribute('condition'),
+				'txts': codeNode.getCDATAs()
+			}
+
+			CODES.append(dic)
+
+	return CODES
+
+#############################################################################
+
 def parseInterface(ctx, interfaces):
 	#####################################################################
 
@@ -101,6 +127,13 @@ def parseInterface(ctx, interfaces):
 					emails = assetNode.getTEXTs()[0].strip()
 				if assetNode.nodeName == 'description':
 					description = assetNode.getTEXTs()[0].strip()
+
+		#############################################################
+		# EXTRA							    #
+		#############################################################
+
+		if node.nodeName == 'extra':
+			ctx.int_extras.append(parseCode(node))
 
 		#############################################################
 		# TYPES							    #
@@ -334,32 +367,6 @@ def parseInterface(ctx, interfaces):
 
 #############################################################################
 
-def parseCode(node):
-	#####################################################################
-
-	CODES = []
-
-	#####################################################################
-
-	for codeNode in node.childNodes:
-
-		#############################################################
-		# CODE							    #
-		#############################################################
-
-		if codeNode.nodeName == 'code':
-
-			dic = {
-				'condition': codeNode.getStripedAttribute('condition'),
-				'txts': codeNode.getCDATAs()
-			}
-
-			CODES.append(dic)
-
-	return CODES
-
-#############################################################################
-
 def parseImplementation(ctx, implementations):
 	#####################################################################
 
@@ -524,6 +531,10 @@ def displayInterface(ctx):
 	print('| ASSET                                                                     |')
 	print('-----------------------------------------------------------------------------')
 	cb.utils.displayTree(ctx.int_asset)
+	print('-----------------------------------------------------------------------------')
+	print('| EXTRAS                                                                    |')
+	print('-----------------------------------------------------------------------------')
+	cb.utils.displayTree(ctx.int_extras)
 	print('-----------------------------------------------------------------------------')
 	print('| TYPES                                                                     |')
 	print('-----------------------------------------------------------------------------')
