@@ -51,14 +51,12 @@ def codebuilder_load_xml(ctx, fileName):
 		if len(includes) > 0:
 
 			dirName = os.path.dirname(fileName)
-
 			if len(dirName) == 0:
 				dirName = '.'
 
 			for include in includes:
 
 				url = include.getStripedAttribute('url')
-
 				if url[0] != os.sep:
 					url = dirName + os.sep + url
 
@@ -110,6 +108,8 @@ class codebuilder:
 		self.imp_dtors = []
 		self.imp_profiles = {}
 
+		#############################################################
+		# OTHER							    #
 		#############################################################
 
 		self.verbose = False
@@ -272,9 +272,6 @@ def entry_point(argv):
 
 #############################################################################
 
-def target(*args):
-	return entry_point, None
-    
 if __name__ == '__main__':
 	entry_point(sys.argv)
 

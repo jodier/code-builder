@@ -27,7 +27,7 @@
           <param name="context" type="context_id" />
         </method>
         <method name="delete" type="void">
-          <param type="ctnr_vector_t" />
+          <param type="void *" />
         </method>
       </extension>
 

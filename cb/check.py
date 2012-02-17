@@ -123,8 +123,12 @@ def interface(ctx):
 
 			for p in m['params']:
 
-				if not p['type'] in L:
-					cb.utils.error(ctx, 'Undefined type \'%s\' !' % p['type'])
+				types = cb.utils.extractTypes(ctx, p['type'])
+
+				for type in types:
+
+					if not type in L:
+						cb.utils.error(ctx, 'Undefined type \'%s\' !' % types)
 
 			##
 
