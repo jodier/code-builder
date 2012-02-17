@@ -186,6 +186,18 @@ def parseInterface(ctx, interfaces):
 
 					ctx.int_types.append(dic)
 
+				#############################################
+				# STRUCT				    #
+				#############################################
+
+				if typeNode.nodeName == 'extern':
+
+					name = typeNode.\
+						getStripedAttribute('name')
+
+					if len(name) > 0:
+						ctx.lang.PRIMITIVES.add(name)
+
 		#############################################################
 		# PROFILES						    #
 		#############################################################

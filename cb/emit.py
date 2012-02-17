@@ -35,7 +35,7 @@ def interface(ctx):
 	#####################################################################
 
 	try:
-		fp = open('%s.h' % NAME, 'wt')
+		fp = open('%s.%s' % (NAME, ctx.intext), 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -81,7 +81,7 @@ def interface(ctx):
 	#####################################################################
 
 	try:
-		fp = open('%s_internal.h' % NAME, 'wt')
+		fp = open('%s_internal.%s' % (NAME, ctx.intext), 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -128,7 +128,7 @@ def implementation(ctx):
 	#####################################################################
 
 	try:
-		fp = open('%s.c' % NAME, 'wt')
+		fp = open('%s.%s' % (NAME, ctx.impext), 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -183,7 +183,7 @@ def implementation(ctx):
 	for p in ctx.imp_profiles:
 
 		try:
-			fp = open('%s_%s.c' % (NAME, p), 'wt')
+			fp = open('%s_%s.%s' % (NAME, p, ctx.impext), 'wt')
 	
 			#####################################################
 			# PROLOG					    #

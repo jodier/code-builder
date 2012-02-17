@@ -26,7 +26,12 @@ import re, cb.utils
 
 #############################################################################
 
-PRIMITIVES = [
+INT_EXT = 'h'
+IMP_EXT = 'c'
+
+#############################################################################
+
+PRIMITIVES = set([
 	'void',
 	'int8_t',
 	'uint8_t',
@@ -43,17 +48,18 @@ PRIMITIVES = [
 	'long',
 	'float',
 	'double',
-]
+	'...'
+])
 
 #############################################################################
 
-QUALIFIERS = [
+QUALIFIERS = set([
 	'const',
 	'register',
 	'volatile',
 	'struct',
 	'enum',
-]
+])
 
 #############################################################################
 # COMMENTS								    #
@@ -226,7 +232,10 @@ def emit_pointerPrototype(ctx, fp, m, prefix = '', suffix = ''):
 	proto = '%s (* %s%s%s)(struct %s_s *self' % (m['type'], prefix, m['name'], suffix, ctx.name)
 
 	for p in m['params']:
-		proto += ', %s %s' % (p['type'], p['name'])
+		if len(p['name']) == 0:
+			proto += ', %s' % (p['type'])
+		else:
+			proto += ', %s %s' % (p['type'], p['name'])
 
 	cb.utils.printf(fp, proto + ');')
 
@@ -237,7 +246,10 @@ def emit_functionPrototype(ctx, fp, m, prefix = '', suffix = ''):
 	proto = 'static %s %s%s%s(%s_t *self' % (m['type'], prefix, m['name'], suffix, ctx.name)
 
 	for p in m['params']:
-		proto += ', %s %s' % (p['type'], p['name'])
+		if len(p['name']) == 0:
+			proto += ', %s' % (p['type'])
+		else:
+			proto += ', %s %s' % (p['type'], p['name'])
 
 	cb.utils.printf(fp, proto + ')')
 

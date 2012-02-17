@@ -114,6 +114,9 @@ class codebuilder:
 
 		self.verbose = False
 
+		self.intext = ''
+		self.impext = ''
+
 		self.language = 'c'
 		self.profiles = '*'
 
@@ -174,6 +177,12 @@ def entry_point(argv):
 		elif flag == 2:
 			ctx.profiles = arg
 
+		elif flag == 3:
+			ctx.intext = arg
+
+		elif flag == 4:
+			ctx.impext = arg
+
 		else:
 			flag = 0
 
@@ -193,6 +202,13 @@ def entry_point(argv):
 
 			elif arg == '-p' or arg == '--profiles':
 				flag = 2
+
+			elif arg == '--intext':
+				flag = 3
+
+			elif arg == '--impext':
+				flag = 4
+
 			else:
 				if arg[0] != '-':
 					args.append(arg)
@@ -207,8 +223,19 @@ def entry_point(argv):
 					print('')
 					print('  -l --language LANG  ')
 					print('  -p --profiles LIST  ')
+					print('')
+					print('  --intext EXT        ')
+					print('  --impext EXT        ')
 
 					return 1
+
+	#####################################################################
+
+	if len(ctx.intext) == 0:
+		ctx.intext = ctx.lang.INT_EXT
+
+	if len(ctx.impext) == 0:
+		ctx.impext = ctx.lang.IMP_EXT
 
 	#####################################################################
 

@@ -27,7 +27,7 @@
           <param name="context" type="context_id" />
         </method>
         <method name="delete" type="void">
-          <param name="context" type="drawable_id" />
+          <param type="ctnr_vector_t" />
         </method>
       </extension>
 
@@ -50,6 +50,8 @@
         <field name="field2" type="uint64_t" />
         <field name="field3" type="simple_enum1" />
       </struct>
+
+      <extern name="ctnr_vector_t" />
     </types>
 
     <profiles>
