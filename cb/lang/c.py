@@ -284,8 +284,12 @@ def emit_impPubTypes(ctx, fp):
 			cb.utils.printf(fp, 'typedef enum %s' % t['name'])
 			cb.utils.printf(fp, '{')
 
+			i = 0
+
 			for v in t['values']:
-				cb.utils.printf(fp, '\t%s = 0x%X,' % (v['name'], cb.utils.getCnt(ctx)))
+				cb.utils.printf(fp, '\t%s = 0x%X,' % (v['name'], i))
+
+				i += 1
 
 			cb.utils.printf(fp, '')
 			cb.utils.printf(fp, '} %s;' % t['name'])
