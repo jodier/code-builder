@@ -121,7 +121,7 @@ def emit_intPubProlog(ctx, fp):
 	cb.utils.printf(fp, '#include <stdbool.h>')
 	cb.utils.printf(fp, '')
 
-	if len(ctx.imp_extras) > 0:
+	if len(ctx.int_extras) > 0:
 		emit_separator(ctx, fp)
 
 		emit_extras(ctx, fp, ctx.int_extras)
