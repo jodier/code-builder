@@ -288,7 +288,6 @@ def emit_impPubTypes(ctx, fp):
 
 			for v in t['values']:
 				cb.utils.printf(fp, '\t%s = 0x%X,' % (v['name'], i))
-
 				i += 1
 
 			cb.utils.printf(fp, '')
