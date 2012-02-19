@@ -34,8 +34,10 @@ def interfacePublic(ctx):
 
 	#####################################################################
 
+	fileName = '%s.%s' % (NAME, ctx.intext)
+
 	try:
-		fp = open('%s.%s' % (NAME, ctx.intext), 'wt')
+		fp = open(fileName, 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -76,7 +78,7 @@ def interfacePublic(ctx):
 		fp.close()
 
 	except IOError:
-		cb.utils.error('Could not open \'%s.h\' !' % NAME)
+		cb.utils.error('Could not generate \'%s\' !' % fileName)
 
 #############################################################################
 
@@ -88,8 +90,10 @@ def interfacePrivate(ctx):
 
 	#####################################################################
 
+	fileName = '%s_internal.%s' % (NAME, ctx.intext)
+
 	try:
-		fp = open('%s_internal.%s' % (NAME, ctx.intext), 'wt')
+		fp = open(fileName, 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -130,7 +134,7 @@ def interfacePrivate(ctx):
 		fp.close()
 
 	except IOError:
-		cb.utils.error('Could not open \'%s_internal.h\' !' % NAME)
+		cb.utils.error('Could not generate \'%s\' !' % fileName)
 
 #############################################################################
 
@@ -142,8 +146,10 @@ def implementation(ctx):
 
 	#####################################################################
 
+	fileName = '%s.%s' % (NAME, ctx.impext)
+
 	try:
-		fp = open('%s.%s' % (NAME, ctx.impext), 'wt')
+		fp = open(fileName, 'wt')
 
 		#############################################################
 		# PROLOG						    #
@@ -184,14 +190,16 @@ def implementation(ctx):
 		fp.close()
 
 	except IOError:
-		cb.utils.error('Could not open \'%s_internal.h\' !' % NAME)
+		cb.utils.error('Could not generate \'%s\' !' % fileName)
 
 	#####################################################################
 
 	for p in ctx.imp_profiles:
 
+		fileName = '%s_%s.%s' % (NAME, p, ctx.impext)
+
 		try:
-			fp = open('%s_%s.%s' % (NAME, p, ctx.impext), 'wt')
+			fp = open(fileName, 'wt')
 	
 			#####################################################
 			# PROLOG					    #
@@ -225,7 +233,7 @@ def implementation(ctx):
 			fp.close()
 
 		except IOError:
-			cb.utils.error('Could not open \'%s_internal.h\' !' % NAME)
+			cb.utils.error('Could not generate \'%s\' !' % fileName)
 
 #############################################################################
 
