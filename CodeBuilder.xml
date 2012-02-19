@@ -13,11 +13,17 @@
       <description>This file is part of SIMPLE_API</description>
     </asset>
 
-    <extra>
+    <prolog>
       <code>
         <![CDATA[#include <ctnr.h>]]>
       </code>
-    </extra>
+    </prolog>
+
+    <epilog>
+      <code>
+        <![CDATA[/* BYE BYE */]]>
+      </code>
+    </epilog>
 
     <extensions>
 
@@ -82,15 +88,15 @@
 
   <interface_private>
 
-    <extra>
+    <prolog>
       <code>
-        <![CDATA[/* EXTRA */]]>
+        <![CDATA[/* PROLOG */]]>
       </code>
-    </extra>
+    </prolog>
 
     <epilog>
       <code>
-        <![CDATA[/* PROLOG */]]>
+        <![CDATA[/* EPILOG */]]>
       </code>
     </epilog>
 

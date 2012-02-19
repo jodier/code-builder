@@ -85,7 +85,7 @@ class codebuilder:
 		self.lang = None
 
 		#############################################################
-		# INTERFACE						    #
+		# PUBLIC INTERFACE					    #
 		#############################################################
 
 		self.name = 'noname'
@@ -94,7 +94,7 @@ class codebuilder:
 		self.minor = 0
 
 		self.int_pub_asset = {}
-		self.int_pub_extras = []
+		self.int_pub_prologs = []
 		self.int_pub_epilogs = []
 		self.int_pub_types = []
 		self.int_pub_profiles = []
@@ -102,10 +102,10 @@ class codebuilder:
 		self.int_pub_constraints = []
 
 		#############################################################
-		# INTERFACE INTERNAL					    #
+		# PRIVATE INTERFACE					    #
 		#############################################################
 
-		self.int_priv_extras = []
+		self.int_priv_prologs = []
 		self.int_priv_epilogs = []
 		self.int_priv_types = []
 
@@ -126,6 +126,9 @@ class codebuilder:
 
 		self.intext = ''
 		self.impext = ''
+
+		self.primitives = ''
+		self.qualifiers = ''
 
 		self.language = 'c'
 		self.profiles = '*'
@@ -156,8 +159,9 @@ class codebuilder:
 	#####################################################################
 
 	def check(self):
-		cb.check.interface(self)
-		cb.check.implementation(self)
+		cb.check.checkInterfacePublic(self)
+		cb.check.checkInterfacePrivate(self)
+		cb.check.checkImplementation(self)
 
 		cb.utils.status(self)
 
@@ -256,6 +260,9 @@ def entry_point(argv):
 
 	if len(ctx.impext) == 0:
 		ctx.impext = ctx.lang.IMP_EXT
+
+	ctx.primitives = ctx.lang.PRIMITIVES
+	ctx.qualifiers = ctx.lang.QUALIFIERS
 
 	#####################################################################
 

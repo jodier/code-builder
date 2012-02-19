@@ -152,7 +152,7 @@ def extractTypes(ctx, s):
 
 	for word in re.split('\W+', s):
 
-		if len(word) > 0 and not word in ctx.lang.QUALIFIERS:
+		if len(word) > 0 and not word in ctx.qualifiers:
 
 			if word[0] < '0'\
 			   or		\

@@ -25,32 +25,24 @@
 import cb.utils
 
 #############################################################################
-# INTERFACE								    #
-#############################################################################
 
-def interface(ctx):
+def checkTypes(ctx, TYPES):
 	#####################################################################
-	# TYPES								    #
+	# PASS ONE							    #
 	#####################################################################
 
-	INT_TYPE = ctx.int_pub_types
+	for t in TYPES:
 
-	#####################################################################
-
-	L = list(ctx.lang.PRIMITIVES)
-
-	#####################################################################
-
-	for t in INT_TYPE:
-
-		if t['name'] in L:
+		if t['name'] in ctx.primitives:
 			cb.utils.error(ctx, 'Duplicated type \'%s\' !' % t['name'])
 		else:
-			L.append(t['name'])
+			ctx.primitives.add(t['name'])
 
 	#####################################################################
+	# PASS TWO							    #
+	#####################################################################
 
-	for t in INT_TYPE:
+	for t in TYPES:
 		#############################################################
 		# BASE TYPE						    #
 		#############################################################
@@ -61,7 +53,7 @@ def interface(ctx):
 
 			for type in types:
 
-				if type in L:
+				if type in ctx.primitives:
 					if type == t['name']:
 						cb.utils.error(ctx, 'Recursif type \'%s\' !' % type)
 				else:
@@ -103,11 +95,20 @@ def interface(ctx):
 
 				for type in types:
 
-					if type in L:
+					if type in ctx.primitives:
 						if type == t['name']:
 							cb.utils.debug(ctx, 'Recursif type \'%s\' !' % type)
 					else:
 						cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
+
+#############################################################################
+
+def checkInterfacePublic(ctx):
+	#####################################################################
+	# TYPES								    #
+	#####################################################################
+
+	checkTypes(ctx, ctx.int_pub_types)
 
 	#####################################################################
 	# EXTENSIONS							    #
@@ -127,7 +128,7 @@ def interface(ctx):
 
 				for type in types:
 
-					if not type in L:
+					if not type in ctx.primitives:
 						cb.utils.error(ctx, 'Undefined type \'%s\' !' % types)
 
 			##
@@ -157,7 +158,14 @@ def interface(ctx):
 				cb.utils.error(ctx, 'Duplicated extension \'%s\' !' % e[i]['name'])
 
 #############################################################################
-# IMPLEMENTATION							    #
+
+def checkInterfacePrivate(ctx):
+	#####################################################################
+	# TYPES								    #
+	#####################################################################
+
+	checkTypes(ctx, ctx.int_priv_types)
+
 #############################################################################
 
 def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
@@ -214,7 +222,7 @@ def checkCodes(ctx, CODES):
 
 #############################################################################
 
-def implementation(ctx):
+def checkImplementation(ctx):
 	#####################################################################
 	# PROFILES							    #
 	#####################################################################

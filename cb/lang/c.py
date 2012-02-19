@@ -134,10 +134,10 @@ def emit_intPubProlog(ctx, fp):
 	cb.utils.printf(fp, '#include <stdbool.h>')
 	cb.utils.printf(fp, '')
 
-	if len(ctx.int_pub_extras) > 0:
+	if len(ctx.int_pub_prologs) > 0:
 		emit_separator(ctx, fp)
 
-		emit_extras(ctx.int_pub_extras, fp)
+		emit_extras(ctx.int_pub_prologs, fp)
 
 #############################################################################
 
@@ -164,10 +164,10 @@ def emit_intPrivProlog(ctx, fp):
 	cb.utils.printf(fp, '#include "%s.h"' % ctx.name)
 	cb.utils.printf(fp, '')
 
-	if len(ctx.int_priv_extras) > 0:
+	if len(ctx.int_priv_prologs) > 0:
 		emit_separator(ctx, fp)
 
-		emit_extras(ctx.int_priv_extras, fp)
+		emit_extras(ctx.int_priv_prologs, fp)
 
 #############################################################################
 

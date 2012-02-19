@@ -146,16 +146,28 @@ def parseType(node):
 			TYPES.append(dic)
 
 		#############################################
-		# STRUCT				    #
+		# PRIMITIVE				    #
 		#############################################
 
-		if typeNode.nodeName == 'extern':
+		if typeNode.nodeName == 'primitive':
 
 			name = typeNode.\
 				getStripedAttribute('name')
 
 			if len(name) > 0:
-				ctx.lang.PRIMITIVES.add(name)
+				ctx.primitives.add(name)
+
+		#############################################
+		# QUALIFIER				    #
+		#############################################
+
+		if typeNode.nodeName == 'qualifier':
+
+			name = typeNode.\
+				getStripedAttribute('name')
+
+			if len(name) > 0:
+				ctx.qualifiers.add(name)
 
 	return TYPES
 
@@ -189,6 +201,11 @@ def parseCode(node):
 
 def parseInterfacePublic(ctx, interfaces):
 	#####################################################################
+
+	if len(interfaces) == 0:
+		cb.utils.error(ctx, 'No public interface defined !')
+
+		return
 
 	if len(interfaces) != 1:
 		cb.utils.error(ctx, 'Only one public interface allowed, \'%d\' found !' % len(interfaces))
@@ -230,11 +247,11 @@ def parseInterfacePublic(ctx, interfaces):
 					description = assetNode.getTEXTs()[0].strip()
 
 		#############################################################
-		# EXTRA							    #
+		# PROLOG						    #
 		#############################################################
 
-		if node.nodeName == 'extra':
-			ctx.int_pub_extras.append(parseCode(node))
+		if node.nodeName == 'prolog':
+			ctx.int_pub_prologs.append(parseCode(node))
 
 		#############################################################
 		# EPILOG						    #
@@ -406,11 +423,11 @@ def parseInterfacePrivate(ctx, interfaces):
 	for node in interface.childNodes:
 
 		#############################################################
-		# EXTRA							    #
+		# PROLOG						    #
 		#############################################################
 
-		if node.nodeName == 'extra':
-			ctx.int_priv_extras.append(parseCode(node))
+		if node.nodeName == 'prolog':
+			ctx.int_priv_prologs.append(parseCode(node))
 
 		#############################################################
 		# EPILOG						    #
@@ -435,6 +452,11 @@ def parseInterfacePrivate(ctx, interfaces):
 
 def parseImplementation(ctx, implementations):
 	#####################################################################
+
+	if len(implementations) == 0:
+		cb.utils.error(ctx, 'No implementation defined !')
+
+		return
 
 	if len(implementations) != 1:
 		cb.utils.error(ctx, 'Only one implementation allowed, \'%d\' found !' % len(implementations))
@@ -598,9 +620,13 @@ def displayInterfacePublic(ctx):
 	print('-----------------------------------------------------------------------------')
 	cb.utils.displayTree(ctx.int_pub_asset)
 	print('-----------------------------------------------------------------------------')
-	print('| EXTRAS                                                                    |')
+	print('| PROLOGS                                                                   |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_pub_extras)
+	cb.utils.displayTree(ctx.int_pub_prologs)
+	print('-----------------------------------------------------------------------------')
+	print('| EPILOGS                                                                   |')
+	print('-----------------------------------------------------------------------------')
+	cb.utils.displayTree(ctx.int_pub_epilogs)
 	print('-----------------------------------------------------------------------------')
 	print('| TYPES                                                                     |')
 	print('-----------------------------------------------------------------------------')
@@ -624,9 +650,13 @@ def displayInterfacePublic(ctx):
 
 def displayInterfacePrivate(ctx):
 	print('-----------------------------------------------------------------------------')
-	print('| EXTRAS                                                                    |')
+	print('| PROLOGS                                                                   |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_priv_extras)
+	cb.utils.displayTree(ctx.int_priv_prologs)
+	print('-----------------------------------------------------------------------------')
+	print('| EPILOGS                                                                   |')
+	print('-----------------------------------------------------------------------------')
+	cb.utils.displayTree(ctx.int_priv_epilogs)
 	print('-----------------------------------------------------------------------------')
 	print('| TYPES                                                                     |')
 	print('-----------------------------------------------------------------------------')
