@@ -163,14 +163,12 @@ class codebuilder:
 		cb.check.checkInterfacePrivate(self)
 		cb.check.checkImplementation(self)
 
-		cb.utils.status(self)
-
 	#####################################################################
 
 	def emit(self):
-		cb.emit.interface(self)
+		cb.emit.interfacePublic(self)
+		cb.emit.interfacePrivate(self)
 		cb.emit.implementation(self)
-		pass
 
 #############################################################################
 
@@ -282,6 +280,8 @@ def entry_point(argv):
 	ctx.parse(fileName)
 
 	ctx.check()
+
+	cb.utils.status(ctx)
 
 	if ctx.error == 0:
 		ctx.emit()
