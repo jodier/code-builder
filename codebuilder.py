@@ -99,7 +99,6 @@ class codebuilder:
 		self.int_pub_types = []
 		self.int_pub_profiles = []
 		self.int_pub_extensions = []
-		self.int_pub_constraints = []
 
 		#############################################################
 		# PRIVATE INTERFACE					    #
@@ -108,6 +107,7 @@ class codebuilder:
 		self.int_priv_prologs = []
 		self.int_priv_epilogs = []
 		self.int_priv_types = []
+		self.int_priv_constraints = []
 
 		#############################################################
 		# IMPLEMENTATION					    #
@@ -145,7 +145,7 @@ class codebuilder:
 		doc = codebuilder_load_xml(self, fileName)
 
 		cb.parse.parseInterfacePublic(self,
-			doc.getElementsByTagName('interface')
+			doc.getElementsByTagName('interface_public')
 		)
 
 		cb.parse.parseInterfacePrivate(self,

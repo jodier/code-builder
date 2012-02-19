@@ -475,7 +475,7 @@ def emit_impPrivTypes(ctx, fp):
 #############################################################################
 
 def emit_impPrivConstraints(ctx, fp):
-	INT_CONSTRAINTS = ctx.int_pub_constraints
+	INT_CONSTRAINTS = ctx.int_priv_constraints
 
 	for c in INT_CONSTRAINTS:
 		cb.utils.printf(fp, 'typedef enum %s_s' % c['name'])
@@ -492,7 +492,7 @@ def emit_impPrivConstraints(ctx, fp):
 
 def emit_impPrivMethods(ctx, fp):
 
-	for c in ctx.int_pub_constraints:
+	for c in ctx.int_priv_constraints:
 		cb.utils.printf(fp, 'extern enum %s_s %s;' % (c['name'], c['name'].upper()))
 
 	cb.utils.printf(fp, '')
@@ -516,7 +516,7 @@ def emit_impPrivMethods(ctx, fp):
 
 def emit_impConstraints(ctx, fp):
 
-	for constraint in ctx.int_pub_constraints:
+	for constraint in ctx.int_priv_constraints:
 		cb.utils.printf(fp, '%s_t %s = (%s_t) -1;' % (constraint['name'], constraint['name'].upper(), constraint['name']))
 
 	cb.utils.printf(fp, '')

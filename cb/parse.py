@@ -346,43 +346,6 @@ def parseInterfacePublic(ctx, interfaces):
 
 					ctx.int_pub_extensions.append(dic)
 
-		#############################################################
-		# CONSTRAINTS						    #
-		#############################################################
-
-		if node.nodeName == 'constraints':
-
-			for constraintNode in node.childNodes:
-
-				#############################################
-				# CONSTRAINT				    #
-				#############################################
-
-				if constraintNode.nodeName == 'constraint':
-
-					KEYS = []
-
-					for keyNode in constraintNode.childNodes:
-
-						#############################
-						# KEY			    #
-						#############################
-
-						if keyNode.nodeName == 'key':
-
-							dic = {
-								'name': keyNode.getStripedAttribute('name')
-							}
-
-							KEYS.append(dic)
-
-					dic = {
-						'name': constraintNode.getStripedAttribute('name'),
-						'keys': KEYS,
-					}
-
-					ctx.int_pub_constraints.append(dic)
-
 	#####################################################################
 
 	ctx.name = interface.getStripedAttribute('name')
@@ -442,6 +405,43 @@ def parseInterfacePrivate(ctx, interfaces):
 
 		if node.nodeName == 'types':
 			ctx.int_priv_types.extend(parseType(ctx, node))
+
+		#############################################################
+		# CONSTRAINTS						    #
+		#############################################################
+
+		if node.nodeName == 'constraints':
+
+			for constraintNode in node.childNodes:
+
+				#############################################
+				# CONSTRAINT				    #
+				#############################################
+
+				if constraintNode.nodeName == 'constraint':
+
+					KEYS = []
+
+					for keyNode in constraintNode.childNodes:
+
+						#############################
+						# KEY			    #
+						#############################
+
+						if keyNode.nodeName == 'key':
+
+							dic = {
+								'name': keyNode.getStripedAttribute('name')
+							}
+
+							KEYS.append(dic)
+
+					dic = {
+						'name': constraintNode.getStripedAttribute('name'),
+						'keys': KEYS,
+					}
+
+					ctx.int_priv_constraints.append(dic)
 
 	#####################################################################
 
@@ -638,10 +638,6 @@ def displayInterfacePublic(ctx):
 	print('-----------------------------------------------------------------------------')
 	cb.utils.displayTree(ctx.int_pub_profiles)
 	print('-----------------------------------------------------------------------------')
-	print('| CONSTRAINTS                                                               |')
-	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_pub_constraints)
-	print('-----------------------------------------------------------------------------')
 	print('| EXTENSIONS                                                                |')
 	print('-----------------------------------------------------------------------------')
 	cb.utils.displayTree(ctx.int_pub_extensions)
@@ -665,6 +661,10 @@ def displayInterfacePrivate(ctx):
 	print('| TYPES                                                                     |')
 	print('-----------------------------------------------------------------------------')
 	cb.utils.displayTree(ctx.int_priv_types)
+	print('-----------------------------------------------------------------------------')
+	print('| CONSTRAINTS                                                               |')
+	print('-----------------------------------------------------------------------------')
+	cb.utils.displayTree(ctx.int_priv_constraints)
 	print('-----------------------------------------------------------------------------')
 	print('')
 
