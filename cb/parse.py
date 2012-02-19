@@ -60,7 +60,7 @@ xml.dom.minidom.Element.getCDATAs = __getCDATAs
 # PARSERS								    #
 #############################################################################
 
-def parseType(node):
+def parseType(ctx, node):
 	#####################################################################
 
 	TYPES = []
@@ -173,7 +173,7 @@ def parseType(node):
 
 #############################################################################
 
-def parseCode(node):
+def parseCode(ctx, node):
 	#####################################################################
 
 	CODES = []
@@ -251,21 +251,21 @@ def parseInterfacePublic(ctx, interfaces):
 		#############################################################
 
 		if node.nodeName == 'prolog':
-			ctx.int_pub_prologs.append(parseCode(node))
+			ctx.int_pub_prologs.append(parseCode(ctx, node))
 
 		#############################################################
 		# EPILOG						    #
 		#############################################################
 
 		if node.nodeName == 'epilog':
-			ctx.int_pub_epilogs.append(parseCode(node))
+			ctx.int_pub_epilogs.append(parseCode(ctx, node))
 
 		#############################################################
 		# TYPES							    #
 		#############################################################
 
 		if node.nodeName == 'types':
-			ctx.int_pub_types.extend(parseType(node))
+			ctx.int_pub_types.extend(parseType(ctx, node))
 
 		#############################################################
 		# PROFILES						    #
@@ -427,21 +427,21 @@ def parseInterfacePrivate(ctx, interfaces):
 		#############################################################
 
 		if node.nodeName == 'prolog':
-			ctx.int_priv_prologs.append(parseCode(node))
+			ctx.int_priv_prologs.append(parseCode(ctx, node))
 
 		#############################################################
 		# EPILOG						    #
 		#############################################################
 
 		if node.nodeName == 'epilog':
-			ctx.int_priv_epilogs.append(parseCode(node))
+			ctx.int_priv_epilogs.append(parseCode(ctx, node))
 
 		#############################################################
 		# TYPES							    #
 		#############################################################
 
 		if node.nodeName == 'types':
-			ctx.int_priv_types.extend(parseType(node))
+			ctx.int_priv_types.extend(parseType(ctx, node))
 
 	#####################################################################
 
@@ -478,21 +478,21 @@ def parseImplementation(ctx, implementations):
 		#############################################################
 
 		if node.nodeName == 'extra':
-			ctx.imp_extras.append(parseCode(node))
+			ctx.imp_extras.append(parseCode(ctx, node))
 
 		#############################################################
 		# CTOR							    #
 		#############################################################
 
 		if node.nodeName == 'ctor':
-			ctx.imp_ctors.append(parseCode(node))
+			ctx.imp_ctors.append(parseCode(ctx, node))
 
 		#############################################################
 		# DTOR							    #
 		#############################################################
 
 		if node.nodeName == 'dtor':
-			ctx.imp_dtors.append(parseCode(node))
+			ctx.imp_dtors.append(parseCode(ctx, node))
 
 		#############################################################
 		# PROFILES						    #
@@ -520,21 +520,21 @@ def parseImplementation(ctx, implementations):
 						#############################
 
 						if itemNode1.nodeName == 'extra':
-							EXTRAS1.append(parseCode(itemNode1))
+							EXTRAS1.append(parseCode(ctx, itemNode1))
 
 						#############################
 						# CTOR			    #
 						#############################
 
 						if itemNode1.nodeName == 'ctor':
-							CTORS1.append(parseCode(itemNode1))
+							CTORS1.append(parseCode(ctx, itemNode1))
 
 						#############################
 						# DTOR			    #
 						#############################
 
 						if itemNode1.nodeName == 'dtor':
-							DTORS1.append(parseCode(itemNode1))
+							DTORS1.append(parseCode(ctx, itemNode1))
 
 						#############################
 						# EXTENSIONS		    #
@@ -562,28 +562,28 @@ def parseImplementation(ctx, implementations):
 										#############
 
 										if itemNode2.nodeName == 'extra':
-											EXTRAS2.append(parseCode(itemNode2))
+											EXTRAS2.append(parseCode(ctx, itemNode2))
 
 										#############
 										# CTOR	    #
 										#############
 
 										if itemNode2.nodeName == 'ctor':
-											CTORS2.append(parseCode(itemNode2))
+											CTORS2.append(parseCode(ctx, itemNode2))
 
 										#############
 										# DTOR	    #
 										#############
 
 										if itemNode2.nodeName == 'dtor':
-											DTORS2.append(parseCode(itemNode2))
+											DTORS2.append(parseCode(ctx, itemNode2))
 
 										#############
 										# METHOD    #
 										#############
 
 										if itemNode2.nodeName == 'method':
-											METHODS[itemNode2.getStripedAttribute('name')] = parseCode(itemNode2)
+											METHODS[itemNode2.getStripedAttribute('name')] = parseCode(ctx, itemNode2)
 
 									dic = {
 										'extras': EXTRAS2,
