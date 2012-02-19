@@ -286,8 +286,10 @@ def entry_point(argv):
 	ctx.check()
 
 	if ctx.error == 0:
-
 		ctx.emit()
+
+	else:
+		print('Abort...')
 
 	#####################################################################
 
