@@ -110,7 +110,7 @@ def displayTree(T, level = 0):
 #############################################################################
 
 def int_getProfile(ctx, name):
-	INT_PROFILES = ctx.int_profiles
+	INT_PROFILES = ctx.int_pub_profiles
 
 	for p in INT_PROFILES:
 
@@ -122,7 +122,7 @@ def int_getProfile(ctx, name):
 #############################################################################
 
 def int_getExtension(ctx, name):
-	INT_EXTENSIONS = ctx.int_extensions
+	INT_EXTENSIONS = ctx.int_pub_extensions
 
 	for e in INT_EXTENSIONS:
 

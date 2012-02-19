@@ -93,12 +93,21 @@ class codebuilder:
 		self.major = 0
 		self.minor = 0
 
-		self.int_asset = {}
-		self.int_extras = []
-		self.int_types = []
-		self.int_profiles = []
-		self.int_extensions = []
-		self.int_constraints = []
+		self.int_pub_asset = {}
+		self.int_pub_extras = []
+		self.int_pub_epilogs = []
+		self.int_pub_types = []
+		self.int_pub_profiles = []
+		self.int_pub_extensions = []
+		self.int_pub_constraints = []
+
+		#############################################################
+		# INTERFACE INTERNAL					    #
+		#############################################################
+
+		self.int_priv_extras = []
+		self.int_priv_epilogs = []
+		self.int_priv_types = []
 
 		#############################################################
 		# IMPLEMENTATION					    #
@@ -132,8 +141,12 @@ class codebuilder:
 	def parse(self, fileName):
 		doc = codebuilder_load_xml(self, fileName)
 
-		cb.parse.parseInterface(self,
+		cb.parse.parseInterfacePublic(self,
 			doc.getElementsByTagName('interface')
+		)
+
+		cb.parse.parseInterfacePrivate(self,
+			doc.getElementsByTagName('interface_private')
 		)
 
 		cb.parse.parseImplementation(self,

@@ -80,6 +80,24 @@
 
 <!-- ******************************************************************** -->
 
+  <interface_private>
+
+    <extra>
+      <code>
+        <![CDATA[/* EXTRA */]]>
+      </code>
+    </extra>
+
+    <epilog>
+      <code>
+        <![CDATA[/* PROLOG */]]>
+      </code>
+    </epilog>
+
+  </interface_private>
+
+<!-- ******************************************************************** -->
+
   <implementation>
 
     <extra>

@@ -96,8 +96,21 @@ def emit_comment(ctx, fp, s):
 # PROLOGS								    #
 #############################################################################
 
+def emit_extras(extras, fp):
+
+	for e in extras:
+
+		for c in e:
+
+			for t in c['txts']:
+				cb.utils.printf(fp, t)
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
 def emit_intPubProlog(ctx, fp):
-	INT_ASSET = ctx.int_asset
+	INT_ASSET = ctx.int_pub_asset
 
 	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
 	cb.utils.printf(fp, ' * Emails  : %s' % INT_ASSET['emails'])
@@ -121,15 +134,15 @@ def emit_intPubProlog(ctx, fp):
 	cb.utils.printf(fp, '#include <stdbool.h>')
 	cb.utils.printf(fp, '')
 
-	if len(ctx.int_extras) > 0:
+	if len(ctx.int_pub_extras) > 0:
 		emit_separator(ctx, fp)
 
-		emit_extras(ctx, fp, ctx.int_extras)
+		emit_extras(ctx.int_pub_extras, fp)
 
 #############################################################################
 
 def emit_intPrivProlog(ctx, fp):
-	INT_ASSET = ctx.int_asset
+	INT_ASSET = ctx.int_pub_asset
 
 	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
 	cb.utils.printf(fp, ' * Emails  : %s' % INT_ASSET['emails'])
@@ -151,10 +164,15 @@ def emit_intPrivProlog(ctx, fp):
 	cb.utils.printf(fp, '#include "%s.h"' % ctx.name)
 	cb.utils.printf(fp, '')
 
+	if len(ctx.int_priv_extras) > 0:
+		emit_separator(ctx, fp)
+
+		emit_extras(ctx.int_priv_extras, fp)
+
 #############################################################################
 
 def emit_impProlog(ctx, fp):
-	INT_ASSET = ctx.int_asset
+	INT_ASSET = ctx.int_pub_asset
 
 	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
 	cb.utils.printf(fp, ' * Emails  : %s' % INT_ASSET['emails'])
@@ -175,12 +193,12 @@ def emit_impProlog(ctx, fp):
 	if len(ctx.imp_extras) > 0:
 		emit_separator(ctx, fp)
 
-		emit_extras(ctx, fp, ctx.imp_extras)
+		emit_extras(ctx.imp_extras, fp)
 
 #############################################################################
 
 def emit_impProfileProlog(ctx, fp, p):
-	INT_ASSET = ctx.int_asset
+	INT_ASSET = ctx.int_pub_asset
 	IMP_PROFILES = ctx.imp_profiles[p]
 
 	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
@@ -203,13 +221,19 @@ def emit_impProfileProlog(ctx, fp, p):
 	if len(IMP_PROFILES['extras']) > 0:
 		emit_separator(ctx, fp)
 
-		emit_extras(ctx, fp, IMP_PROFILES['extras'])
+		emit_extras(IMP_PROFILES['extras'], fp)
 
 #############################################################################
 # EPILOGS								    #
 #############################################################################
 
 def emit_intPubEpilog(ctx, fp):
+
+	if len(ctx.int_pub_epilogs) > 0:
+		emit_extras(ctx.int_pub_epilogs, fp)
+
+		emit_separator(ctx, fp)
+
 	cb.utils.printf(fp, '#endif /* __%s_H */' % ctx.name.upper())
 
 	cb.utils.printf(fp, '')
@@ -218,6 +242,12 @@ def emit_intPubEpilog(ctx, fp):
 #############################################################################
 
 def emit_intPrivEpilog(ctx, fp):
+
+	if len(ctx.int_priv_epilogs) > 0:
+		emit_extras(ctx.int_priv_epilogs, fp)
+
+		emit_separator(ctx, fp)
+
 	cb.utils.printf(fp, '#endif /* __%s_INTERNAL_H */' % ctx.name.upper())
 
 	cb.utils.printf(fp, '')
@@ -259,13 +289,12 @@ def emit_functionPrototype(ctx, fp, m, prefix = '', suffix = ''):
 	cb.utils.printf(fp, proto + ')')
 
 #############################################################################
-# PUBLIC INTERFACE							    #
+# PUBLIC & PRIVATE INTERFACE						    #
 #############################################################################
 
-def emit_impPubTypes(ctx, fp):
-	INT_TYPES = ctx.int_types
+def emit_impTypes(types, fp):
 
-	for t in INT_TYPES:
+	for t in types:
 
 		#############################################################
 
@@ -308,6 +337,13 @@ def emit_impPubTypes(ctx, fp):
 			cb.utils.printf(fp, '')
 
 #############################################################################
+# PUBLIC INTERFACE							    #
+#############################################################################
+
+def emit_impPubTypes(ctx, fp):
+	emit_impTypes(ctx.int_pub_types, fp)
+
+#############################################################################
 
 def emit_impPubDefinitions(ctx, fp):
 	name = ctx.name
@@ -322,7 +358,7 @@ def emit_impPubDefinitions(ctx, fp):
 	cb.utils.printf(fp, 'typedef enum %s_profiles_e' % name)
 	cb.utils.printf(fp, '{')
 
-	for p in ctx.int_profiles:
+	for p in ctx.int_pub_profiles:
 		cb.utils.printf(fp, '\t%s_PROFILE_%s = 0x%X,' % (NAME, p['name'].upper(), cb.utils.getCnt(ctx)))
 
 	cb.utils.printf(fp, '')
@@ -339,7 +375,7 @@ def emit_impPubDefinitions(ctx, fp):
 	cb.utils.printf(fp, 'typedef enum %s_extensions_e' % name)
 	cb.utils.printf(fp, '{')
 
-	for e in ctx.int_extensions:
+	for e in ctx.int_pub_extensions:
 		cb.utils.printf(fp, '\t%s_EXTENSION_%s = 0x%X,' % (NAME, e['name'].upper(), cb.utils.getCnt(ctx)))
 
 	cb.utils.printf(fp, '')
@@ -370,7 +406,7 @@ def emit_impPubDefinitions(ctx, fp):
 	cb.utils.printf(fp, 'typedef enum %s_methods_e' % name)
 	cb.utils.printf(fp, '{')
 
-	for e in ctx.int_extensions:
+	for e in ctx.int_pub_extensions:
 
 		for m in e['methods']:
 			cb.utils.printf(fp, '\t%s_METHOD_%s_%s = 0x%X,' % (NAME, e['name'].upper(), m['name'].upper(), cb.utils.getCnt(ctx)))
@@ -389,7 +425,7 @@ def emit_impPubDefinitions(ctx, fp):
 	cb.utils.printf(fp, 'typedef struct %s_s' % ctx.name)
 	cb.utils.printf(fp, '{')
 
-	for e in ctx.int_extensions:
+	for e in ctx.int_pub_extensions:
 
 		cb.utils.printf(fp, '\tstruct {')
 
@@ -433,8 +469,13 @@ def emit_impPubMethods(ctx, fp):
 # PRIVATE INTERFACE							    #
 #############################################################################
 
+def emit_impPrivTypes(ctx, fp):
+	emit_impTypes(ctx.int_priv_types, fp)
+
+#############################################################################
+
 def emit_impPrivConstraints(ctx, fp):
-	INT_CONSTRAINTS = ctx.int_constraints
+	INT_CONSTRAINTS = ctx.int_pub_constraints
 
 	for c in INT_CONSTRAINTS:
 		cb.utils.printf(fp, 'typedef enum %s_s' % c['name'])
@@ -451,7 +492,7 @@ def emit_impPrivConstraints(ctx, fp):
 
 def emit_impPrivMethods(ctx, fp):
 
-	for c in ctx.int_constraints:
+	for c in ctx.int_pub_constraints:
 		cb.utils.printf(fp, 'extern enum %s_s %s;' % (c['name'], c['name'].upper()))
 
 	cb.utils.printf(fp, '')
@@ -463,26 +504,11 @@ def emit_impPrivMethods(ctx, fp):
 
 	cb.utils.printf(fp, '')
 
-	for p in ctx.int_profiles:
+	for p in ctx.int_pub_profiles:
 		cb.utils.printf(fp, 'bool __%s_%s_ctor(struct %s_s *);' % (ctx.name, p['name'], ctx.name))
 		cb.utils.printf(fp, 'bool __%s_%s_dtor(struct %s_s *);' % (ctx.name, p['name'], ctx.name))
 
 		cb.utils.printf(fp, '')
-
-#############################################################################
-# IMPLEMENTATION							    #
-#############################################################################
-
-def emit_extras(ctx, fp, EXTRAS):
-
-	for e in EXTRAS:
-
-		for c in e:
-
-			for t in c['txts']:
-				cb.utils.printf(fp, t)
-
-	cb.utils.printf(fp, '')
 
 #############################################################################
 # GLOBAL IMPLEMENTATION							    #
@@ -490,7 +516,7 @@ def emit_extras(ctx, fp, EXTRAS):
 
 def emit_impConstraints(ctx, fp):
 
-	for constraint in ctx.int_constraints:
+	for constraint in ctx.int_pub_constraints:
 		cb.utils.printf(fp, '%s_t %s = (%s_t) -1;' % (constraint['name'], constraint['name'].upper(), constraint['name']))
 
 	cb.utils.printf(fp, '')
@@ -652,7 +678,7 @@ def emit_impMethods(ctx, fp):
 	cb.utils.printf(fp, '\tswitch(profile)')
 	cb.utils.printf(fp, '\t{')
 
-	for p in ctx.int_profiles:
+	for p in ctx.int_pub_profiles:
 		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p['name'].upper()))
 		cb.utils.printf(fp, '\t\t\tresult = __%s_%s_ctor(__interface);' % (name, p['name']))
 		cb.utils.printf(fp, '\t\t\tbreak;')
@@ -683,7 +709,7 @@ def emit_impMethods(ctx, fp):
 	cb.utils.printf(fp, '\tswitch(profile)')
 	cb.utils.printf(fp, '\t{')
 
-	for p in ctx.int_profiles:
+	for p in ctx.int_pub_profiles:
 		cb.utils.printf(fp, '\t\tcase %s_PROFILE_%s:' % (name.upper(), p['name'].upper()))
 		cb.utils.printf(fp, '\t\t\tresult = __%s_%s_dtor(__interface);' % (name, p['name']))
 		cb.utils.printf(fp, '\t\t\tbreak;')
@@ -718,7 +744,7 @@ def emit_impMethods(ctx, fp):
 	cb.utils.printf(fp, '\tswitch(extension)')
 	cb.utils.printf(fp, '\t{')
 
-	for e in ctx.int_extensions:
+	for e in ctx.int_pub_extensions:
 		cb.utils.printf(fp, '\t\tcase %s_EXTENSION_%s:' % (name.upper(), e['name'].upper()))
 
 		cb.utils.printf(fp, '')
@@ -765,7 +791,7 @@ def emit_impMethods(ctx, fp):
 	cb.utils.printf(fp, '\tswitch(method)')
 	cb.utils.printf(fp, '\t{')
 
-	for e in ctx.int_extensions:
+	for e in ctx.int_pub_extensions:
 
 		for m in e['methods']:
 			cb.utils.printf(fp, '\t\tcase %s_METHOD_%s_%s:' % (name.upper(), e['name'].upper(), m['name'].upper()))
@@ -850,7 +876,7 @@ def emit_impProfileMethods(ctx, fp, p):
 
 def emit_impProfileCtor(ctx, fp, p):
 	IMP_PROFILES = ctx.imp_profiles[p]
-	INT_EXTENSIONS = ctx.int_extensions
+	INT_EXTENSIONS = ctx.int_pub_extensions
 
 	##
 
@@ -972,7 +998,7 @@ def emit_impProfileCtor(ctx, fp, p):
 
 def emit_impProfileDtor(ctx, fp, p):
 	IMP_PROFILES = ctx.imp_profiles[p]
-	INT_EXTENSIONS = ctx.int_extensions
+	INT_EXTENSIONS = ctx.int_pub_extensions
 
 	##
 

@@ -60,6 +60,107 @@ xml.dom.minidom.Element.getCDATAs = __getCDATAs
 # PARSERS								    #
 #############################################################################
 
+def parseType(node):
+	#####################################################################
+
+	TYPES = []
+
+	#####################################################################
+
+	for typeNode in node.childNodes:
+
+		#############################################
+		# TYPE					    #
+		#############################################
+
+		if typeNode.nodeName == 'type':
+
+			dic = {
+				'class': 'base',
+				'name': typeNode.getStripedAttribute('name'),
+				'from': typeNode.getStripedAttribute('from'),
+			}
+
+			TYPES.append(dic)
+
+		#############################################
+		# ENUM					    #
+		#############################################
+
+		if typeNode.nodeName == 'enum':
+
+			VALUES = []
+
+			for valueNode in typeNode.childNodes:
+
+				#############################
+				# VALUE			    #
+				#############################
+
+				if valueNode.nodeName == 'value':
+
+					dic = {
+						'name': valueNode.getStripedAttribute('name'),
+						'init': valueNode.getStripedAttribute('init'),
+					}
+
+					VALUES.append(dic)
+
+			dic = {
+				'class': 'enum',
+				'name': typeNode.getStripedAttribute('name'),
+				'values': VALUES
+			}
+
+			TYPES.append(dic)
+
+		#############################################
+		# STRUCT				    #
+		#############################################
+
+		if typeNode.nodeName == 'struct':
+
+			FIELDS = []
+
+			for fieldNode in typeNode.childNodes:
+
+				#############################
+				# FIELD			    #
+				#############################
+
+				if fieldNode.nodeName == 'field':
+
+					dic = {
+						'name': fieldNode.getStripedAttribute('name'),
+						'type': fieldNode.getStripedAttribute('type'),
+					}
+
+					FIELDS.append(dic)
+
+			dic = {
+				'class': 'struct',
+				'name': typeNode.getStripedAttribute('name'),
+				'fields': FIELDS
+			}
+
+			TYPES.append(dic)
+
+		#############################################
+		# STRUCT				    #
+		#############################################
+
+		if typeNode.nodeName == 'extern':
+
+			name = typeNode.\
+				getStripedAttribute('name')
+
+			if len(name) > 0:
+				ctx.lang.PRIMITIVES.add(name)
+
+	return TYPES
+
+#############################################################################
+
 def parseCode(node):
 	#####################################################################
 
@@ -86,11 +187,11 @@ def parseCode(node):
 
 #############################################################################
 
-def parseInterface(ctx, interfaces):
+def parseInterfacePublic(ctx, interfaces):
 	#####################################################################
 
 	if len(interfaces) != 1:
-		cb.utils.error(ctx, 'Only one interface allowed, \'%d\' found !' % len(interfaces))
+		cb.utils.error(ctx, 'Only one public interface allowed, \'%d\' found !' % len(interfaces))
 
 		return
 
@@ -133,103 +234,21 @@ def parseInterface(ctx, interfaces):
 		#############################################################
 
 		if node.nodeName == 'extra':
-			ctx.int_extras.append(parseCode(node))
+			ctx.int_pub_extras.append(parseCode(node))
+
+		#############################################################
+		# EPILOG						    #
+		#############################################################
+
+		if node.nodeName == 'epilog':
+			ctx.int_pub_epilogs.append(parseCode(node))
 
 		#############################################################
 		# TYPES							    #
 		#############################################################
 
 		if node.nodeName == 'types':
-
-			for typeNode in node.childNodes:
-
-				#############################################
-				# TYPE					    #
-				#############################################
-
-				if typeNode.nodeName == 'type':
-
-					dic = {
-						'class': 'base',
-						'name': typeNode.getStripedAttribute('name'),
-						'from': typeNode.getStripedAttribute('from'),
-					}
-
-					ctx.int_types.append(dic)
-
-				#############################################
-				# ENUM					    #
-				#############################################
-
-				if typeNode.nodeName == 'enum':
-
-					VALUES = []
-
-					for valueNode in typeNode.childNodes:
-
-						#############################
-						# VALUE			    #
-						#############################
-
-						if valueNode.nodeName == 'value':
-
-							dic = {
-								'name': valueNode.getStripedAttribute('name'),
-								'init': valueNode.getStripedAttribute('init'),
-							}
-
-							VALUES.append(dic)
-
-					dic = {
-						'class': 'enum',
-						'name': typeNode.getStripedAttribute('name'),
-						'values': VALUES
-					}
-
-					ctx.int_types.append(dic)
-
-				#############################################
-				# STRUCT				    #
-				#############################################
-
-				if typeNode.nodeName == 'struct':
-
-					FIELDS = []
-
-					for fieldNode in typeNode.childNodes:
-
-						#############################
-						# FIELD			    #
-						#############################
-
-						if fieldNode.nodeName == 'field':
-
-							dic = {
-								'name': fieldNode.getStripedAttribute('name'),
-								'type': fieldNode.getStripedAttribute('type'),
-							}
-
-							FIELDS.append(dic)
-
-					dic = {
-						'class': 'struct',
-						'name': typeNode.getStripedAttribute('name'),
-						'fields': FIELDS
-					}
-
-					ctx.int_types.append(dic)
-
-				#############################################
-				# STRUCT				    #
-				#############################################
-
-				if typeNode.nodeName == 'extern':
-
-					name = typeNode.\
-						getStripedAttribute('name')
-
-					if len(name) > 0:
-						ctx.lang.PRIMITIVES.add(name)
+			ctx.int_pub_types.extend(parseType(node))
 
 		#############################################################
 		# PROFILES						    #
@@ -251,7 +270,7 @@ def parseInterface(ctx, interfaces):
 					   or			    \
 					   profileNode.getStripedAttribute('name') in SELECTED_PROFILES:
 
-						ctx.int_profiles.append(dic)
+						ctx.int_pub_profiles.append(dic)
 
 		#############################################################
 		# EXTENSIONS						    #
@@ -308,7 +327,7 @@ def parseInterface(ctx, interfaces):
 						'methods': METHODS
 					}
 
-					ctx.int_extensions.append(dic)
+					ctx.int_pub_extensions.append(dic)
 
 		#############################################################
 		# CONSTRAINTS						    #
@@ -345,7 +364,7 @@ def parseInterface(ctx, interfaces):
 						'keys': KEYS,
 					}
 
-					ctx.int_constraints.append(dic)
+					ctx.int_pub_constraints.append(dic)
 
 	#####################################################################
 
@@ -355,15 +374,62 @@ def parseInterface(ctx, interfaces):
 
 	#####################################################################
 
-	ctx.int_asset['date'] = date
-	ctx.int_asset['authors'] = authors
-	ctx.int_asset['emails'] = emails
-	ctx.int_asset['description'] = description
+	ctx.int_pub_asset['date'] = date
+	ctx.int_pub_asset['authors'] = authors
+	ctx.int_pub_asset['emails'] = emails
+	ctx.int_pub_asset['description'] = description
 
 	#####################################################################
 
 	if ctx.verbose:
-		displayInterface(ctx)
+		displayInterfacePublic(ctx)
+
+#############################################################################
+
+def parseInterfacePrivate(ctx, interfaces):
+	#####################################################################
+
+	if len(interfaces) == 0:
+		cb.utils.debug(ctx, 'No private interface defined !')
+
+		return
+
+	if len(interfaces) != 1:
+		cb.utils.error(ctx, 'Only one private interface allowed, \'%d\' found !' % len(interfaces))
+
+		return
+
+	interface = interfaces[0]
+
+	#####################################################################
+
+	for node in interface.childNodes:
+
+		#############################################################
+		# EXTRA							    #
+		#############################################################
+
+		if node.nodeName == 'extra':
+			ctx.int_priv_extras.append(parseCode(node))
+
+		#############################################################
+		# EPILOG						    #
+		#############################################################
+
+		if node.nodeName == 'epilog':
+			ctx.int_priv_epilogs.append(parseCode(node))
+
+		#############################################################
+		# TYPES							    #
+		#############################################################
+
+		if node.nodeName == 'types':
+			ctx.int_priv_types.extend(parseType(node))
+
+	#####################################################################
+
+	if ctx.verbose:
+		displayInterfacePrivate(ctx)
 
 #############################################################################
 
@@ -371,7 +437,7 @@ def parseImplementation(ctx, implementations):
 	#####################################################################
 
 	if len(implementations) != 1:
-		cb.utils.error(ctx, 'Only one implementation allowed !')
+		cb.utils.error(ctx, 'Only one implementation allowed, \'%d\' found !' % len(implementations))
 
 		return
 
@@ -526,31 +592,45 @@ def parseImplementation(ctx, implementations):
 
 #############################################################################
 
-def displayInterface(ctx):
+def displayInterfacePublic(ctx):
 	print('-----------------------------------------------------------------------------')
 	print('| ASSET                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_asset)
+	cb.utils.displayTree(ctx.int_pub_asset)
 	print('-----------------------------------------------------------------------------')
 	print('| EXTRAS                                                                    |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_extras)
+	cb.utils.displayTree(ctx.int_pub_extras)
 	print('-----------------------------------------------------------------------------')
 	print('| TYPES                                                                     |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_types)
+	cb.utils.displayTree(ctx.int_pub_types)
 	print('-----------------------------------------------------------------------------')
 	print('| PROFILES                                                                  |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_profiles)
+	cb.utils.displayTree(ctx.int_pub_profiles)
 	print('-----------------------------------------------------------------------------')
 	print('| CONSTRAINTS                                                               |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_constraints)
+	cb.utils.displayTree(ctx.int_pub_constraints)
 	print('-----------------------------------------------------------------------------')
 	print('| EXTENSIONS                                                                |')
 	print('-----------------------------------------------------------------------------')
-	cb.utils.displayTree(ctx.int_extensions)
+	cb.utils.displayTree(ctx.int_pub_extensions)
+	print('-----------------------------------------------------------------------------')
+	print('')
+
+#############################################################################
+
+def displayInterfacePrivate(ctx):
+	print('-----------------------------------------------------------------------------')
+	print('| EXTRAS                                                                    |')
+	print('-----------------------------------------------------------------------------')
+	cb.utils.displayTree(ctx.int_priv_extras)
+	print('-----------------------------------------------------------------------------')
+	print('| TYPES                                                                     |')
+	print('-----------------------------------------------------------------------------')
+	cb.utils.displayTree(ctx.int_priv_types)
 	print('-----------------------------------------------------------------------------')
 	print('')
 
