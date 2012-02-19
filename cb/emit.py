@@ -180,13 +180,6 @@ def implementation(ctx):
 		LANG.emit_impMethods(ctx, fp)
 
 		#############################################################
-		# EPILOG						    #
-		#############################################################
-
-		LANG.emit_separator(ctx, fp)
-		LANG.emit_impEpilog(ctx, fp)
-
-		#############################################################
 
 		fp.close()
 
@@ -226,13 +219,6 @@ def implementation(ctx):
 
 			LANG.emit_separator(ctx, fp)
 			LANG.emit_impProfileCtor(ctx, fp, p)
-
-			#####################################################
-			# EPILOG					    #
-			#####################################################
-
-			LANG.emit_separator(ctx, fp)
-			LANG.emit_impEpilog(ctx, fp)
 
 			#####################################################
 
