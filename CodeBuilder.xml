@@ -4,7 +4,7 @@
 
 <!-- ******************************************************************** -->
 
-  <interface name="simple_api" major="1" minor="0">
+  <interface_public name="simple_api" major="1" minor="0">
 
     <asset>
       <date>2012</date>
@@ -69,20 +69,7 @@
       <profile name="profile2" />
     </profiles>
 
-    <constraints>
-
-      <constraint name="simple_constraint1">
-        <key name="simple_key1"/>
-        <key name="simple_key2"/>
-      </constraint>
-
-      <constraint name="simple_constraint2">
-        <key name="simple_key3"/>
-      </constraint>
-
-    </constraints>
-
-  </interface>
+  </interface_public>
 
 <!-- ******************************************************************** -->
 
@@ -99,6 +86,19 @@
         <![CDATA[/* EPILOG */]]>
       </code>
     </epilog>
+
+    <constraints>
+
+      <constraint name="simple_constraint1">
+        <key name="simple_key1"/>
+        <key name="simple_key2"/>
+      </constraint>
+
+      <constraint name="simple_constraint2">
+        <key name="simple_key3"/>
+      </constraint>
+
+    </constraints>
 
   </interface_private>
 
