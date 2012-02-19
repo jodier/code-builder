@@ -33,7 +33,7 @@ def __getTEXTs(self):
 
 	for node in self.childNodes:
 		if node.nodeType == 3:
-			L.append(node.nodeValue)
+			L.append(node.nodeValue.strip())
 
 	return L
 
@@ -48,7 +48,7 @@ def __getCDATAs(self):
 
 	for node in self.childNodes:
 		if node.nodeType == 4:
-			L.append(node.nodeValue)
+			L.append(node.nodeValue.strip())
 
 	return L
 
