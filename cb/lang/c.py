@@ -469,6 +469,16 @@ def emit_impPrivTypes(ctx, fp):
 
 #############################################################################
 
+def emit_impPrivProfiles(ctx, fp):
+	INT_PROFILES = ctx.int_pub_profiles
+
+	for p in INT_PROFILES:
+		cb.utils.printf(fp, '#define __IS_DEFINED_PROFILE_%s' % p['name'].upper())
+
+	cb.utils.printf(fp, '')
+
+#############################################################################
+
 def emit_impPrivConstraints(ctx, fp):
 	INT_CONSTRAINTS = ctx.int_priv_constraints
 

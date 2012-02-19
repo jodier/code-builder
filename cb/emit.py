@@ -105,6 +105,13 @@ def interfacePrivate(ctx):
 		# TYPES							    #
 		#############################################################
 
+		LANG.emit_COMMENT(ctx, fp, 'PROFILES')
+		LANG.emit_impPrivProfiles(ctx, fp)
+
+		#############################################################
+		# TYPES							    #
+		#############################################################
+
 		LANG.emit_COMMENT(ctx, fp, 'TYPES')
 		LANG.emit_impPrivTypes(ctx, fp)
 
