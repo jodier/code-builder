@@ -354,6 +354,11 @@ def parseInterfacePublic(ctx, interfaces):
 
 	#####################################################################
 
+	ctx.primitives.add('%s_s' % ctx.name)
+	ctx.primitives.add('%s_t' % ctx.name)
+
+	#####################################################################
+
 	ctx.int_pub_asset['date'] = date
 	ctx.int_pub_asset['authors'] = authors
 	ctx.int_pub_asset['emails'] = emails

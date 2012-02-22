@@ -336,6 +336,10 @@ def emit_impTypes(types, fp):
 #############################################################################
 
 def emit_impPubTypes(ctx, fp):
+	cb.utils.printf(fp, 'typedef struct %s_s %s_t;' % (ctx.name, ctx.name))
+	cb.utils.printf(fp, '')
+	emit_separator(ctx, fp)
+
 	emit_impTypes(ctx.int_pub_types, fp)
 
 #############################################################################
@@ -417,7 +421,7 @@ def emit_impPubDefinitions(ctx, fp):
 
 	emit_comment(ctx, fp, 'STRUCTURE')
 
-	cb.utils.printf(fp, 'typedef struct %s_s' % ctx.name)
+	cb.utils.printf(fp, 'struct %s_s' % ctx.name)
 	cb.utils.printf(fp, '{')
 
 	for e in ctx.int_pub_extensions:
@@ -435,8 +439,7 @@ def emit_impPubDefinitions(ctx, fp):
 		cb.utils.printf(fp, '\t} %s;\n' % e['name'])		
 
 	cb.utils.printf(fp, '\tvoid *user;')
-	cb.utils.printf(fp, '')
-	cb.utils.printf(fp, '} %s_t;' % ctx.name)
+	cb.utils.printf(fp, '};')
 
 	cb.utils.printf(fp, '')
 
