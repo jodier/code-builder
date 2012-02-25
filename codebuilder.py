@@ -249,7 +249,17 @@ def entry_point(argv):
 
 	#####################################################################
 
-	ctx.lang = cb.lang.c
+	try:
+		module = 'cb.lang.%s' % ctx.language
+
+		##################
+		__import__(module)
+		##################
+
+		ctx.lang = sys.modules[module]
+
+	except ImportError, e:
+		cb.utils.fatal(ctx, 'Could not load \'%s\' !' % module)
 
 	#####################################################################
 
@@ -283,13 +293,10 @@ def entry_point(argv):
 
 	cb.utils.status(ctx)
 
-	if ctx.error == 0:
-		ctx.emit()
-		return 0
+	if ctx.error != 0:
+		cb.utils.fatal(ctx, 'Abort !')
 
-	else:
-		print('Abort...')
-		return 1
+	ctx.emit()
 
 #############################################################################
 

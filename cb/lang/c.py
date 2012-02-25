@@ -295,8 +295,19 @@ def emit_impTypes(types, fp):
 
 		if t['class'] == 'base':
 
-			if re.search('\(\s*\*\s*\)', t['from']):
-				cb.utils.printf(fp, 'typedef %s;' % re.sub('\(\s*\*\s*\)', '(* %s)' % t['name'], t['from']))
+			re1 = re.compile('\(\s*\*\s*\)')
+			re2 = re.compile('\[\s*(\w*)\s*\]')
+
+			if   re1.search(t['from']):
+				cb.utils.printf(fp, 'typedef %s;' % (
+					re1.sub('(* %s)' % t['name'], t['from']).strip()
+				))
+
+			elif re2.search(t['from']):
+				cb.utils.printf(fp, 'typedef %s %s%d;' % (
+					re2.sub('', s).strip(), t['name'],
+					''.join(['[%s]' % dim for dim in re2.findall(s)])
+				))
 			else:
 				cb.utils.printf(fp, 'typedef %s %s;' % (t['from'], t['name']))
 
@@ -308,11 +319,12 @@ def emit_impTypes(types, fp):
 			cb.utils.printf(fp, 'typedef enum %s' % t['name'])
 			cb.utils.printf(fp, '{')
 
-			i = 0
-
 			for v in t['values']:
-				cb.utils.printf(fp, '\t%s = 0x%X,' % (v['name'], i))
-				i += 1
+
+				if len(v['init']) == 0:
+					cb.utils.printf(fp, '\t%s,' % (v['name']))
+				else:
+					cb.utils.printf(fp, '\t%s = %s,' % (v['name'], v['init']))
 
 			cb.utils.printf(fp, '')
 			cb.utils.printf(fp, '} %s;' % t['name'])
