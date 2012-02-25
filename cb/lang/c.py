@@ -265,7 +265,10 @@ def emit_pointerPrototype(ctx, fp, m, prefix = '', suffix = ''):
 		if len(p['name']) == 0:
 			proto += ', %s' % (p['type'])
 		else:
-			proto += ', %s %s' % (p['type'], p['name'])
+			if p['type'][-1] == '*':
+				proto += ', %s%s' % (p['type'], p['name'])
+			else:
+				proto += ', %s %s' % (p['type'], p['name'])
 
 	cb.utils.printf(fp, proto + ');')
 
@@ -279,7 +282,10 @@ def emit_functionPrototype(ctx, fp, m, prefix = '', suffix = ''):
 		if len(p['name']) == 0:
 			proto += ', %s' % (p['type'])
 		else:
-			proto += ', %s %s' % (p['type'], p['name'])
+			if p['type'][-1] == '*':
+				proto += ', %s%s' % (p['type'], p['name'])
+			else:
+				proto += ', %s %s' % (p['type'], p['name'])
 
 	cb.utils.printf(fp, proto + ')')
 
@@ -309,7 +315,10 @@ def emit_impTypes(types, fp):
 					''.join(['[%s]' % dim for dim in re2.findall(t['from'])])
 				))
 			else:
-				cb.utils.printf(fp, 'typedef %s %s;' % (t['from'], t['name']))
+				if t['from'][-1] == '*':
+					cb.utils.printf(fp, 'typedef %s%s;' % (t['from'], t['name']))
+				else:
+					cb.utils.printf(fp, 'typedef %s %s;' % (t['from'], t['name']))
 
 			cb.utils.printf(fp, '')
 
