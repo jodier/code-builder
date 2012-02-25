@@ -150,7 +150,7 @@ def int_getMethod(ext, name):
 def extractTypes(ctx, s):
 	L = []
 
-	for word in re.split('\W+', s):
+	for word in re.split('\W+',re.sub('\[\s*(\w*)\s*\]', '', s)):
 
 		if len(word) > 0 and not word in ctx.qualifiers:
 
