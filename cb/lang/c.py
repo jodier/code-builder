@@ -889,7 +889,7 @@ def emit_impProfileMethods(ctx, fp, p):
 			met = cb.utils.int_getMethod(ext, m)
 
                         for c in IMP_METHODS[m]:
-				prefix = '__%s_' % e
+				prefix = '__%s_%s_' % (p, e)
 				suffix = '%d' % i
 
 				##
@@ -1203,7 +1203,7 @@ def emit_impExtensionCtor(ctx, fp, p, e):
 
 			if len(condition) == 0 and len(c['txts']) > 0:
 				cb.utils.printf(fp, '\t{')
-				cb.utils.printf(fp, '\t\tself->%s.%s = __%s_%s%d;' % (e, m, e, m, i))
+				cb.utils.printf(fp, '\t\tself->%s.%s = __%s_%s_%s%d;' % (e, m, p, e, m, i))
 				cb.utils.printf(fp, '\t}')
 
 		#############################################################
@@ -1223,7 +1223,7 @@ def emit_impExtensionCtor(ctx, fp, p, e):
 					cb.utils.printf(fp, '\telse if(%s)' % condition)
 
 				cb.utils.printf(fp, '\t{')
-				cb.utils.printf(fp, '\t\tself->%s.%s = __%s_%s%d;' % (e, m, e, m, i))
+				cb.utils.printf(fp, '\t\tself->%s.%s = __%s_%s_%s%d;' % (e, m, p, e, m, i))
 				cb.utils.printf(fp, '\t}')
 
 				cnt += 1
