@@ -200,6 +200,7 @@ def emit_impProlog(ctx, fp):
 def emit_impProfileProlog(ctx, fp, p):
 	INT_ASSET = ctx.int_pub_asset
 	IMP_PROFILES = ctx.imp_profiles[p]
+	IMP_EXTENSIONS = IMP_PROFILES['extensions']
 
 	cb.utils.printf(fp, '/* Authors : %s' % INT_ASSET['authors'])
 	cb.utils.printf(fp, ' * Emails  : %s' % INT_ASSET['emails'])
@@ -222,6 +223,13 @@ def emit_impProfileProlog(ctx, fp, p):
 		emit_separator(ctx, fp)
 
 		emit_extras(IMP_PROFILES['extras'], fp)
+
+	for e in IMP_EXTENSIONS:
+
+		if len(IMP_EXTENSIONS[e]['extras']) > 0:
+			emit_separator(ctx, fp)
+
+			emit_extras(IMP_EXTENSIONS[e]['extras'], fp)
 
 #############################################################################
 # EPILOGS								    #
