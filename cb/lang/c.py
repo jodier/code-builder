@@ -267,16 +267,27 @@ def emit_intPrivEpilog(ctx, fp):
 
 def emit_pointerPrototype(ctx, fp, m, prefix = '', suffix = ''):
 
-	proto = '%s (* %s%s%s)(struct %s_s *self' % (m['type'], prefix, m['name'], suffix, ctx.name)
+	proto = '%s (* %s%s%s)(' % (m['type'], prefix, m['name'], suffix)
 
-	for p in m['params']:
-		if len(p['name']) == 0:
-			proto += ', %s' % (p['type'])
-		else:
-			if p['type'].find('*') >= 0:
-				proto += ', %s%s' % (p['type'], p['name'])
+	if len(m['params']) > 0:
+
+		i = 0
+
+		for p in m['params']:
+
+			if i > 0:
+				proto += ', '
+
+			if len(p['name']) == 0:
+				proto += '%s' % (p['type'])
 			else:
-				proto += ', %s %s' % (p['type'], p['name'])
+				if p['type'].find('*') >= 0:
+					proto += '%s%s' % (p['type'], p['name'])
+				else:
+					proto += '%s %s' % (p['type'], p['name'])
+			i += 1
+	else:
+		proto += 'void'
 
 	cb.utils.printf(fp, proto + ');')
 
@@ -284,16 +295,27 @@ def emit_pointerPrototype(ctx, fp, m, prefix = '', suffix = ''):
 
 def emit_functionPrototype(ctx, fp, m, prefix = '', suffix = ''):
 
-	proto = 'static %s %s%s%s(%s_t *self' % (m['type'], prefix, m['name'], suffix, ctx.name)
+	proto = 'static %s %s%s%s(' % (m['type'], prefix, m['name'], suffix)
 
-	for p in m['params']:
-		if len(p['name']) == 0:
-			proto += ', %s' % (p['type'])
-		else:
-			if p['type'].find('*') >= 0:
-				proto += ', %s%s' % (p['type'], p['name'])
+	if len(m['params']) > 0:
+
+		i = 0
+
+		for p in m['params']:
+
+			if i > 0:
+				proto += ', '
+
+			if len(p['name']) == 0:
+				proto += '%s' % (p['type'])
 			else:
-				proto += ', %s %s' % (p['type'], p['name'])
+				if p['type'].find('*') >= 0:
+					proto += '%s%s' % (p['type'], p['name'])
+				else:
+					proto += '%s %s' % (p['type'], p['name'])
+			i += 1
+	else:
+		proto += 'void'
 
 	cb.utils.printf(fp, proto + ')')
 
