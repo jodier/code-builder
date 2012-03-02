@@ -187,6 +187,8 @@ def implementation(ctx):
 
 		#############################################################
 
+		LANG.emit_separator(ctx, fp)
+
 		fp.close()
 
 	except IOError:
@@ -229,6 +231,8 @@ def implementation(ctx):
 			LANG.emit_impProfileDtor(ctx, fp, p)
 
 			#####################################################
+
+			LANG.emit_separator(ctx, fp)
 
 			fp.close()
 
