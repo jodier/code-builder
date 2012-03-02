@@ -153,8 +153,10 @@
         <extra>
           <code condition="cond5">
             <![CDATA[/* Hello world 7 */]]>
+            <![CDATA[/* Hello world 7 */]]>
           </code>
           <code condition="cond6">
+            <![CDATA[/* Hello world 8 */]]>
             <![CDATA[/* Hello world 8 */]]>
           </code>
         </extra>
@@ -164,11 +166,14 @@
         <ctor>
           <code>
             <![CDATA[printf("Hello world 9");]]>
+            <![CDATA[printf("Hello world 9");]]>
           </code>
           <code condition="SIMPLE_CONSTRAINT2 == SIMPLE_KEY3">
             <![CDATA[printf("Hello world A");]]>
+            <![CDATA[printf("Hello world A");]]>
           </code>
           <code condition="cond8">
+            <![CDATA[printf("Hello world B");]]>
             <![CDATA[printf("Hello world B");]]>
           </code>
         </ctor>
@@ -178,8 +183,10 @@
         <dtor>
           <code condition="cond7">
             <![CDATA[printf("Hello world C");]]>
+            <![CDATA[printf("Hello world C");]]>
           </code>
           <code condition="cond8">
+            <![CDATA[printf("Hello world D");]]>
             <![CDATA[printf("Hello world D");]]>
           </code>
         </dtor>
@@ -195,11 +202,13 @@
             <ctor>
               <code>
                 <![CDATA[printf("Hello world E");]]>
+                <![CDATA[printf("Hello world E");]]>
               </code>
             </ctor>
 
             <dtor>
               <code>
+                <![CDATA[printf("Hello world F");]]>
                 <![CDATA[printf("Hello world F");]]>
               </code>
             </dtor>
@@ -207,14 +216,17 @@
             <method name="new">
               <code condition="cond1">
                 <![CDATA[printf("Hello world G");]]>
+                <![CDATA[printf("Hello world G");]]>
               </code>
               <code condition="cond2">
+                <![CDATA[printf("Hello world H");]]>
                 <![CDATA[printf("Hello world H");]]>
               </code>
             </method>
 
             <method name="delete">
-              <code condition="cond1">
+              <code>
+                <![CDATA[printf("Hello world I");]]>
                 <![CDATA[printf("Hello world I");]]>
               </code>
             </method>

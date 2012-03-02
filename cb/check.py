@@ -228,8 +228,8 @@ def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
 
 	for e in EXTRAS:
 		for c in e:
-			if len(c['txts']) > 1:
-				cb.utils.error(ctx, 'Up to one CDATA allowed for extra !')
+			if len(c['txts']) == 0:
+				cb.utils.error(ctx, 'At least one CDATA node needed for extra !')
 
 			if len(c['condition'].strip()) > 0:
 				cb.utils.ooops(ctx, 'Only unconditional extra allowed !')
@@ -243,8 +243,8 @@ def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
 
 	for x in CTORS:
 		for c in x:
-			if len(c['txts']) > 1:
-				cb.utils.error(ctx, 'Up to one CDATA allowed for ctor !')
+			if len(c['txts']) == 0:
+				cb.utils.error(ctx, 'At least one CDATA node needed for ctor !')
 
 	#####################################################################
 	# DTORS								    #
@@ -255,8 +255,8 @@ def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
 
 	for x in DTORS:
 		for c in x:
-			if len(c['txts']) > 1:
-				cb.utils.error(ctx, 'Up to one CDATA allowed for dtor !')
+			if len(c['txts']) == 0:
+				cb.utils.error(ctx, 'At least one CDATA node needed for dtor !')
 
 #############################################################################
 
@@ -267,7 +267,7 @@ def checkCodes(ctx, CODES):
 
 	for c in CODES:
 
-		if len(c['txts']) != 1:
+		if len(c['txts']) == 0:
 			cb.utils.error(ctx, 'Only one CDATA allowed for method !')
 
 #############################################################################

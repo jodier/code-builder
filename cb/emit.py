@@ -119,14 +119,14 @@ def interfacePrivate(ctx):
 		# CONSTRAINTS						    #
 		#############################################################
 
-		LANG.emit_separator(ctx, fp)
+		LANG.emit_COMMENT(ctx, fp, 'CONSTRAINTS')
 		LANG.emit_impPrivConstraints(ctx, fp)
 
 		#############################################################
 		# METHODS						    #
 		#############################################################
 
-		LANG.emit_separator(ctx, fp)
+		LANG.emit_COMMENT(ctx, fp, 'METHODS')
 		LANG.emit_impPrivMethods(ctx, fp)
 
 		#############################################################
@@ -165,11 +165,11 @@ def implementation(ctx):
 		LANG.emit_impProlog(ctx, fp)
 
 		#############################################################
-		# CONSTRAINTS						    #
+		# CTORS							    #
 		#############################################################
 
 		LANG.emit_separator(ctx, fp)
-		LANG.emit_impConstraints(ctx, fp)
+		LANG.emit_impCtor(ctx, fp)
 
 		#############################################################
 		# DTORS							    #
@@ -177,13 +177,6 @@ def implementation(ctx):
 
 		LANG.emit_separator(ctx, fp)
 		LANG.emit_impDtor(ctx, fp)
-
-		#############################################################
-		# CTORS							    #
-		#############################################################
-
-		LANG.emit_separator(ctx, fp)
-		LANG.emit_impCtor(ctx, fp)
 
 		#############################################################
 		# METHODS						    #
@@ -222,18 +215,18 @@ def implementation(ctx):
 			LANG.emit_impProfileMethods(ctx, fp, p)
 
 			#####################################################
-			# DTORS						    #
-			#####################################################
-
-			LANG.emit_separator(ctx, fp)
-			LANG.emit_impProfileDtor(ctx, fp, p)
-
-			#####################################################
 			# CTORS						    #
 			#####################################################
 
 			LANG.emit_separator(ctx, fp)
 			LANG.emit_impProfileCtor(ctx, fp, p)
+
+			#####################################################
+			# DTORS						    #
+			#####################################################
+
+			LANG.emit_separator(ctx, fp)
+			LANG.emit_impProfileDtor(ctx, fp, p)
 
 			#####################################################
 
