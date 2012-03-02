@@ -35,42 +35,49 @@ import cb.emit
 # CODE-BUILDER								    #
 #############################################################################
 
+def fixRelPath(path, prefix):
+
+	if os.path.isabs(path) == False:
+		path = prefix + os.sep + path
+
+	return path
+
+#############################################################################
+
 def codebuilder_load_xml(ctx, fileName):
 	#####################################################################
 
 	if ctx.verbose:
 		print('Loading \'%s\'...' % fileName)
 
-	#####################################################################
-
 	try:
 		doc = xml.dom.minidom.parse(fileName)
 
-		includes = doc.getElementsByTagName('include')
-
-		if len(includes) > 0:
-
-			dirName = os.path.dirname(fileName)
-			if len(dirName) == 0:
-				dirName = '.'
-
-			for include in includes:
-
-				url = include.getStripedAttribute('url')
-				if url[0] != os.sep:
-					url = dirName + os.sep + url
-
-				#############################################
-
-				subdoc = codebuilder_load_xml(ctx, url)
-
-				for node in subdoc.documentElement.childNodes:
-					include.parentNode.appendChild(node.cloneNode(1))
-
-				#############################################
-
 	except:
 		cb.utils.fatal(ctx, 'XML error in file `%s`, %s !' % (fileName, sys.exc_info()[1]))
+
+	#####################################################################
+
+	includes = doc.getElementsByTagName('include')
+
+	if len(includes) > 0:
+
+		dirName = fixRelPath(os.path.dirname(fileName), '.')
+
+		for include in includes:
+
+			fileName = fixRelPath(include.getAttribute('url'), dirName)
+
+			#####################################################
+			#####################################################
+
+			subdoc = codebuilder_load_xml(ctx, fileName)
+
+			for node in subdoc.documentElement.childNodes:
+				include.parentNode.appendChild(node.cloneNode(1))
+
+			#####################################################
+			#####################################################
 
 	return doc
 
@@ -162,6 +169,11 @@ class codebuilder:
 		cb.check.checkInterfacePublic(self)
 		cb.check.checkInterfacePrivate(self)
 		cb.check.checkImplementation(self)
+
+		cb.utils.status(self)
+
+		if self.error != 0:
+			cb.utils.fatal(self, 'Abort !')
 
 	#####################################################################
 
@@ -290,11 +302,6 @@ def entry_point(argv):
 	ctx.parse(fileName)
 
 	ctx.check()
-
-	cb.utils.status(ctx)
-
-	if ctx.error != 0:
-		cb.utils.fatal(ctx, 'Abort !')
 
 	ctx.emit()
 

@@ -150,7 +150,7 @@ def int_getMethod(ext, name):
 def extractTypes(ctx, s):
 	L = []
 
-	for word in re.split('\W+',re.sub('\[\s*\w*\s*\]', '', s)):
+	for word in re.split('\W+', re.sub('\[[^]]*\]', '', s)):
 
 		if len(word) > 0 and not word in ctx.qualifiers:
 
@@ -203,9 +203,9 @@ def fatal(ctx, msg):
 
 def status(ctx):
 	if ctx.debug > 0\
-	   or		   \
+	   or		\
 	   ctx.ooops > 0\
-	   or		   \
+	   or		\
 	   ctx.error > 0:
 
 		print('')

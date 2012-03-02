@@ -65,7 +65,16 @@
     </types>
 
     <profiles>
-      <profile name="profile1" />
+      <profile name="profile1">
+        <ctor>
+          <param name="foo1" type="int" />
+          <param name="foo2" type="int" />
+        </ctor>
+        <dtor>
+          <param name="foo3" type="int" />
+          <param name="foo4" type="int" />
+        </dtor>
+      </profile>
       <profile name="profile2" />
     </profiles>
 

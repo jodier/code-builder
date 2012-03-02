@@ -129,33 +129,83 @@ def checkInterfacePublic(ctx):
 				for type in types:
 
 					if not type in ctx.primitives:
-						cb.utils.error(ctx, 'Undefined type \'%s\' !' % types)
+						cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
 
 			##
 
-			p = m['params']
+			ps = m['params']
 
-			for i in xrange(0 + 0, len(p)):
-				for j in xrange(i + 1, len(p)):
+			for i in xrange(0 + 0, len(ps)):
+				for j in xrange(i + 1, len(ps)):
 
-					if p[i]['name'] == p[j]['name']:
-						cb.utils.error(ctx, 'Duplicated param \'%s\' !' % p[i]['name'])
+					if ps[i]['name'] == ps[j]['name']:
+						cb.utils.error(ctx, 'Duplicated param \'%s\' !' % ps[i]['name'])
 
-		m = e['methods']
+		ms = e['methods']
 
-		for i in xrange(0 + 0, len(m)):
-			for j in xrange(i + 1, len(m)):
+		for i in xrange(0 + 0, len(ms)):
+			for j in xrange(i + 1, len(ms)):
 
-				if m[i]['name'] == m[j]['name']:
-					cb.utils.error(ctx, 'Duplicated method \'%s\' !' % m[i]['name'])
+				if ms[i]['name'] == ms[j]['name']:
+					cb.utils.error(ctx, 'Duplicated method \'%s\' !' % ms[i]['name'])
 
-	e = INT_EXTENSIONS
+	es = INT_EXTENSIONS
 
-	for i in xrange(0 + 0, len(e)):
-		for j in xrange(i + 1, len(e)):
+	for i in xrange(0 + 0, len(es)):
+		for j in xrange(i + 1, len(es)):
 
-			if e[i]['name'] == e[j]['name']:
-				cb.utils.error(ctx, 'Duplicated extension \'%s\' !' % e[i]['name'])
+			if es[i]['name'] == es[j]['name']:
+				cb.utils.error(ctx, 'Duplicated extension \'%s\' !' % es[i]['name'])
+
+	#####################################################################
+	# PROFILES							    #
+	#####################################################################
+
+	INT_PROFILES = ctx.int_pub_profiles
+
+	#####################################################################
+
+	for p in INT_PROFILES:
+
+		for cp in p['ctor_params']:
+
+			types = cb.utils.extractTypes(ctx, cp['type'])
+
+			for type in types:
+
+				if not type in ctx.primitives:
+					cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
+
+		##
+
+		for dp in p['dtor_params']:
+
+			types = cb.utils.extractTypes(ctx, dp['type'])
+
+			for type in types:
+
+				if not type in ctx.primitives:
+					cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
+
+		##
+
+		cps = p['ctor_params']
+
+		for i in xrange(0 + 0, len(cps)):
+			for j in xrange(i + 1, len(cps)):
+
+				if cps[i]['name'] == cps[j]['name']:
+					cb.utils.error(ctx, 'Duplicated ctor_param \'%s\' !' % cps[i]['name'])
+
+		##
+
+		dps = p['dtor_params']
+
+		for i in xrange(0 + 0, len(dps)):
+			for j in xrange(i + 1, len(dps)):
+
+				if dps[i]['name'] == dps[j]['name']:
+					cb.utils.error(ctx, 'Duplicated dtor_param \'%s\' !' % dps[i]['name'])
 
 #############################################################################
 

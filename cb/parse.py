@@ -276,11 +276,62 @@ def parseInterfacePublic(ctx, interfaces):
 			for profileNode in node.childNodes:
 
 				#############################################
+				# PROFILE				    #
+				#############################################
 
 				if profileNode.nodeName == 'profile':
 
+					CTOR_PARAMS = []
+					DTOR_PARAMS = []
+
+					for xtorNode in profileNode.childNodes:
+
+						#############################
+						# CTOR			    #
+						#############################
+
+						if xtorNode.nodeName == 'ctor':
+
+							for paramNode in xtorNode.childNodes:
+
+								#############
+								# PARAM	    #
+								#############
+
+								if paramNode.nodeName == 'param':
+
+									dic = {
+										'name': paramNode.getStripedAttribute('name'),
+										'type': paramNode.getStripedAttribute('type'),
+									}
+
+									CTOR_PARAMS.append(dic)
+
+						#############################
+						# DTOR			    #
+						#############################
+
+						if xtorNode.nodeName == 'dtor':
+
+							for paramNode in xtorNode.childNodes:
+
+								#############
+								# PARAM	    #
+								#############
+
+								if paramNode.nodeName == 'param':
+
+									dic = {
+										'name': paramNode.getStripedAttribute('name'),
+										'type': paramNode.getStripedAttribute('type'),
+									}
+
+									DTOR_PARAMS.append(dic)
+
 					dic = {
-						'name': profileNode.getStripedAttribute('name')
+						'name': profileNode.getStripedAttribute('name'),
+						'ctor_params': CTOR_PARAMS,
+						'dtor_params': DTOR_PARAMS,
 					}
 
 					if SELECTED_PROFILES is None\
