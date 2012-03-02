@@ -189,6 +189,8 @@ def implementation(ctx):
 
 		LANG.emit_separator(ctx, fp)
 
+		#############################################################
+
 		fp.close()
 
 	except IOError:
@@ -233,6 +235,8 @@ def implementation(ctx):
 			#####################################################
 
 			LANG.emit_separator(ctx, fp)
+
+			#####################################################
 
 			fp.close()
 
