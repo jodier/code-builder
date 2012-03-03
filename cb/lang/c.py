@@ -384,23 +384,23 @@ def emit_impTypes(types, fp):
 		if t['class'] == 'base':
 
 			re1 = re.compile('\(\s*\*\s*\)')
-			re2 = re.compile('\[\s*(\w*)\s*\]')
+			re2 = re.compile('\[([^\]]*)\]')
 
 			if   re1.search(t['from']):
 				cb.utils.printf(fp, 'typedef %s;' % (
-					re1.sub('(* %s)' % t['name'], t['from']).strip()
+					re1.sub('(* %s)' % t['name'], t['from'])
 				))
 
 			elif re2.search(t['from']):
 				if t['from'].find('*') >= 0:
 					cb.utils.printf(fp, 'typedef %s%s%s;' % (
-						re2.sub('', t['from']).strip(), t['name'],
-						''.join(['[%s]' % dim for dim in re2.findall(t['from'])])
+						re2.sub('', t['from']), t['name'],
+						''.join(['[%s]' % dim.strip() for dim in re2.findall(t['from'])])
 					))
 				else:
 					cb.utils.printf(fp, 'typedef %s %s%s;' % (
-						re2.sub('', t['from']).strip(), t['name'],
-						''.join(['[%s]' % dim for dim in re2.findall(t['from'])])
+						re2.sub('', t['from']), t['name'],
+						''.join(['[%s]' % dim.strip() for dim in re2.findall(t['from'])])
 					))
 			else:
 				if t['from'].find('*') >= 0:
