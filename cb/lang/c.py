@@ -392,7 +392,7 @@ def emit_impTypes(types, fp):
 				))
 
 			elif re2.search(t['from']):
-				if t['from'].find('*') >= 0:
+				if re2.sub('', t['from']).find('*') >= 0:
 					cb.utils.printf(fp, 'typedef %s%s%s;' % (
 						re2.sub('', t['from']), t['name'],
 						''.join(['[%s]' % dim.strip() for dim in re2.findall(t['from'])])
