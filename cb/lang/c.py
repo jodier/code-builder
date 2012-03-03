@@ -628,7 +628,7 @@ def emit_impPrivMethods(ctx, fp):
 	cb.utils.printf(fp, '')
 
 #############################################################################
-# PRIVATE IMPLEMENTATION						    #
+# GLOBAL IMPLEMENTATION							    #
 #############################################################################
 
 def emit_impCtor(ctx, fp):
@@ -885,12 +885,10 @@ def emit_impProfileMethods(ctx, fp, p):
 	##
 
 	IMP_EXTENSIONS = IMP_PROFILES[p]['extensions']
-
 	for e in IMP_EXTENSIONS:
 		ext = cb.utils.int_getExtension(ctx, e)
 
 		IMP_METHODS = IMP_EXTENSIONS[e]['methods']
-
 		for m in IMP_METHODS:
 			met = cb.utils.int_getMethod(ext, m)
 
@@ -1241,10 +1239,9 @@ def emit_impExtensionXtor(ctx, fp, isCtor, p, e):
 			# UNCONDITIONAL CODES		#
 			#################################
 
-			i = 0
 			j = 0
 
-			for c in ext['methods'][m]:
+			for (i, c) in enumerate(ext['methods'][m]):
 
 				condition = c['condition']
 
@@ -1261,16 +1258,13 @@ def emit_impExtensionXtor(ctx, fp, isCtor, p, e):
 
 					j += 1
 
-				i += 1
-
 			#################################
 			# CONDITIONAL CODES		#
 			#################################
 
-			i = 0
 			j = 0
 
-			for c in ext['methods'][m]:
+			for (i, c) in enumerate(ext['methods'][m]):
 
 				condition = c['condition']
 
@@ -1286,8 +1280,6 @@ def emit_impExtensionXtor(ctx, fp, isCtor, p, e):
 					cb.utils.printf(fp, '\t}')
 
 					j += 1
-
-				i += 1
 
 	else:
 		#################################
