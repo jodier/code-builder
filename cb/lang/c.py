@@ -659,7 +659,7 @@ def emit_impCtor(ctx, fp):
 	cb.utils.printf(fp, '\tmemset(self, 0x00, sizeof(%s_t));' % ctx.name)
 	cb.utils.printf(fp, '')
 
-	cb.utils.printf(fp, '\tbool result = true;')
+	cb.utils.printf(fp, '\tbool result;')
 	cb.utils.printf(fp, '')
 
 	for ctor in ctx.imp_ctors:
@@ -720,7 +720,7 @@ def emit_impDtor(ctx, fp):
 	cb.utils.printf(fp, 'bool __%s_dtor(%s_t *self)' % (ctx.name, ctx.name))
 	cb.utils.printf(fp, '{')
 
-	cb.utils.printf(fp, '\tbool result = true;')
+	cb.utils.printf(fp, '\tbool result;')
 	cb.utils.printf(fp, '')
 
 	for dtor in ctx.imp_dtors:
