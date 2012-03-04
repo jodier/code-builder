@@ -165,7 +165,7 @@ def checkInterfacePublic(ctx):
 
 	for p_node in INT_PROFILES:
 
-		for cp_node in p_node['ctor_params']:
+		for cp_node in p_node['params']:
 
 			for t_node in cb.utils.extractTypes(ctx, cp_node['type']):
 
@@ -174,32 +174,13 @@ def checkInterfacePublic(ctx):
 
 		##
 
-		for dp_node in p_node['dtor_params']:
+		params = p_node['params']
 
-			for t_node in cb.utils.extractTypes(ctx, dp_node['type']):
+		for i in xrange(0 + 0, len(params)):
+			for j in xrange(i + 1, len(params)):
 
-				if not t_node in ctx.primitives:
-					cb.utils.error(ctx, 'Undefined type \'%s\' !' % t_node)
-
-		##
-
-		ctor_params = p_node['ctor_params']
-
-		for i in xrange(0 + 0, len(ctor_params)):
-			for j in xrange(i + 1, len(ctor_params)):
-
-				if ctor_params[i]['name'] == ctor_params[j]['name']:
-					cb.utils.error(ctx, 'Duplicated ctor_param \'%s\' !' % ctor_params[i]['name'])
-
-		##
-
-		dtor_params = p_node['dtor_params']
-
-		for i in xrange(0 + 0, len(dtor_params)):
-			for j in xrange(i + 1, len(dtor_params)):
-
-				if dtor_params[i]['name'] == dtor_params[j]['name']:
-					cb.utils.error(ctx, 'Duplicated dtor_param \'%s\' !' % dtor_params[i]['name'])
+				if params[i]['name'] == params[j]['name']:
+					cb.utils.error(ctx, 'Duplicated ctor_param \'%s\' !' % params[i]['name'])
 
 #############################################################################
 

@@ -331,7 +331,7 @@ def emit_ctorPrototype(ctx, fp, comma, p, name):
 
 	proto = 'bool %s(struct %s_s *self' % (name, ctx.name)
 
-	for cp in p['ctor_params']:
+	for cp in p['params']:
 
 		proto += ', '
 
@@ -354,22 +354,30 @@ def emit_dtorPrototype(ctx, fp, comma, p, name):
 
 	proto = 'bool %s(struct %s_s *self' % (name, ctx.name)
 
-	for dp in p['dtor_params']:
-
-		proto += ', '
-
-		if len(dp['name']) == 0:
-			proto += '%s' % (dp['type'])
-		else:
-			if dp['type'].find('*') >= 0:
-				proto += '%s%s' % (dp['type'], dp['name'])
-			else:
-				proto += '%s %s' % (dp['type'], dp['name'])
-
 	if comma == False:
 		cb.utils.printf(fp, proto + ')')
 	else:
 		cb.utils.printf(fp, proto + ');')
+
+#############################################################################
+
+def emit_ctorCall(ctx, fp, p, name):
+
+	proto = '%s(self' % name
+
+	for cp in p['params']:
+
+		proto += ', %s' % cp['name']
+
+	cb.utils.writef(fp, proto + ')')
+
+#############################################################################
+
+def emit_dtorCall(ctx, fp, p, name):
+
+	proto = '%s(self' % name
+
+	cb.utils.writef(fp, proto + ')')
 
 #############################################################################
 # PUBLIC & PRIVATE INTERFACE						    #
@@ -910,6 +918,7 @@ def emit_impProfileMethods(ctx, fp, p):
 #############################################################################
 
 def emit_impProfileCtor(ctx, fp, p):
+	pro = cb.utils.int_getProfile(ctx, p)
 	IMP_PROFILES = ctx.imp_profiles[p]
 
 	#####################################################################
@@ -921,8 +930,7 @@ def emit_impProfileCtor(ctx, fp, p):
 	for ctor in IMP_PROFILES['ctors']:
 
 		for code in ctor:
-
-			cb.utils.printf(fp, 'bool __%s_%s_ctor%d(%s_t *self)' % (ctx.name, p, i, ctx.name))
+			emit_ctorPrototype(ctx, fp, False, pro, '__%s_%s_ctor%d' % (ctx.name, p, i))
 			cb.utils.printf(fp, '{')
 			for t in code['txts']: cb.utils.printf(fp, '%s' % t)
 			cb.utils.printf(fp, '}')
@@ -952,7 +960,7 @@ def emit_impProfileCtor(ctx, fp, p):
 	# PROFILE CTOR							    #
 	#####################################################################
 
-	cb.utils.printf(fp, 'bool %s_%s_initialize(%s_t *self)' % (ctx.name, p, ctx.name))
+	emit_ctorPrototype(ctx, fp, False, pro, '%s_%s_initialize' % (ctx.name, p))
 	cb.utils.printf(fp, '{')
 
 	#####################################################################
@@ -979,14 +987,14 @@ def emit_impProfileCtor(ctx, fp, p):
 			if len(code['condition']) == 0:
 				cb.utils.printf(fp, '\tif(1)')
 				cb.utils.printf(fp, '\t{')
-				cb.utils.printf(fp, '\t\tresult = __%s_%s_ctor%d(self);' % (ctx.name, p, i))
+				cb.utils.writef(fp, '\t\tresult = ') ; emit_ctorCall(ctx, fp, pro, '__%s_%s_ctor%d' % (ctx.name, p, i)) ; cb.utils.printf(fp, ';')
 				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
 				cb.utils.printf(fp, '')
 			else:
 				cb.utils.printf(fp, '\tif(%s)' % code['condition'])
 				cb.utils.printf(fp, '\t{')
-				cb.utils.printf(fp, '\t\tresult = __%s_%s_ctor%d(self);' % (ctx.name, p, i))
+				cb.utils.writef(fp, '\t\tresult = ') ; emit_ctorCall(ctx, fp, pro, '__%s_%s_ctor%d' % (ctx.name, p, i)) ; cb.utils.printf(fp, ';')
 				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
 				cb.utils.printf(fp, '')
@@ -1012,14 +1020,14 @@ def emit_impProfileCtor(ctx, fp, p):
 
 			if ctx.imp_profiles[p]['extensions'].has_key(e['name']) != False:
 
-				cb.utils.printf(fp, '\t\t && __%s_%s_%s_ctor(self)' % (ctx.name, p, e['name']))
+				cb.utils.writef(fp, '\t\t && ') ; emit_ctorCall(ctx, fp, pro, '__%s_%s_%s_ctor' % (ctx.name, p, e['name'])) ; cb.utils.printf(fp, '')
 
 		cb.utils.printf(fp, '\t;')
 		cb.utils.printf(fp, '')
 
 	cb.utils.printf(fp, '\tif(result == false)')
 	cb.utils.printf(fp, '\t{')
-	cb.utils.printf(fp, '\t\t%s_%s_finalize(self);' % (ctx.name, p))
+	cb.utils.writef(fp, '\t\t') ; emit_dtorCall(ctx, fp, pro, '%s_%s_finalize' % (ctx.name, p)) ; cb.utils.printf(fp, ';')
 	cb.utils.printf(fp, '\t}')
 	cb.utils.printf(fp, '')
 
@@ -1033,6 +1041,7 @@ def emit_impProfileCtor(ctx, fp, p):
 #############################################################################
 
 def emit_impProfileDtor(ctx, fp, p):
+	pro = cb.utils.int_getProfile(ctx, p)
 	IMP_PROFILES = ctx.imp_profiles[p]
 
 	#####################################################################
@@ -1044,8 +1053,7 @@ def emit_impProfileDtor(ctx, fp, p):
 	for dtor in IMP_PROFILES['dtors']:
 
 		for code in dtor:
-
-			cb.utils.printf(fp, 'bool __%s_%s_dtor%d(%s_t *self)' % (ctx.name, p, i, ctx.name))
+			emit_dtorPrototype(ctx, fp, False, pro, '__%s_%s_dtor%d' % (ctx.name, p, i))
 			cb.utils.printf(fp, '{')
 			for t in code['txts']: cb.utils.printf(fp, '%s' % t)
 			cb.utils.printf(fp, '}')
@@ -1075,7 +1083,7 @@ def emit_impProfileDtor(ctx, fp, p):
 	# PROFILE DTOR							    #
 	#####################################################################
 
-	cb.utils.printf(fp, 'bool %s_%s_finalize(%s_t *self)' % (ctx.name, p, ctx.name))
+	emit_dtorPrototype(ctx, fp, False, pro, '%s_%s_finalize' % (ctx.name, p))
 	cb.utils.printf(fp, '{')
 
 	cb.utils.printf(fp, '\tbool result = true;')
@@ -1091,7 +1099,7 @@ def emit_impProfileDtor(ctx, fp, p):
 
 			if ctx.imp_profiles[p]['extensions'].has_key(e['name']) != False:
 
-				cb.utils.printf(fp, '\tif(__%s_%s_%s_dtor(self) == false) {' % (ctx.name, p, e['name']))
+				cb.utils.writef(fp, '\tif(') ; emit_dtorCall(ctx, fp, pro, '__%s_%s_%s_dtor' % (ctx.name, p, e['name'])) ; cb.utils.printf(fp, ' == false) {')
 				cb.utils.printf(fp, '\t\tresult = false;')
 				cb.utils.printf(fp, '\t}')
 
@@ -1110,7 +1118,7 @@ def emit_impProfileDtor(ctx, fp, p):
 			if len(code['condition']) == 0:
 				cb.utils.printf(fp, '\tif(1)')
 				cb.utils.printf(fp, '\t{')
-				cb.utils.printf(fp, '\t\tif(__%s_%s_dtor%d(self) == false) {' % (ctx.name, p, i))
+				cb.utils.writef(fp, '\t\tif(') ; emit_dtorCall(ctx, fp, pro, '__%s_%s_dtor%d' % (ctx.name, p, i)) ; cb.utils.printf(fp, ' == false) {')
 				cb.utils.printf(fp, '\t\t\tresult = false;')
 				cb.utils.printf(fp, '\t\t}')
 				cb.utils.printf(fp, '\t\tgoto __next;')
@@ -1119,7 +1127,7 @@ def emit_impProfileDtor(ctx, fp, p):
 			else:
 				cb.utils.printf(fp, '\tif(%s)' % code['condition'])
 				cb.utils.printf(fp, '\t{')
-				cb.utils.printf(fp, '\t\tif(__%s_%s_dtor%d(self) == false) {' % (ctx.name, p, i))
+				cb.utils.writef(fp, '\t\tif(') ; emit_dtorCall(ctx, fp, pro, '__%s_%s_dtor%d' % (ctx.name, p, i)) ; cb.utils.printf(fp, ' == false) {')
 				cb.utils.printf(fp, '\t\t\tresult = false;')
 				cb.utils.printf(fp, '\t\t}')
 				cb.utils.printf(fp, '\t\tgoto __next;')
@@ -1158,10 +1166,12 @@ def emit_impExtensionXtor(ctx, fp, isCtor, p, e):
 
 	if isCtor != False:
 		emit_xtorPrototype = emit_ctorPrototype
+		emit_xtorCall = emit_ctorCall
 		XTORS = ext['ctors']
 		yuio = 'ctor'
 	else:
 		emit_xtorPrototype = emit_dtorPrototype
+		emit_xtorCall = emit_dtorCall
 		XTORS = ext['dtors']
 		yuio = 'dtor'
 
@@ -1207,14 +1217,14 @@ def emit_impExtensionXtor(ctx, fp, isCtor, p, e):
 			if len(code['condition']) == 0:
 				cb.utils.printf(fp, '\tif(1)')
 				cb.utils.printf(fp, '\t{')
-				cb.utils.printf(fp, '\t\tresult = __%s_%s_%s_%s%d(self);' % (ctx.name, p, e, yuio, i))
+				cb.utils.writef(fp, '\t\tresult = ') ; emit_xtorCall(ctx, fp, pro, '__%s_%s_%s_%s%d' % (ctx.name, p, e, yuio, i)) ; cb.utils.printf(fp, ';')
 				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
 				cb.utils.printf(fp, '')
 			else:
 				cb.utils.printf(fp, '\tif(%s)' % code['condition'])
 				cb.utils.printf(fp, '\t{')
-				cb.utils.printf(fp, '\t\tresult = __%s_%s_%s_%s%d(self);' % (ctx.name, p, e, yuio, i))
+				cb.utils.writef(fp, '\t\tresult = ') ; emit_xtorCall(ctx, fp, pro, '__%s_%s_%s_%s%d' % (ctx.name, p, e, yuio, i)) ; cb.utils.printf(fp, ';')
 				cb.utils.printf(fp, '\t\tgoto __next;')
 				cb.utils.printf(fp, '\t}')
 				cb.utils.printf(fp, '')
