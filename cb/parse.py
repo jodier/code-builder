@@ -25,38 +25,6 @@
 import cb.utils, xml.dom.minidom
 
 #############################################################################
-# UTILS									    #
-#############################################################################
-
-def __getTEXTs(self):
-	L = []
-
-	for node in self.childNodes:
-		if node.nodeType == 3:
-			L.append(node.nodeValue.lstrip('\r\n').rstrip(' \t\r\n'))
-
-	return L
-
-#############################################################################
-
-xml.dom.minidom.Element.getTEXTs = __getTEXTs
-
-#############################################################################
-
-def __getCDATAs(self):
-	L = []
-
-	for node in self.childNodes:
-		if node.nodeType == 4:
-			L.append(node.nodeValue.lstrip('\r\n').rstrip(' \t\r\n'))
-
-	return L
-
-#############################################################################
-
-xml.dom.minidom.Element.getCDATAs = __getCDATAs
-
-#############################################################################
 # PARSERS								    #
 #############################################################################
 
@@ -238,7 +206,8 @@ def parseInterfacePublic(ctx, interfaces):
 			for assetNode in node.childNodes:
 
 				if assetNode.nodeName == 'date':
-					date = assetNode.getTEXTs()[0].strip()
+					date = assetNode.getTEXTs()
+					date = date[0].strip()
 				if assetNode.nodeName == 'authors':
 					authors = assetNode.getTEXTs()[0].strip()
 				if assetNode.nodeName == 'emails':

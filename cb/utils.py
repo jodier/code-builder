@@ -51,6 +51,99 @@ xml.dom.minidom.Element.getStripedUAttribute = \
 					getStripedUAttribute
 
 #############################################################################
+
+def getTEXTs(self):
+	L = []
+
+	for node in self.childNodes:
+
+		if node.nodeType == 3:
+			L.append(node.nodeValue.lstrip('\r\n').rstrip(' \t\r\n'))
+
+	return L
+
+xml.dom.minidom.Element.getTEXTs = \
+				getTEXTs
+
+#############################################################################
+
+def getCDATAs(self):
+	L = []
+
+	for node in self.childNodes:
+
+		if node.nodeType == 4:
+			L.append(node.nodeValue.lstrip('\r\n').rstrip(' \t\r\n'))
+
+	return L
+
+xml.dom.minidom.Element.getCDATAs = \
+				getCDATAs
+
+#############################################################################
+# PROFILES								    #
+#############################################################################
+
+class context:
+	#####################################################################
+
+	def __init__(self, name = 'noname', major = 0, minor = 0, verbose = False, primitives = '', qualifiers = '', language = 'c', profiles = '*'):
+
+		self.lang = None
+
+		#############################################################
+		# PUBLIC INTERFACE					    #
+		#############################################################
+
+		self.name = name
+
+		self.major = major
+		self.minor = minor
+
+		self.int_pub_asset = {}
+		self.int_pub_prologs = []
+		self.int_pub_epilogs = []
+		self.int_pub_types = []
+		self.int_pub_profiles = []
+		self.int_pub_extensions = []
+
+		#############################################################
+		# PRIVATE INTERFACE					    #
+		#############################################################
+
+		self.int_priv_prologs = []
+		self.int_priv_epilogs = []
+		self.int_priv_types = []
+		self.int_priv_constraints = []
+
+		#############################################################
+		# IMPLEMENTATION					    #
+		#############################################################
+
+		self.imp_extras = []
+		self.imp_ctors = []
+		self.imp_dtors = []
+		self.imp_profiles = {}
+
+		#############################################################
+		# OTHER							    #
+		#############################################################
+
+		self.verbose = verbose
+
+		self.primitives = primitives
+		self.qualifiers = qualifiers
+
+		self.language = language
+		self.profiles = profiles
+
+		self.debug = 0
+		self.ooops = 0
+		self.error = 0
+
+		self.cnt = 0x10000
+
+#############################################################################
 # PROFILES								    #
 #############################################################################
 
@@ -112,10 +205,10 @@ def displayTree(T, level = 0):
 def int_getProfile(ctx, name):
 	INT_PROFILES = ctx.int_pub_profiles
 
-	for p in INT_PROFILES:
+	for p_node in INT_PROFILES:
 
-		if p['name'] == name:
-			return p
+		if p_node['name'] == name:
+			return p_node
 
 	return None
 
@@ -124,10 +217,10 @@ def int_getProfile(ctx, name):
 def int_getExtension(ctx, name):
 	INT_EXTENSIONS = ctx.int_pub_extensions
 
-	for e in INT_EXTENSIONS:
+	for e_node in INT_EXTENSIONS:
 
-		if e['name'] == name:
-			return e
+		if e_node['name'] == name:
+			return e_node
 
 	return None
 
@@ -136,10 +229,10 @@ def int_getExtension(ctx, name):
 def int_getMethod(ext, name):
 	INT_METHODS = ext['methods']
 
-	for m in INT_METHODS:
+	for m_node in INT_METHODS:
 
-		if m['name'] == name:
-			return m
+		if m_node['name'] == name:
+			return m_node
 
 	return None
 

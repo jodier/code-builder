@@ -447,6 +447,7 @@ def emit_impTypes(types, fp):
 def emit_impPubTypes(ctx, fp):
 	cb.utils.printf(fp, 'typedef struct %s_s %s_t;' % (ctx.name, ctx.name))
 	cb.utils.printf(fp, '')
+
 	emit_separator(ctx, fp)
 
 	emit_impTypes(ctx.int_pub_types, fp)
@@ -1152,14 +1153,17 @@ def emit_impProfileDtor(ctx, fp, p):
 #############################################################################
 
 def emit_impExtensionXtor(ctx, fp, isCtor, p, e):
+	pro = cb.utils.int_getProfile(ctx, p)
 	ext = ctx.imp_profiles[p]['extensions'][e]
 
 	if isCtor != False:
-		yuio = 'ctor'
+		emit_xtorPrototype = emit_ctorPrototype
 		XTORS = ext['ctors']
+		yuio = 'ctor'
 	else:
-		yuio = 'dtor'
+		emit_xtorPrototype = emit_dtorPrototype
 		XTORS = ext['dtors']
+		yuio = 'dtor'
 
 	#####################################################################
 	# EXTENSION XTORS						    #
@@ -1170,7 +1174,7 @@ def emit_impExtensionXtor(ctx, fp, isCtor, p, e):
 	for xtor in XTORS:
 
 		for code in xtor:
-			cb.utils.printf(fp, 'bool __%s_%s_%s_%s%d(%s_t *self)' % (ctx.name, p, e, yuio, i, ctx.name))
+			emit_xtorPrototype(ctx, fp, False, pro, '__%s_%s_%s_%s%d' % (ctx.name, p, e, yuio, i))
 			cb.utils.printf(fp, '{')
 			for t in code['txts']: cb.utils.printf(fp, '%s' % t)
 			cb.utils.printf(fp, '}')
@@ -1184,7 +1188,7 @@ def emit_impExtensionXtor(ctx, fp, isCtor, p, e):
 	# EXTENSION CTOR						    #
 	#####################################################################
 
-	cb.utils.printf(fp, 'bool __%s_%s_%s_%s(%s_t *self)' % (ctx.name, p, e, yuio, ctx.name))
+	emit_xtorPrototype(ctx, fp, False, pro, '__%s_%s_%s_%s' % (ctx.name, p, e, yuio))
 	cb.utils.printf(fp, '{')
 
 	cb.utils.printf(fp, '\tbool result;')

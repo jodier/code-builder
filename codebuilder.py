@@ -82,69 +82,12 @@ def codebuilder_load_xml(ctx, fileName):
 	return doc
 
 #############################################################################
-import cb.lang.c
-#############################################################################
 
-class codebuilder:
+class codebuilder(cb.utils.context):
 	#####################################################################
 
 	def __init__(self):
-		self.lang = None
-
-		#############################################################
-		# PUBLIC INTERFACE					    #
-		#############################################################
-
-		self.name = 'noname'
-
-		self.major = 0
-		self.minor = 0
-
-		self.int_pub_asset = {}
-		self.int_pub_prologs = []
-		self.int_pub_epilogs = []
-		self.int_pub_types = []
-		self.int_pub_profiles = []
-		self.int_pub_extensions = []
-
-		#############################################################
-		# PRIVATE INTERFACE					    #
-		#############################################################
-
-		self.int_priv_prologs = []
-		self.int_priv_epilogs = []
-		self.int_priv_types = []
-		self.int_priv_constraints = []
-
-		#############################################################
-		# IMPLEMENTATION					    #
-		#############################################################
-
-		self.imp_extras = []
-		self.imp_ctors = []
-		self.imp_dtors = []
-		self.imp_profiles = {}
-
-		#############################################################
-		# OTHER							    #
-		#############################################################
-
-		self.verbose = False
-
-		self.intext = ''
-		self.impext = ''
-
-		self.primitives = ''
-		self.qualifiers = ''
-
-		self.language = 'c'
-		self.profiles = '*'
-
-		self.debug = 0
-		self.ooops = 0
-		self.error = 0
-
-		self.cnt = 0x10000
+		cb.utils.context.__init__(self)
 
 	#####################################################################
 
@@ -207,14 +150,6 @@ def entry_point(argv):
 			ctx.profiles = arg
 			flag = 0
 
-		elif flag == 3:
-			ctx.intext = arg
-			flag = 0
-
-		elif flag == 4:
-			ctx.impext = arg
-			flag = 0
-
 		else:
 			if   arg == '--authors':
 				print('Jerome ODIER, Christophe SMEKENS')
@@ -233,12 +168,6 @@ def entry_point(argv):
 			elif arg == '-p' or arg == '--profiles':
 				flag = 2
 
-			elif arg == '--intext':
-				flag = 3
-
-			elif arg == '--impext':
-				flag = 4
-
 			else:
 				if arg[0] != '-':
 					args.append(arg)
@@ -253,9 +182,6 @@ def entry_point(argv):
 					print('')
 					print('  -l --language LANG  ')
 					print('  -p --profiles LIST  ')
-					print('')
-					print('  --intext EXT        ')
-					print('  --impext EXT        ')
 
 					return 1
 
@@ -274,12 +200,6 @@ def entry_point(argv):
 		cb.utils.fatal(ctx, 'Could not load \'%s\' !' % module)
 
 	#####################################################################
-
-	if len(ctx.intext) == 0:
-		ctx.intext = ctx.lang.INT_EXT
-
-	if len(ctx.impext) == 0:
-		ctx.impext = ctx.lang.IMP_EXT
 
 	ctx.primitives = ctx.lang.PRIMITIVES
 	ctx.qualifiers = ctx.lang.QUALIFIERS

@@ -34,7 +34,7 @@ def interfacePublic(ctx):
 
 	#####################################################################
 
-	fileName = '%s.%s' % (NAME, ctx.intext)
+	fileName = '%s.%s' % (NAME, LANG.INT_EXT)
 
 	try:
 		fp = open(fileName, 'wt')
@@ -90,7 +90,7 @@ def interfacePrivate(ctx):
 
 	#####################################################################
 
-	fileName = '%s_internal.%s' % (NAME, ctx.intext)
+	fileName = '%s_internal.%s' % (NAME, LANG.INT_EXT)
 
 	try:
 		fp = open(fileName, 'wt')
@@ -153,7 +153,7 @@ def implementation(ctx):
 
 	#####################################################################
 
-	fileName = '%s.%s' % (NAME, ctx.impext)
+	fileName = '%s.%s' % (NAME, LANG.IMP_EXT)
 
 	try:
 		fp = open(fileName, 'wt')
@@ -200,7 +200,7 @@ def implementation(ctx):
 
 	for p in ctx.imp_profiles:
 
-		fileName = '%s_%s.%s' % (NAME, p, ctx.impext)
+		fileName = '%s_%s.%s' % (NAME, p, LANG.IMP_EXT)
 
 		try:
 			fp = open(fileName, 'wt')

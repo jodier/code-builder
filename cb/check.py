@@ -31,75 +31,75 @@ def checkTypes(ctx, TYPES):
 	# PASS ONE							    #
 	#####################################################################
 
-	for t in TYPES:
+	for t_node in TYPES:
 
-		if t['name'] in ctx.primitives:
-			cb.utils.error(ctx, 'Duplicated type \'%s\' !' % t['name'])
+		if t_node['name'] in ctx.primitives:
+			cb.utils.error(ctx, 'Duplicated type \'%s\' !' % t_node['name'])
 		else:
-			ctx.primitives.add(t['name'])
+			ctx.primitives.add(t_node['name'])
 
 	#####################################################################
 	# PASS TWO							    #
 	#####################################################################
 
-	for t in TYPES:
+	for t_node in TYPES:
 		#############################################################
 		# BASE TYPE						    #
 		#############################################################
 
-		if t['class'] == 'base':
+		if t_node['class'] == 'base':
 
-			types = cb.utils.extractTypes(ctx, t['from'])
+			for t_name in cb.utils.extractTypes(ctx, t_node['from']):
 
-			for type in types:
+				if t_name in ctx.primitives:
 
-				if type in ctx.primitives:
-					if type == t['name']:
-						cb.utils.error(ctx, 'Recursif type \'%s\' !' % type)
+					if t_name == t_node['name']:
+						cb.utils.error(ctx, 'Recursif type \'%s\' !' % t_name)
+
 				else:
-					cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
+					cb.utils.error(ctx, 'Undefined type \'%s\' !' % t_name)
 
 		#############################################################
 		# ENUM TYPE						    #
 		#############################################################
 
-		if t['class'] == 'enum':
+		if t_node['class'] == 'enum':
 
-			values = t['values']
+			values = t_node['values']
 
 			for i in xrange(0 + 0, len(values)):
 				for j in xrange(i + 1, len(values)):
 
 					if values[i]['name'] == values[j]['name']:
-						cb.utils.error(ctx, 'Duplicated values \'%s\' for type \'%s\' !' % (values[i]['name'], t['name']))
+						cb.utils.error(ctx, 'Duplicated values \'%s\' for type \'%s\' !' % (values[i]['name'], t_node['name']))
 
 		#############################################################
 		# STRUCT TYPE						    #
 		#############################################################
 
-		if t['class'] == 'struct':
+		if t_node['class'] == 'struct':
 
-			fields = t['fields']
+			fields = t_node['fields']
 
 			for i in xrange(0 + 0, len(fields)):
 				for j in xrange(i + 1, len(fields)):
 
 					if fields[i]['name'] == fields[j]['name']:
-						cb.utils.error(ctx, 'Duplicated fields \'%s\' for type \'%s\' !' % (fields[i]['name'], t['name']))
+						cb.utils.error(ctx, 'Duplicated fields \'%s\' for type \'%s\' !' % (fields[i]['name'], t_node['name']))
 
 			##
 
-			for f in fields:
+			for f_node in fields:
 
-				types = cb.utils.extractTypes(ctx, f['type'])
+				for t_name in cb.utils.extractTypes(ctx, f_node['type']):
 
-				for type in types:
+					if t_name in ctx.primitives:
 
-					if type in ctx.primitives:
-						if type == t['name']:
-							cb.utils.debug(ctx, 'Recursif type \'%s\' !' % type)
+						if t_name == t_node['name']:
+							cb.utils.debug(ctx, 'Recursif type \'%s\' !' % t_name)
+
 					else:
-						cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
+						cb.utils.error(ctx, 'Undefined type \'%s\' !' % t_name)
 
 #############################################################################
 
@@ -118,44 +118,42 @@ def checkInterfacePublic(ctx):
 
 	#####################################################################
 
-	for e in INT_EXTENSIONS:
+	for e_node in INT_EXTENSIONS:
 
-		for m in e['methods']:
+		for m_node in e_node['methods']:
 
-			for p in m['params']:
+			for p_node in m_node['params']:
 
-				types = cb.utils.extractTypes(ctx, p['type'])
+				for t_name in cb.utils.extractTypes(ctx, p_node['type']):
 
-				for type in types:
-
-					if not type in ctx.primitives:
-						cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
+					if not t_name in ctx.primitives:
+						cb.utils.error(ctx, 'Undefined type \'%s\' !' % t_name)
 
 			##
 
-			ps = m['params']
+			params = m_node['params']
 
-			for i in xrange(0 + 0, len(ps)):
-				for j in xrange(i + 1, len(ps)):
+			for i in xrange(0 + 0, len(params)):
+				for j in xrange(i + 1, len(params)):
 
-					if ps[i]['name'] == ps[j]['name']:
-						cb.utils.error(ctx, 'Duplicated param \'%s\' !' % ps[i]['name'])
+					if params[i]['name'] == params[j]['name']:
+						cb.utils.error(ctx, 'Duplicated param \'%s\' !' % params[i]['name'])
 
-		ms = e['methods']
+		methods = e_node['methods']
 
-		for i in xrange(0 + 0, len(ms)):
-			for j in xrange(i + 1, len(ms)):
+		for i in xrange(0 + 0, len(methods)):
+			for j in xrange(i + 1, len(methods)):
 
-				if ms[i]['name'] == ms[j]['name']:
-					cb.utils.error(ctx, 'Duplicated method \'%s\' !' % ms[i]['name'])
+				if methods[i]['name'] == methods[j]['name']:
+					cb.utils.error(ctx, 'Duplicated method \'%s\' !' % methods[i]['name'])
 
-	es = INT_EXTENSIONS
+	extensions = INT_EXTENSIONS
 
-	for i in xrange(0 + 0, len(es)):
-		for j in xrange(i + 1, len(es)):
+	for i in xrange(0 + 0, len(extensions)):
+		for j in xrange(i + 1, len(extensions)):
 
-			if es[i]['name'] == es[j]['name']:
-				cb.utils.error(ctx, 'Duplicated extension \'%s\' !' % es[i]['name'])
+			if extensions[i]['name'] == extensions[j]['name']:
+				cb.utils.error(ctx, 'Duplicated extension \'%s\' !' % extensions[i]['name'])
 
 	#####################################################################
 	# PROFILES							    #
@@ -165,47 +163,43 @@ def checkInterfacePublic(ctx):
 
 	#####################################################################
 
-	for p in INT_PROFILES:
+	for p_node in INT_PROFILES:
 
-		for cp in p['ctor_params']:
+		for cp_node in p_node['ctor_params']:
 
-			types = cb.utils.extractTypes(ctx, cp['type'])
+			for t_node in cb.utils.extractTypes(ctx, cp_node['type']):
 
-			for type in types:
-
-				if not type in ctx.primitives:
-					cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
+				if not t_node in ctx.primitives:
+					cb.utils.error(ctx, 'Undefined type \'%s\' !' % t_node)
 
 		##
 
-		for dp in p['dtor_params']:
+		for dp_node in p_node['dtor_params']:
 
-			types = cb.utils.extractTypes(ctx, dp['type'])
+			for t_node in cb.utils.extractTypes(ctx, dp_node['type']):
 
-			for type in types:
-
-				if not type in ctx.primitives:
-					cb.utils.error(ctx, 'Undefined type \'%s\' !' % type)
+				if not t_node in ctx.primitives:
+					cb.utils.error(ctx, 'Undefined type \'%s\' !' % t_node)
 
 		##
 
-		cps = p['ctor_params']
+		ctor_params = p_node['ctor_params']
 
-		for i in xrange(0 + 0, len(cps)):
-			for j in xrange(i + 1, len(cps)):
+		for i in xrange(0 + 0, len(ctor_params)):
+			for j in xrange(i + 1, len(ctor_params)):
 
-				if cps[i]['name'] == cps[j]['name']:
-					cb.utils.error(ctx, 'Duplicated ctor_param \'%s\' !' % cps[i]['name'])
+				if ctor_params[i]['name'] == ctor_params[j]['name']:
+					cb.utils.error(ctx, 'Duplicated ctor_param \'%s\' !' % ctor_params[i]['name'])
 
 		##
 
-		dps = p['dtor_params']
+		dtor_params = p_node['dtor_params']
 
-		for i in xrange(0 + 0, len(dps)):
-			for j in xrange(i + 1, len(dps)):
+		for i in xrange(0 + 0, len(dtor_params)):
+			for j in xrange(i + 1, len(dtor_params)):
 
-				if dps[i]['name'] == dps[j]['name']:
-					cb.utils.error(ctx, 'Duplicated dtor_param \'%s\' !' % dps[i]['name'])
+				if dtor_params[i]['name'] == dtor_params[j]['name']:
+					cb.utils.error(ctx, 'Duplicated dtor_param \'%s\' !' % dtor_params[i]['name'])
 
 #############################################################################
 
@@ -226,12 +220,13 @@ def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
 	if len(EXTRAS) > 1:
 		cb.utils.error(ctx, 'Only one extra allowed !')
 
-	for e in EXTRAS:
-		for c in e:
-			if len(c['txts']) == 0:
+	for e_node in EXTRAS:
+		for c_node in e_node:
+
+			if len(c_node['txts']) == 0:
 				cb.utils.error(ctx, 'At least one CDATA node needed for extra !')
 
-			if len(c['condition'].strip()) > 0:
+			if len(c_node['condition'].strip()) > 0:
 				cb.utils.ooops(ctx, 'Only unconditional extra allowed !')
 
 	#####################################################################
@@ -241,9 +236,10 @@ def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
 	if len(CTORS) > 1:
 		cb.utils.error(ctx, 'Only one ctor allowed !')
 
-	for x in CTORS:
-		for c in x:
-			if len(c['txts']) == 0:
+	for x_node in CTORS:
+		for c_node in x_node:
+
+			if len(c_node['txts']) == 0:
 				cb.utils.error(ctx, 'At least one CDATA node needed for ctor !')
 
 	#####################################################################
@@ -253,9 +249,10 @@ def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
 	if len(DTORS) > 1:
 		cb.utils.error(ctx, 'Only one dtor allowed !')
 
-	for x in DTORS:
-		for c in x:
-			if len(c['txts']) == 0:
+	for x_node in DTORS:
+		for c_node in x_node:
+
+			if len(c_node['txts']) == 0:
 				cb.utils.error(ctx, 'At least one CDATA node needed for dtor !')
 
 #############################################################################
@@ -265,9 +262,9 @@ def checkCodes(ctx, CODES):
 	# CODES								    #
 	#####################################################################
 
-	for c in CODES:
+	for c_node in CODES:
 
-		if len(c['txts']) == 0:
+		if len(c_node['txts']) == 0:
 			cb.utils.error(ctx, 'Only one CDATA allowed for method !')
 
 #############################################################################
@@ -281,56 +278,56 @@ def checkImplementation(ctx):
 
 	#####################################################################
 
-	for p in IMP_PROFILES:
+	for p_name in IMP_PROFILES:
 
-		PRO = cb.utils.int_getProfile(ctx, p)
+		PRO = cb.utils.int_getProfile(ctx, p_name)
 		if PRO is None:
-			cb.utils.error(ctx, 'Undefined profile \'%s\' !' % p)
+			cb.utils.error(ctx, 'Undefined profile \'%s\' !' % p_name)
 
 		else:
 			#####################################################
 			# EXTENSIONS					    #
 			#####################################################
 
-			IMP_EXTENSIONS = IMP_PROFILES[p]['extensions']
+			IMP_EXTENSIONS = IMP_PROFILES[p_name]['extensions']
 
 			#####################################################
 
-			for e in IMP_EXTENSIONS:
+			for e_name in IMP_EXTENSIONS:
 
-				EXT = cb.utils.int_getExtension(ctx, e)
+				EXT = cb.utils.int_getExtension(ctx, e_name)
 				if EXT is None:
-					cb.utils.error(ctx, 'Undefined extension \'%s\' !' % e)
+					cb.utils.error(ctx, 'Undefined extension \'%s\' !' % e_name)
 
 				else:
 					#####################################
 					# METHODS			    #
 					#####################################
 
-					IMP_METHODS = IMP_EXTENSIONS[e]['methods']
+					IMP_METHODS = IMP_EXTENSIONS[e_name]['methods']
 
 					#####################################
 
-					for m in IMP_METHODS:
+					for m_name in IMP_METHODS:
 
-						MET = cb.utils.int_getMethod(EXT, m)
+						MET = cb.utils.int_getMethod(EXT, m_name)
 						if MET is None:
-							cb.utils.error(ctx, 'Undefined method \'%s\' !' % m)
+							cb.utils.error(ctx, 'Undefined method \'%s\' !' % m_name)
 
 						checkCodes(ctx,
-							IMP_METHODS[m]
+							IMP_METHODS[m_name]
 						)
 
 				checkExtraXtor(ctx,
-					IMP_EXTENSIONS[e]['extras'],
-					IMP_EXTENSIONS[e]['ctors'],
-					IMP_EXTENSIONS[e]['dtors']
+					IMP_EXTENSIONS[e_name]['extras'],
+					IMP_EXTENSIONS[e_name]['ctors'],
+					IMP_EXTENSIONS[e_name]['dtors']
 				)
 
 		checkExtraXtor(ctx,
-			IMP_PROFILES[p]['extras'],
-			IMP_PROFILES[p]['ctors'],
-			IMP_PROFILES[p]['dtors']
+			IMP_PROFILES[p_name]['extras'],
+			IMP_PROFILES[p_name]['ctors'],
+			IMP_PROFILES[p_name]['dtors']
 		)
 
 	#####################################################################
