@@ -198,8 +198,8 @@ def checkExtraXtor(ctx, EXTRAS, CTORS, DTORS):
 	# EXTRAS							    #
 	#####################################################################
 
-	if len(EXTRAS) > 1:
-		cb.utils.error(ctx, 'Only one extra allowed !')
+#	if len(EXTRAS) > 1:
+#		cb.utils.error(ctx, 'Only one extra allowed !')
 
 	for e_node in EXTRAS:
 		for c_node in e_node:
