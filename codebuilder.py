@@ -121,8 +121,11 @@ class codebuilder(cb.utils.context):
 	#####################################################################
 
 	def emit(self):
-		cb.emit.interfacePublic(self)
-		cb.emit.interfacePrivate(self)
+
+		if self.lang.HAS_HEADER != False:
+			cb.emit.interfacePublic(self)
+			cb.emit.interfacePrivate(self)
+
 		cb.emit.implementation(self)
 
 #############################################################################
