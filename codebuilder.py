@@ -122,7 +122,7 @@ class codebuilder(cb.utils.context):
 
 	def emit(self):
 
-		if self.lang.HAS_HEADER != False:
+		if self.lang.HAS_HEADERS != False:
 			cb.emit.interfacePublic(self)
 			cb.emit.interfacePrivate(self)
 
