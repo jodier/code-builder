@@ -243,7 +243,7 @@ def int_getMethod(ext, name):
 def extractTypes(ctx, s):
 	L = []
 
-	for word in re.split('\W+', re.sub('\[[^\]]*\]', '', s)):
+	for word in re.split('[^a-zA-Z0-9_.]+', re.sub('\[[^\]]*\]', '', s)):
 
 		if len(word) > 0 and not word in ctx.qualifiers:
 
