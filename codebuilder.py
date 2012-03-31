@@ -56,28 +56,47 @@ def codebuilder_load_xml(ctx, fileName):
 	except:
 		cb.utils.fatal(ctx, 'XML error in file `%s`, %s !' % (fileName, sys.exc_info()[1]))
 
+		sys.exit(1)
+
+	#####################################################################
+
+	dirName = fixRelPath(os.path.dirname(fileName), '.')
+
+	#####################################################################
+
+	nodes = doc.getElementsByTagName('*')
+
+	for node in nodes:
+
+		n = node.getAttributeNode('url')
+
+		if not n is None:
+
+			n.nodeValue = fixRelPath(n.nodeValue, dirName)
+
 	#####################################################################
 
 	includes = doc.getElementsByTagName('include')
 
-	if len(includes) > 0:
+	for include in includes:
 
-		dirName = fixRelPath(os.path.dirname(fileName), '.')
+		fileName = include.getAttribute('url')
 
-		for include in includes:
+		subdoc = codebuilder_load_xml(
+			ctx
+			,
+			fileName
+		)
 
-			fileName = fixRelPath(include.getAttribute('url'), dirName)
+		for node in subdoc.documentElement.childNodes:
 
-			#####################################################
-			#####################################################
+			include.parentNode.appendChild(node.cloneNode(1))
 
-			subdoc = codebuilder_load_xml(ctx, fileName)
+	#####################################################################
 
-			for node in subdoc.documentElement.childNodes:
-				include.parentNode.appendChild(node.cloneNode(1))
+	for i in xrange(len(includes)): includes[i].parentNode.removeChild(includes[i])
 
-			#####################################################
-			#####################################################
+	#####################################################################
 
 	return doc
 
