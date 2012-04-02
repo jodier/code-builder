@@ -35,12 +35,12 @@ import cb.emit
 # CODE-BUILDER								    #
 #############################################################################
 
-def fixRelPath(path, prefix):
+def updatePath(path, prefix):
 
 	if os.path.isabs(path) == False:
 		path = prefix + os.sep + path
 
-	return path
+	return os.path.normpath(path)
 
 #############################################################################
 
@@ -60,7 +60,7 @@ def codebuilder_load_xml(ctx, fileName):
 
 	#####################################################################
 
-	dirName = fixRelPath(os.path.dirname(fileName), '.')
+	dirName = updatePath(os.path.dirname(fileName), '.')
 
 	#####################################################################
 
@@ -72,7 +72,7 @@ def codebuilder_load_xml(ctx, fileName):
 
 		if not n is None:
 
-			n.nodeValue = fixRelPath(n.nodeValue, dirName)
+			n.nodeValue = updatePath(n.nodeValue, dirName)
 
 	#####################################################################
 
@@ -91,10 +91,6 @@ def codebuilder_load_xml(ctx, fileName):
 		for node in subdoc.documentElement.childNodes:
 
 			include.parentNode.appendChild(node.cloneNode(1))
-
-	#####################################################################
-
-	for i in xrange(len(includes)): includes[i].parentNode.removeChild(includes[i])
 
 	#####################################################################
 
@@ -134,7 +130,7 @@ class codebuilder(cb.utils.context):
 
 		cb.utils.status(self)
 
-		if self.error != 0:
+		if self.error_nr != 0:
 			cb.utils.fatal(self, 'Abort !')
 
 	#####################################################################
@@ -147,6 +143,8 @@ class codebuilder(cb.utils.context):
 
 		cb.emit.implementation(self)
 
+#############################################################################
+# ENTRY POINT								    #
 #############################################################################
 
 def entry_point(argv):

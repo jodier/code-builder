@@ -25,7 +25,7 @@
 import cb.utils, xml.dom.minidom
 
 #############################################################################
-# PARSERS								    #
+# TYPE									    #
 #############################################################################
 
 def parseType(ctx, node):
@@ -140,6 +140,8 @@ def parseType(ctx, node):
 	return TYPES
 
 #############################################################################
+# CODE									    #
+#############################################################################
 
 def parseCode(ctx, node):
 	#####################################################################
@@ -165,6 +167,8 @@ def parseCode(ctx, node):
 
 	return CODES
 
+#############################################################################
+# INTERFACE PUBLIC							    #
 #############################################################################
 
 def parseInterfacePublic(ctx, interfaces):
@@ -359,6 +363,8 @@ def parseInterfacePublic(ctx, interfaces):
 		displayInterfacePublic(ctx)
 
 #############################################################################
+# INTERFACE PRIVATE							    #
+#############################################################################
 
 def parseInterfacePrivate(ctx, interfaces):
 	#####################################################################
@@ -442,6 +448,8 @@ def parseInterfacePrivate(ctx, interfaces):
 	if ctx.verbose:
 		displayInterfacePrivate(ctx)
 
+#############################################################################
+# IMPLEMENTATION							    #
 #############################################################################
 
 def parseImplementation(ctx, implementations):
@@ -606,6 +614,8 @@ def parseImplementation(ctx, implementations):
 	if ctx.verbose:
 		displayImplementation(ctx)
 
+#############################################################################
+# DISPLAY								    #
 #############################################################################
 
 def displayInterfacePublic(ctx):

@@ -81,7 +81,7 @@ xml.dom.minidom.Element.getCDATAs = \
 				getCDATAs
 
 #############################################################################
-# PROFILES								    #
+# CONTEXT								    #
 #############################################################################
 
 class context:
@@ -137,9 +137,9 @@ class context:
 		self.language = language
 		self.profiles = profiles
 
-		self.debug = 0
-		self.ooops = 0
-		self.error = 0
+		self.debug_nr = 0
+		self.ooops_nr = 0
+		self.error_nr = 0
 
 		self.cnt = 0x10000
 
@@ -272,19 +272,19 @@ def printf(fp, s):
 
 def debug(ctx, msg):
 	print('[Debug] %s' % msg)
-	ctx.debug += 1
+	ctx.debug_nr += 1
 
 #############################################################################
 
 def ooops(ctx, msg):
 	print('[Ooops] %s' % msg)
-	ctx.ooops += 1
+	ctx.ooops_nr += 1
 
 #############################################################################
 
 def error(ctx, msg):
 	print('[Error] %s' % msg)
-	ctx.error += 1
+	ctx.error_nr += 1
 
 #############################################################################
 
@@ -295,22 +295,22 @@ def fatal(ctx, msg):
 #############################################################################
 
 def status(ctx):
-	if ctx.debug > 0\
+	if ctx.debug_nr > 0\
 	   or		\
-	   ctx.ooops > 0\
+	   ctx.ooops_nr > 0\
 	   or		\
-	   ctx.error > 0:
+	   ctx.error_nr > 0:
 
 		print('')
 
-		if ctx.debug > 0:
-			print('There are %d \'debug\' messages !' % ctx.debug)
+		if ctx.debug_nr > 0:
+			print('There are %d \'debug\' messages !' % ctx.debug_nr)
 
-		if ctx.ooops > 0:
-			print('There are %d \'ooops\' messages !' % ctx.ooops)
+		if ctx.ooops_nr > 0:
+			print('There are %d \'ooops\' messages !' % ctx.ooops_nr)
 
-		if ctx.error > 0:
-			print('There are %d \'error\' messages !' % ctx.error)
+		if ctx.error_nr > 0:
+			print('There are %d \'error\' messages !' % ctx.error_nr)
 
 #############################################################################
 # COUNTER								    #
